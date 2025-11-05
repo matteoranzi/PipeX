@@ -6,6 +6,7 @@
 #define PIPEX_AGGREGATOR_H
 
 #include <PipeX/nodes/Node.h>
+#include <PipeX/debug/pipex_print_debug.h>
 
 #include <functional>
 #include <vector>
@@ -17,15 +18,15 @@ namespace PipeX {
         using Function = std::function<OutputT(const std::vector<InputT>&)>;
 
         explicit Aggregator (Function _function) : function(std::move(_function)) {
-            PRINT_DEBUG_INFO("[PipeX::Aggregator] {%s}.Constructor(Function)\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Aggregator] {%s}.Constructor(Function)\n", this->name.c_str());
         }
         Aggregator (std::string _name, Function _function) : Node<InputT, OutputT>(std::move(_name)), function(std::move(_function)) {
-            PRINT_DEBUG_INFO("[PipeX::Aggregator] {%s}.Constructor(std::string, Function)\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Aggregator] {%s}.Constructor(std::string, Function)\n", this->name.c_str());
         }
         ~Aggregator() override = default;
 
         std::vector<OutputT> process(const std::vector<InputT>& input) const override {
-            PRINT_DEBUG_INFO("[PipeX::Aggregator] {%s}.process()\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Aggregator] {%s}.process()\n", this->name.c_str());
             return { function(input) };
         }
 

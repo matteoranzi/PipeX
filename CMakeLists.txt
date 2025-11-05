@@ -8,12 +8,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/PrintDebug.cmake)
 include(cmake/utils.cmake)
+#include(cmake/fetch_googletest.cmake)
+
 
 add_subdirectory(src/PipeX)
 
-add_executable(PipeX_testing src/main.cpp)
+add_executable(app src/main.cpp)
 
-target_link_libraries(PipeX_testing PRIVATE PipeX print_debug)
+target_link_libraries(app PRIVATE PipeX print_debug)
 
 
 #================================ SET PRINT_DEBUG_LEVEL per module ==========================================
@@ -36,7 +38,11 @@ set(PRINT_DEBUG_LEVEL_MAIN ${PRINT_DEBUG_LEVEL_GLOBAL} CACHE STRING "Debug level
 set(PRINT_DEBUG_LEVEL_PIPEX ${PRINT_DEBUG_LEVEL_GLOBAL} CACHE STRING "Debug level for benchmark")
 #------------------------------------------------
 
-define_print_debug_level_for_target(PipeX_testing ${PRINT_DEBUG_LEVEL_MAIN})
+define_print_debug_level_for_target(app ${PRINT_DEBUG_LEVEL_MAIN})
 define_print_debug_level_for_target(PipeX ${PRINT_DEBUG_LEVEL_PIPEX})
+
+target_compile_definitions(app PRIVATE PIPEX_PRINT_DEBUG_ENABLED)
+target_compile_definitions(PipeX PRIVATE PIPEX_PRINT_DEBUG_ENABLED)
+
 
 #================================================================================================

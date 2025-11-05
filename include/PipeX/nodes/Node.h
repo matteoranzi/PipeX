@@ -8,7 +8,7 @@
 #include <string>
 #include <sstream>
 
-#include <debug/print_debug.h>
+#include <PipeX/debug/pipex_print_debug.h>
 
 
 namespace PipeX {
@@ -21,16 +21,16 @@ namespace PipeX {
                             oss << this;
                             return oss.str();
                         }()) {
-            PRINT_DEBUG_INFO("[PipeX::Node] {%s}.Constructor()\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Constructor()\n", name.c_str());
         }
         explicit Node (std::string _name) : name(std::move(_name)) {
-            PRINT_DEBUG_INFO("[PipeX::Node] {%s}.Constructor(std::string)\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Constructor(std::string)\n", name.c_str());
         }
         virtual ~Node() = default;
 
         virtual std::vector<OutputT> process(const std::vector<InputT>& input) const = 0;
         virtual std::vector<OutputT> operator() (const std::vector<InputT>& input) const final {
-            PRINT_DEBUG_INFO("[PipeX::Node] {%s}.Operator()\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Operator()\n", name.c_str());
             return this->process(input);
         }
     };
