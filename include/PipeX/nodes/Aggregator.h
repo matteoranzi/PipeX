@@ -1,0 +1,37 @@
+//
+// Created by Matteo Ranzi on 05/11/25.
+//
+
+#ifndef PIPEX_AGGREGATOR_H
+#define PIPEX_AGGREGATOR_H
+
+#include <PipeX/nodes/Node.h>
+
+#include <functional>
+#include <vector>
+
+namespace PipeX {
+    template <typename InputT, typename OutputT>
+    class Aggregator final : public Node<InputT, OutputT> {
+    public:
+        using Function = std::function<OutputT(const std::vector<InputT>&)>;
+
+        explicit Aggregator (Function _function) : function(std::move(_function)) {
+            PRINT_DEBUG_INFO("[PipeX::Aggregator] {%s}.Constructor(Function)\n", this->name.c_str());
+        }
+        Aggregator (std::string _name, Function _function) : Node<InputT, OutputT>(std::move(_name)), function(std::move(_function)) {
+            PRINT_DEBUG_INFO("[PipeX::Aggregator] {%s}.Constructor(std::string, Function)\n", this->name.c_str());
+        }
+        ~Aggregator() override = default;
+
+        std::vector<OutputT> process(const std::vector<InputT>& input) const override {
+            PRINT_DEBUG_INFO("[PipeX::Aggregator] {%s}.process()\n", this->name.c_str());
+            return { function(input) };
+        }
+
+    private:
+        Function function;
+    };
+} // PipeX
+
+#endif //PIPEX_AGGREGATOR_H
