@@ -1,6 +1,5 @@
 #include <iostream>
 #include <numeric>
-#include <PipeX/Pipeline.h>
 #include <PipeX/nodes/Filter.h>
 #include <PipeX/nodes/Transformer.h>
 
@@ -24,7 +23,6 @@ int main() {
         return std::accumulate(input.begin(), input.end(), 0.0f) / static_cast<float>(input.size());
     });
 
-    
 
 
     std::vector<int> input;
