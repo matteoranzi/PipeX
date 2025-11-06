@@ -18,6 +18,12 @@ using namespace PipeX;
 template <typename T>
 void printVector(const std::vector<T>& vec);
 
+/* ________________ Useful REGEX __________________
+
+ * To filter Google Test debug info logs:
+^\[DEBUG_INFO\] \[PipeX] (?=\[Node]).*$
+
+ * ________________________________________________ */
 
 // =========================================================================================================
 
