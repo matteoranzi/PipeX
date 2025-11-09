@@ -2,7 +2,7 @@ enable_testing()
 
 add_executable(PipeX_unit_tests
         test_pipex_nodes.cpp
-#        test_pipex_pipeline.cpp
+        test_pipex_pipeline.cpp
 )
 
 target_link_libraries(PipeX_unit_tests PRIVATE
