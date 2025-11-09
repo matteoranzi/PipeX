@@ -3,12 +3,14 @@
 #include <PipeX/nodes/Filter.h>
 #include <PipeX/nodes/Transformer.h>
 
+#include "debug/print_debug.h"
 #include "PipeX/nodes/Aggregator.h"
 
 template <typename T>
 void printVector(const std::vector<T>& vec);
 
 int main() {
+
     PipeX::Node<int, int> *node = new PipeX::Filter<int>("Odd filter", [](const int &value) {
         return value % 2 != 0; // Keep only odd numbers
     });

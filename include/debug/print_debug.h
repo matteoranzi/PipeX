@@ -11,6 +11,17 @@
     #include <stdio.h>
 #endif
 
+#define ANSI_COLOR_RED      "\x1b[31m"
+#define ANSI_COLOR_RED_BOLD ANSI_COLOR_RED"\x1b[1m"
+#define ANSI_COLOR_GREEN    "\x1b[32m"
+#define ANSI_COLOR_YELLOW   "\x1b[33m"
+#define ANSI_COLOR_BLUE     "\x1b[34m"
+#define ANSI_COLOR_MAGENTA  "\x1b[35m"
+#define ANSI_COLOR_CYAN     "\x1b[36m"
+#define ANSI_COLOR_RESET    "\x1b[0m"
+
+#define ANSI_COLOR_ORANGE  "\033[38;2;255;165;0m"
+
 /*
 ===========================================================
  PRINT_DEBUG Configuration
@@ -38,19 +49,19 @@
 #endif
 
 #if PRINT_DEBUG_LEVEL >= PRINT_DEBUG_LEVEL_INFO
-#define PRINT_DEBUG_INFO(format, ...) printf("[DEBUG_INFO] " format, ##__VA_ARGS__)
+#define PRINT_DEBUG_INFO(format, ...) printf(ANSI_COLOR_BLUE "[DEBUG_INFO] " format ANSI_COLOR_RESET, ##__VA_ARGS__)
 #else
 #define PRINT_DEBUG_INFO(format, ...)
 #endif
 
 #if PRINT_DEBUG_LEVEL >= PRINT_DEBUG_LEVEL_WARN
-#define PRINT_DEBUG_WARN(format, ...) printf("[DEBUG_WARN] " format, ##__VA_ARGS__)
+#define PRINT_DEBUG_WARN(format, ...) printf(ANSI_COLOR_YELLOW "[DEBUG_WARN] " format ANSI_COLOR_RESET, ##__VA_ARGS__)
 #else
 #define PRINT_DEBUG_WARN(format, ...)
 #endif
 
 #if PRINT_DEBUG_LEVEL >= PRINT_DEBUG_LEVEL_ERROR
-#define PRINT_DEBUG_ERROR(format, ...) do {printf("[DEBUG_ERROR] " format, ##__VA_ARGS__); fprintf(stderr, "[DEBUG_ERROR] " format, ##__VA_ARGS__);} while(0)
+#define PRINT_DEBUG_ERROR(format, ...) do {printf(ANSI_COLOR_RED_BOLD "[DEBUG_ERROR] " format ANSI_COLOR_RESET, ##__VA_ARGS__); fprintf(stderr, "[DEBUG_ERROR] " format, ##__VA_ARGS__);} while(0)
 #else
 #define PRINT_DEBUG_ERROR(format, ...)
 #endif

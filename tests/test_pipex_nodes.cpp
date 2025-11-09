@@ -28,80 +28,92 @@ void printVector(const std::vector<T>& vec);
 // =========================================================================================================
 
 TEST(NodesTest, Filter_evenNumbers) {
-    // Create a Filter node that filters out even numbers
-    auto isEven = [](int value) { return value % 2 == 0; };
-    Filter<int> filter("Filter_evenNumbers", isEven);
+    std::cout << "======================================================================" << std::endl;
 
-    // Input data
-    const std::vector<int> inputData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    { // Create unnamed scope to compact destructor output in this test's output
+        // Create a Filter node that filters out even numbers
+        auto isEven = [](int value) { return value % 2 == 0; };
+        Filter<int> filter("Filter_evenNumbers", isEven);
 
-    // Process and retrieve data
-    const std::vector<int> outputData = filter.process(inputData);
+        // Input data
+        const std::vector<int> inputData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+        // Process and retrieve data
+        const std::vector<int> outputData = filter.process(inputData);
 
 
-    // Expected output data (only odd numbers)
-    const std::vector<int> expectedOutput = {2, 4, 6, 8, 10};
+        // Expected output data (only odd numbers)
+        const std::vector<int> expectedOutput = {2, 4, 6, 8, 10};
 
-    std::cout<< "Input vector: ";
-    printVector(inputData);
-    std::cout << "Filtered output (even numbers): ";
-    printVector(outputData);
+        std::cout<< "Input vector: ";
+        printVector(inputData);
+        std::cout << "Filtered output (even numbers): ";
+        printVector(outputData);
 
-    // Check if the output matches the expected output
-    EXPECT_EQ(outputData, expectedOutput);
+        // Check if the output matches the expected output
+        EXPECT_EQ(outputData, expectedOutput);
+    }
 
     std::cout << "======================================================================\n" << std::endl;
 }
 
 TEST(NodesTest, Aggregator_sumNumbers) {
-    // Create an Aggregator node that sums numbers
-    auto sumFunction = [](const std::vector<int>& input) {
-        return std::accumulate(input.begin(), input.end(), 0.0);
+    std::cout << "======================================================================" << std::endl;
 
-    };
-    Aggregator<int, int> aggregator("Aggregator_sumNumbers", sumFunction);
+    { // Create unnamed scope to compact destructor output in this test's output
+        // Create an Aggregator node that sums numbers
+        auto sumFunction = [](const std::vector<int>& input) {
+            return std::accumulate(input.begin(), input.end(), 0.0);
 
-    // Input data
-    const std::vector<int> inputData = {1, 2, 3, 4, 5};
+        };
+        Aggregator<int, int> aggregator("Aggregator_sumNumbers", sumFunction);
 
-    // Process and retrieve data
-    const std::vector<int> outputData = aggregator.process(inputData);
+        // Input data
+        const std::vector<int> inputData = {1, 2, 3, 4, 5};
 
-    // Expected output data (sum of inputData)
-    const std::vector<int> expectedOutput = {15};
+        // Process and retrieve data
+        const std::vector<int> outputData = aggregator.process(inputData);
 
-    std::cout<< "Input vector: ";
-    printVector(inputData);
-    std::cout << "Aggregated output (sum): ";
-    printVector(outputData);
+        // Expected output data (sum of inputData)
+        const std::vector<int> expectedOutput = {15};
 
-    // Check if the output matches the expected output
-    EXPECT_EQ(outputData, expectedOutput);
+        std::cout<< "Input vector: ";
+        printVector(inputData);
+        std::cout << "Aggregated output (sum): ";
+        printVector(outputData);
+
+        // Check if the output matches the expected output
+        EXPECT_EQ(outputData, expectedOutput);
+    }
 
     std::cout << "======================================================================\n" << std::endl;
 }
 
 TEST(NodesTest, Transformer_squareNumbers) {
-    // Create a Transformer node that squares numbers
-    auto squareFunction = [](int value) { return value * value; };
-    Transformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
+    std::cout << "======================================================================" << std::endl;
 
-    // Input data
-    const std::vector<int> inputData = {1, 2, 3, 4, 5};
+    { // Create unnamed scope to compact destructor output in this test's output
+        // Create a Transformer node that squares numbers
+        auto squareFunction = [](int value) { return value * value; };
+        Transformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
 
-    // Process and retrieve data
-    const std::vector<int> outputData = transformer.process(inputData);
+        // Input data
+        const std::vector<int> inputData = {1, 2, 3, 4, 5};
 
-    // Expected output data (squared values)
-    const std::vector<int> expectedOutput = {1, 4, 9, 16, 25};
+        // Process and retrieve data
+        const std::vector<int> outputData = transformer.process(inputData);
 
-    std::cout<< "Input vector: ";
-    printVector(inputData);
-    std::cout << "Transformed output (x^2): ";
-    printVector(outputData);
+        // Expected output data (squared values)
+        const std::vector<int> expectedOutput = {1, 4, 9, 16, 25};
 
-    // Check if the output matches the expected output
-    EXPECT_EQ(outputData, expectedOutput);
+        std::cout<< "Input vector: ";
+        printVector(inputData);
+        std::cout << "Transformed output (x^2): ";
+        printVector(outputData);
+
+        // Check if the output matches the expected output
+        EXPECT_EQ(outputData, expectedOutput);
+    }
 
     std::cout << "======================================================================" << std::endl;
 }

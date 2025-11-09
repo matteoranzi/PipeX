@@ -157,3 +157,8 @@ To contribute:
 ---
 
 > “Build complex systems out of simple, composable parts.” — *PipeX Philosophy*
+
+---
+
+# NOTES FOR THE DEVELOPER
+- In class inheritance, if no visibility mode is specified, then by default the visibility mode is considered as private
