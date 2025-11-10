@@ -47,8 +47,9 @@ namespace PipeX {
         // Delete copy constructors
         // TODO : check how to properly implement factory pattern
         Pipeline& operator=(Pipeline const& _pipeline) {
+            PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
-                name = _pipeline.name;
+                name = _pipeline.name + "_copy";
                 nodes.clear();
                 nodes.reserve(_pipeline.nodes.size());
                 for (const auto& node : _pipeline.nodes) {
@@ -59,13 +60,14 @@ namespace PipeX {
             return *this;
         }
         Pipeline(const Pipeline& _pipeline) {
+            PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
             *this = _pipeline;
         }
 
 
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode&(Args&&)\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode()&\n", name.c_str(), this);
             nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
 
             return *this;
@@ -73,7 +75,7 @@ namespace PipeX {
 
         template<typename NodeT, typename... Args>
         Pipeline&& addNode(Args&&... args) && {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode&&(Args&&)\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode()&&\n", name.c_str(), this);
             nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
 
             return std::move(*this);

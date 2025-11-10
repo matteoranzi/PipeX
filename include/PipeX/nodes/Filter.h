@@ -32,6 +32,7 @@ namespace PipeX {
         }
 
         std::unique_ptr<Node<int,int>> clone() const override {
+            PIPEX_PRINT_DEBUG_INFO("[Filter] {%s}.clone()\n", this->name.c_str());
             return make_unique<Filter>(*this);
         }
 
