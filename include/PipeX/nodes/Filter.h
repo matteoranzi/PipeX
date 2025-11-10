@@ -8,6 +8,8 @@
 #include "Node.h"
 #include "PipeX/debug/pipex_print_debug.h"
 
+#include "extended_cpp_standard/memory.h"
+
 #include <vector>
 #include <functional>
 #include <string>
@@ -27,7 +29,11 @@ namespace PipeX {
         }
         ~Filter() override {
             PIPEX_PRINT_DEBUG_INFO("[Filter] {%s}.Destructor()\n", this->name.c_str());
-        };
+        }
+
+        std::unique_ptr<Node<int,int>> clone() const override {
+            return make_unique<Filter>(*this);
+        }
 
     private:
         Predicate predicate;

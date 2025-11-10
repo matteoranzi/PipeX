@@ -46,8 +46,21 @@ namespace PipeX {
 
         // Delete copy constructors
         // TODO : check how to properly implement factory pattern
-        Pipeline& operator=(Pipeline const&) = delete;
-        Pipeline(const Pipeline&) = delete;
+        Pipeline& operator=(Pipeline const& _pipeline) {
+            if (this != &_pipeline) {
+                name = _pipeline.name;
+                nodes.clear();
+                nodes.reserve(_pipeline.nodes.size());
+                for (const auto& node : _pipeline.nodes) {
+                    nodes.push_back(node->clone());
+                }
+            }
+
+            return *this;
+        }
+        Pipeline(const Pipeline& _pipeline) {
+            *this = _pipeline;
+        }
 
 
         template<typename NodeT, typename... Args>

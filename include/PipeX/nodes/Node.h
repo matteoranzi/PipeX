@@ -18,6 +18,8 @@ namespace PipeX {
     public:
         const std::string name;
 
+        virtual std::unique_ptr<Node<InputT, OutputT>> clone() const = 0;
+
         Node () : name([this]() {
                             std::ostringstream oss;
                             oss << this;

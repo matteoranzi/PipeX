@@ -8,6 +8,8 @@
 #include "Node.h"
 #include "PipeX/debug/pipex_print_debug.h"
 
+#include <extended_cpp_standard/memory.h>
+
 #include <functional>
 #include <vector>
 
@@ -26,6 +28,10 @@ namespace PipeX {
         }
         ~Transformer() override {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] {%s}.Destructor()\n", this->name.c_str());
+        }
+
+        std::unique_ptr<Node<int,int>> clone() const override {
+            return make_unique<Transformer>(*this);
         }
 
     private:
