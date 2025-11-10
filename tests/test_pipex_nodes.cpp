@@ -28,6 +28,8 @@ void printVector(const std::vector<T>& vec);
 // =========================================================================================================
 
 TEST(NodesTest, Filter_evenNumbers) {
+    std::cout << "\n======================================================================" << std::endl;
+    std::cout << "Nodes Test: Filter_evenNumbers" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     { // Create unnamed scope to compact destructor output in this test's output
@@ -58,6 +60,8 @@ TEST(NodesTest, Filter_evenNumbers) {
 }
 
 TEST(NodesTest, Aggregator_sumNumbers) {
+    std::cout << "======================================================================" << std::endl;
+    std::cout << "Nodes Test: Aggregator_sumNumbers" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     { // Create unnamed scope to compact destructor output in this test's output
@@ -90,6 +94,8 @@ TEST(NodesTest, Aggregator_sumNumbers) {
 }
 
 TEST(NodesTest, Transformer_squareNumbers) {
+    std::cout << "======================================================================" << std::endl;
+    std::cout << "Nodes Test: Transformer_squareNumbers" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     { // Create unnamed scope to compact destructor output in this test's output

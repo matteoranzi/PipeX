@@ -29,6 +29,8 @@ void printVector(const std::vector<T>& vec);
 // =========================================================================================================
 
 TEST(PipelineTest, SimplePipeline) {
+    std::cout << "\n======================================================================" << std::endl;
+    std::cout << "Pipeline test: SimplePipeline" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     { // Create unnamed scope to compact destructor output in this test's output
