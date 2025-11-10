@@ -14,8 +14,6 @@
 #include <vector>
 #include <memory>
 
-#include "nodes/Filter.h"
-
 namespace PipeX {
     template<typename T>
     class Pipeline {
