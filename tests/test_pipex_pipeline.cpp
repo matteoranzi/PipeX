@@ -39,16 +39,13 @@ TEST(PipelineTest, SimplePipeline) {
             return value * value;
         };
 
-        auto pipeline = Pipeline<int>().addNode<Transformer<int, int>>(powerCube).addNode<Filter<int>>(isEven);
-        /*
-        auto pipeline = Pipeline<int>()
+        auto pipeline = Pipeline<int>("SimplePipeline")
                             .addNode<Transformer<int, int>>(powerCube)
                             .addNode<Filter<int>>(isEven);
-                            */
+
 
         const std::vector<int> inputData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         const std::vector<int> outputData = pipeline.run(inputData);
-
         const std::vector<int> expectedOutput = {25, 36, 49, 64};
 
 
