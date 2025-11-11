@@ -126,6 +126,36 @@ TEST(NodesTest, Transformer_squareNumbers) {
 
 // =========================================================================================================
 
+TEST(NodesTest, CopyNodes) {
+    std::cout << "======================================================================" << std::endl;
+    { // Create unnamed scope to compact destructor output in this test's output
+        auto squareFunction = [](int value) { return value * value; };
+        Transformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
+        auto copiedTransformer = transformer; // Copy the transformer
+
+        // Input data
+        const std::vector<int> inputData = {1, 2, 3, 4, 5};
+
+        // Process and retrieve data
+        const std::vector<int> outputData = copiedTransformer.process(inputData);
+
+        // Expected output data (squared values)
+        const std::vector<int> expectedOutput = {1, 4, 9, 16, 25};
+
+        std::cout<< "Input vector: ";
+        printVector(inputData);
+        std::cout << "Transformed output (x^2): ";
+        printVector(outputData);
+
+        // Check if the output matches the expected output
+        EXPECT_EQ(outputData, expectedOutput);
+    }
+    std::cout << "======================================================================" << std::endl;
+
+}
+
+// =========================================================================================================
+
 template <typename T>
 void printVector(const std::vector<T>& vec) {
     std::cout << "[";

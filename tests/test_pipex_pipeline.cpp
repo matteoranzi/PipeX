@@ -10,7 +10,6 @@
 
 #include "PipeX/Pipeline.h"
 #include "PipeX/nodes/Filter.h"
-#include "PipeX/nodes/Aggregator.h"
 #include "PipeX/nodes/Transformer.h"
 
 
@@ -47,7 +46,9 @@ TEST(PipelineTest, SimplePipeline) {
 
 
         const std::vector<int> inputData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
         const std::vector<int> outputData = pipeline.run(inputData);
+        
         const std::vector<int> expectedOutput = {25, 36, 49, 64};
 
 

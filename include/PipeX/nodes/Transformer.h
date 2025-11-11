@@ -21,25 +21,35 @@ namespace PipeX {
         using Function = std::function<OutputT(const InputT&&)>;
 
         explicit Transformer (Function _function) : function(std::move(_function)) {
-            PIPEX_PRINT_DEBUG_INFO("[Transformer] {%s}.Constructor(Function)\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Constructor(Function)\n", this->name.c_str(), this);
         }
         Transformer (std::string _name, Function _function) : Node<InputT, OutputT>(std::move(_name)), function(std::move(_function)) {
-            PIPEX_PRINT_DEBUG_INFO("[Transformer] {%s}.Constructor(std::string, Function)\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Constructor(std::string, Function)\n", this->name.c_str(), this);
+        }
+        Transformer (const Transformer& other) : Node<InputT, OutputT>(other), function(other.function) {
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.CopyConstructor()\n", this->name.c_str(), this);
+        }
+        Transformer (const Transformer& other, std::string _name) : Node<InputT, OutputT>(other, std::move(_name)), function(other.function) {
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.CopyConstructor()\n", this->name.c_str(), this);
         }
         ~Transformer() override {
-            PIPEX_PRINT_DEBUG_INFO("[Transformer] {%s}.Destructor()\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Destructor()\n", this->name.c_str(), this);
         }
 
         std::unique_ptr<Node<int,int>> clone() const override {
-            PIPEX_PRINT_DEBUG_INFO("[Transformer] {%s}.clone()\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.clone()\n", this->name.c_str(), this);
             return make_unique<Transformer>(*this);
+        }
+        std::unique_ptr<Node<int,int>> clone(std::string _name) const override {
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.clone()\n", this->name.c_str(), this);
+            return make_unique<Transformer>(*this, std::move(_name));
         }
 
     private:
         Function function;
 
         std::vector<OutputT> processImpl(const std::vector<InputT>&& input) const override {
-            PIPEX_PRINT_DEBUG_INFO("[Transformer] {%s}.processImpl(&&)\n", this->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.processImpl(&&)\n", this->name.c_str(), this);
             std::vector<OutputT> output;
             output.reserve(input.size());
             for (const auto& item : input) {

@@ -18,39 +18,47 @@ namespace PipeX {
     public:
         const std::string name;
 
-        virtual std::unique_ptr<Node<InputT, OutputT>> clone() const = 0;
+        virtual std::unique_ptr<Node> clone() const = 0;
+        virtual std::unique_ptr<Node> clone(std::string name) const = 0;
 
         Node () : name([this]() {
                             std::ostringstream oss;
                             oss << this;
                             return oss.str();
                         }()) {
-            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Constructor()\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
         }
         explicit Node (std::string _name) : name(std::move(_name)) {
-            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Constructor(std::string)\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Constructor(std::string)\n", name.c_str(), this);
         }
+        Node (const Node& other) : name(other.name + "_copy") {
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.CopyConstructor()\n", name.c_str(), this);
+        }
+        Node (const Node& other, std::string _name) : name(std::move(_name)) {
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.CopyConstructor(newName)\n", name.c_str(), this);
+        }
+
         virtual ~Node() {
-            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Destructor()\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         };
 
 
         virtual std::vector<OutputT> process(const std::vector<InputT>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.process(&&)\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.process(&&)\n", name.c_str(), this);
             return std::move(processImpl(std::move(input)));
         }
         virtual std::vector<OutputT> process(const std::vector<InputT>& input) const {
-            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.process(&)\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.process(&)\n", name.c_str(), this);
             return std::move(processImpl(std::move(input)));
         }
 
 
         virtual std::vector<OutputT> operator() (const std::vector<InputT>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Operator(&&)\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Operator(&&)\n", name.c_str(), this);
             return this->process(std::move(input));
         }
         virtual std::vector<OutputT> operator() (const std::vector<InputT>& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[Node] {%s}.Operator(&)\n", name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Operator(&)\n", name.c_str(), this);
             return this->process(std::move(input));
         }
 
