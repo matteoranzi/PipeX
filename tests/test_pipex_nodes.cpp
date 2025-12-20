@@ -7,6 +7,7 @@
 #include <vector>
 #include <numeric>
 
+#include "extended_cpp_standard/memory.h"
 
 #include "PipeX/nodes/Filter.h"
 #include "PipeX/nodes/Aggregator.h"
@@ -128,6 +129,8 @@ TEST(NodesTest, Transformer_squareNumbers) {
 
 TEST(NodesTest, CopyNodes) {
     std::cout << "======================================================================" << std::endl;
+    std::cout << "Nodes Test: CopyNodes" << std::endl;
+    std::cout << "======================================================================" << std::endl;
     { // Create unnamed scope to compact destructor output in this test's output
         auto squareFunction = [](int value) { return value * value; };
         Transformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
@@ -155,6 +158,7 @@ TEST(NodesTest, CopyNodes) {
 }
 
 // =========================================================================================================
+
 
 template <typename T>
 void printVector(const std::vector<T>& vec) {

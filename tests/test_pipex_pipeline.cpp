@@ -33,7 +33,7 @@ TEST(PipelineTest, SimplePipeline) {
     std::cout << "======================================================================" << std::endl;
 
     { // Create unnamed scope to compact destructor output in this test's output
-        auto isEven = [](const int&& value) {
+        auto bounded = [](const int&& value) {
             return value > 20 && value < 70;
         };
         auto powerCube = [](const int&& value) {
@@ -42,7 +42,7 @@ TEST(PipelineTest, SimplePipeline) {
 
         auto pipeline = Pipeline<int>("SimplePipeline")
                             .addNode<Transformer<int, int>>(powerCube)
-                            .addNode<Filter<int>>(isEven);
+                            .addNode<Filter<int>>(bounded);
 
 
         const std::vector<int> inputData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

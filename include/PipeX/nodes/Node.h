@@ -14,7 +14,7 @@
 
 namespace PipeX {
     template <typename InputT, typename OutputT>
-    class Node {
+    class Node{
     public:
         const std::string name;
 

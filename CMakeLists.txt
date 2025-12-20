@@ -7,19 +7,21 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(cmake/PrintDebug.cmake)
-include(cmake/extended_cpp_standard.cmake)
+include(cmake/my_extended_cpp_standard.cmake)
 include(cmake/utils.cmake)
 include(cmake/fetch_googletest.cmake)
 
 
-#add_subdirectory(src/PipeX)
+#add_subdirectory(src/PipeX) #TODO: determine if needed
 add_subdirectory(tests)
+add_subdirectory(sandbox)
 
 
 add_executable(app src/main.cpp)
 
-#target_link_libraries(app PRIVATE PipeX print_debug)
-target_link_libraries(app PRIVATE extended_cpp_standard)
+
+#target_link_libraries(app PRIVATE PipeX print_debug) #TODO: determine if needed
+target_link_libraries(app PRIVATE my_extended_cpp_standard)
 
 
 #================================================================================================

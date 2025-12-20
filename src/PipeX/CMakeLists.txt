@@ -1,5 +1,4 @@
-add_library(PipeX
-        Pipeline.cpp)
+add_library(PipeX INTERFACE)
 
 include(${CMAKE_SOURCE_DIR}/cmake/PrintDebug.cmake)
 

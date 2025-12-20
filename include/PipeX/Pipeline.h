@@ -95,6 +95,7 @@ namespace PipeX {
 
     private:
         std::string name;
+        // TODO std::vector or std::list ?
         std::vector<std::unique_ptr<Node<T, T>>> nodes;
     };
 } // PipeX

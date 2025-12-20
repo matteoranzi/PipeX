@@ -3,7 +3,7 @@
 #include <PipeX/nodes/Filter.h>
 #include <PipeX/nodes/Transformer.h>
 
-#include "debug/print_debug.h"
+//#include "debug/print_debug.h"
 #include "PipeX/nodes/Aggregator.h"
 
 template <typename T>

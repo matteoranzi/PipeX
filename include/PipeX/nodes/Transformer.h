@@ -20,6 +20,7 @@ namespace PipeX {
     public:
         using Function = std::function<OutputT(const InputT&&)>;
 
+        //fixme: move semantics on Function argument?
         explicit Transformer (Function _function) : function(std::move(_function)) {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Constructor(Function)\n", this->name.c_str(), this);
         }
@@ -27,10 +28,10 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Constructor(std::string, Function)\n", this->name.c_str(), this);
         }
         Transformer (const Transformer& other) : Node<InputT, OutputT>(other), function(other.function) {
-            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.CopyConstructor()\n", this->name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.CopyConstructor(Transformer)\n", this->name.c_str(), this);
         }
         Transformer (const Transformer& other, std::string _name) : Node<InputT, OutputT>(other, std::move(_name)), function(other.function) {
-            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.CopyConstructor()\n", this->name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.CopyConstructor(Transformer, std::string)\n", this->name.c_str(), this);
         }
         ~Transformer() override {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Destructor()\n", this->name.c_str(), this);
