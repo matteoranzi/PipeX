@@ -1,10 +1,10 @@
 #ifndef PIPEX_DATA_HP
     #define PIPEX_DATA_HP
 
-    #include "Data_.h"
+    #include "GenericData.h"
 
-    template <typename T>
-    class Data final: public Data_ {
+template <typename T>
+    class Data final: public GenericData {
     public:
         T value;
 

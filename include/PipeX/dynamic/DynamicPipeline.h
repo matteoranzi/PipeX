@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "nodes/DynamicNode.h"
-#include "data/Data_.h"
+#include "data/GenericData.h"
 #include "data/Data.h"
 // FIXME: check for memory leaks
 namespace PipeX {

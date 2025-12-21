@@ -8,7 +8,7 @@
 #include <numeric>
 
 
-#include "PipeX/Pipeline.h"
+#include "../include/PipeX/static/Pipeline.h"
 #include "PipeX/nodes/Filter.h"
 #include "PipeX/nodes/Transformer.h"
 

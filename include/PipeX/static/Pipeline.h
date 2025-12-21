@@ -9,7 +9,7 @@
 #include "extended_cpp_standard/memory.h"
 
 
-#include "nodes/Node.h"
+#include "../nodes/Node.h"
 
 #include <vector>
 #include <memory>

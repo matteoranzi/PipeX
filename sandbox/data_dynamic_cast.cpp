@@ -7,26 +7,26 @@
 #include "extended_cpp_standard/memory.h"
 
 
-class Data_ {
+class GenericData {
 public:
-    virtual ~Data_() = default;
+    virtual ~GenericData() = default;
 };
 
 template <typename T>
-class Data: public Data_ {
+class Data: public GenericData {
 public:
     T value;
     explicit Data(const T value) : value(value) {}
 };
 
-class Integer final : public Data_ {
+class Integer final : public GenericData {
 public:
     int value = 0;
     explicit Integer(const int value) : value(value) {}
 
 };
 
-class Float final : public Data_ {
+class Float final : public GenericData {
 public:
     float value = 0.0f;
     explicit Float(const float value) : value(value) {}
@@ -37,7 +37,7 @@ int bar(const int k) {
 }
 
 template <typename InputT, typename OutputT>
-OutputT foo(const Data_* input) {
+OutputT foo(const GenericData* input) {
     const auto castedInput = dynamic_cast<const Data<InputT>*>(input);
     if (!castedInput) {
         throw std::bad_cast();
@@ -47,7 +47,7 @@ OutputT foo(const Data_* input) {
 
 int main() {
 
-    std::vector<std::unique_ptr<Data_>> dataset;
+    std::vector<std::unique_ptr<GenericData>> dataset;
     // dataset.push_back(make_unique<Integer>(10));
     // dataset.push_back(make_unique<Float>(3.14f));
     // dataset.push_back(make_unique<Integer>(5));
@@ -58,7 +58,7 @@ int main() {
     dataset.push_back(make_unique<Data<int>>(20));
     dataset.push_back(make_unique<Data<float>>(2.71f));
 
-    const Data_* element = dataset[0].get();
+    const GenericData* element = dataset[0].get();
     auto result = foo<int, int>(element);
 
     std::cout << "Result: " << result << std::endl;
