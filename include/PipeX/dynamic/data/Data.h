@@ -3,7 +3,7 @@
 
 #include <ostream>
 
-    #include "GenericData.h"
+#include "GenericData.h"
 
 //Fixme: allow only base data types (T = int, float, double, char, bool, etc...)?
 //Fixme: arithmetic operators only work on the same type T, should we allow mixed types (e.g., Data<int> + Data<float>)?
@@ -18,6 +18,9 @@ namespace PipeX {
         explicit Data(const T value): value(value) {}
         Data(const Data&) = default;
         Data(Data&&) = default;
+
+
+
         Data& operator=(const Data&) = default;
         Data& operator=(Data&&) = default;
         Data& operator=(const T& v) { value = v; return *this; }

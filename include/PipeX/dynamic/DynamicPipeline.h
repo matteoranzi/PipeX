@@ -74,7 +74,20 @@ namespace PipeX {
 
         DynamicPipeline&& addNode(const std::shared_ptr<DynamicNode>& node) && {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, node->name.c_str());
+            nodes.push_back(std::unique_ptr<DynamicNode>(node->clone()));
             return std::move(*this);
+        }
+
+        //fixme logic of data ownership: who owns the data at each stage? get input data as shared_ptr or unique_ptr?
+        std::vector<std::unique_ptr<GenericData>> run(const std::vector<std::shared_ptr<GenericData>>& input) {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<std::shared_ptr<GenericData>>) -> %zu nodes\n", name.c_str(), this, nodes.size());
+            std::vector<std::unique_ptr<GenericData>> data;
+            data.reserve(input.size());
+            for (auto& item : input) {
+                data.push_back(make_unique<Data<>(item);
+            }
+
+            return run(std::move(data));
         }
 
         std::vector<std::unique_ptr<GenericData>> run(std::vector<std::unique_ptr<GenericData>> data) {

@@ -38,11 +38,11 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Destructor()\n", this->name.c_str(), this);
         }
 
-        std::unique_ptr<Node<int,int>> clone() const override {
+        std::unique_ptr<Node<InputT, OutputT>> clone() const override {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.clone()\n", this->name.c_str(), this);
             return make_unique<Transformer>(*this);
         }
-        std::unique_ptr<Node<int,int>> clone(std::string _name) const override {
+        std::unique_ptr<Node<InputT, OutputT>> clone(std::string _name) const override {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.clone()\n", this->name.c_str(), this);
             return make_unique<Transformer>(*this, std::move(_name));
         }

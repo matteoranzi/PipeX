@@ -8,6 +8,7 @@
 class GenericData {
 public:
     virtual ~GenericData() = default;
+    virtual std::unique_ptr<GenericData> clone() const = 0;
 };
 
 #endif // PIPEX_GENERIC_BASE_DATA_H

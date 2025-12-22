@@ -7,6 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "../include/PipeX/dynamic/DynamicPipeline.h"
+#include "PipeX/dynamic/nodes/DynamicFilter.h"
 #include "PipeX/dynamic/nodes/DynamicTransformer.h"
 
 using namespace PipeX;
@@ -20,6 +21,49 @@ TEST(DynamicPipelineTest, BasicDynamicPipeline) {
     std::cout << "======================================================================" << std::endl;
 
     {
+        DynamicTransformer::Function halfFunction = [](const GenericData* data) {
+            auto castedData = dynamic_cast<const Data<int>*>(data);
+            if (!castedData) {
+                PRINT_DEBUG_ERROR("Error in halfFunction while casting to Data<int>\n");
+                throw std::bad_cast();
+            }
+            return make_unique<Data<float>>(*castedData / 2.0f);
+        };
+
+        float lowerBound = 5.5f;
+        float upperBound = 10.5f;
+        DynamicFilter::Predicate boundedPredicate = [lowerBound, upperBound](const GenericData* data) {
+            auto castedData = dynamic_cast<const Data<float>*>(data);
+            if (!castedData) {
+                throw std::bad_cast();
+            }
+            return *castedData >= lowerBound && *castedData <= upperBound;
+        };
+
+
+        DynamicPipeline dynamicPipeline("BasicDynamicPipeline");
+        dynamicPipeline.addNode(std::make_shared<DynamicTransformer>(halfFunction))
+                        .addNode(std::make_shared<DynamicFilter>(boundedPredicate));
+
+
+
+        constexpr int inputDataLength = 10;
+        std::vector<std::shared_ptr<GenericData>> inputData;
+        inputData.reserve(inputDataLength);
+        for (int i = 1; i <= inputDataLength; ++i) {
+            inputData.push_back(make_unique<Data<int>>(i * 3));
+        }
+
+        const auto outputData = dynamicPipeline.run(inputData);
+        // std::cout << "outputData size: " << outputData.size() << std::endl;
+
+        // for (int i = 0; i < inputData.size(); ++i) {
+        //     auto castedData = dynamic_cast<Data<int>*>(inputData[i].get());
+        //     ASSERT_NE(castedData, nullptr);
+        //     std::cout << "Data[" << i << "] after transformation: " << *castedData << std::endl;
+        //     //EXPECT_FLOAT_EQ(static_cast<float>(*castedData), expectedOutput[i]);
+        // }
+
 
     }
 
