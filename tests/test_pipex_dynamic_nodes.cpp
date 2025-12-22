@@ -7,6 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "../include/PipeX/dynamic/DynamicPipeline.h"
+#include "PipeX/dynamic/nodes/DynamicFilter.h"
 #include "PipeX/dynamic/nodes/DynamicTransformer.h"
 
 using namespace PipeX;
@@ -16,19 +17,63 @@ void printVector(const std::vector<T>& vec);
 
 TEST(DynamicNodeTest, DynamicTransformer) {
     std::cout << "\n======================================================================" << std::endl;
-    std::cout << "DynamicPipeline test: SimpleDynamicPipeline" << std::endl;
+    std::cout << "DynamicNodeTest test: DynamicTransformer" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     {
-        auto halfFunction = [](GenericData* data) {
-            auto castedData = dynamic_cast<Data<int>*>(data);
+        DynamicTransformer::Function halfFunction = [](const GenericData* data) {
+            auto castedData = dynamic_cast<const Data<int>*>(data);
             if (!castedData) {
                 throw std::bad_cast();
             }
-            return make_unique<Data<float>>(static_cast<float>(castedData->value) / 2.0f);
+            return make_unique<Data<float>>(*castedData / 2.0f);
         };
 
-        DynamicTransformer transformer(halfFunction);
+        const DynamicTransformer transformer(halfFunction);
+
+
+        std::vector<std::unique_ptr<GenericData>> input;
+        input.reserve(10);
+        for (int i = 1; i <= 10; ++i) {
+            input.push_back(make_unique<Data<int>>(i)); // Even numbers
+        }
+        auto out = halfFunction(input[0].get());
+        auto castedOut = dynamic_cast<Data<float>*>(out.get());
+        ASSERT_NE(castedOut, nullptr);
+        std::cout << "Output of 'halfFunction' = " << *castedOut << std::endl;
+
+        const auto output = transformer.process(input);
+        const std::vector<float> expectedOutput = {0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5};
+
+        for (int i = 0; i < output.size(); ++i) {
+            auto castedData = dynamic_cast<Data<float>*>(output[i].get());
+            ASSERT_NE(castedData, nullptr);
+            std::cout << "Data[" << i << "] after transformation: " << *castedData << std::endl;
+            EXPECT_FLOAT_EQ(static_cast<float>(*castedData), expectedOutput[i]);
+        }
+    }
+
+    std::cout << "======================================================================" << std::endl;
+
+}
+
+// =========================================================================================================
+
+TEST(DynamicNodeTest, DynamicFilter) {
+    std::cout << "\n======================================================================" << std::endl;
+    std::cout << "DynamicNodeTest test: DynamicFilter" << std::endl;
+    std::cout << "======================================================================" << std::endl;
+
+    {
+        DynamicFilter::Predicate evenIntegers = [](const GenericData* data) {
+            auto castedData = dynamic_cast<const Data<int>*>(data);
+            if (!castedData) {
+                throw std::bad_cast();
+            }
+            return *castedData % 2 == 0;
+        };
+
+        const DynamicFilter filter(evenIntegers);
 
         std::vector<std::unique_ptr<GenericData>> input;
         input.reserve(10);
@@ -36,25 +81,23 @@ TEST(DynamicNodeTest, DynamicTransformer) {
             input.push_back(make_unique<Data<int>>(i)); // Even numbers
         }
 
-        const auto output = transformer.process(input);
-        for (auto& data: output) {
-            const auto castedData = dynamic_cast<Data<float>*>(data.get());
-            std::cout << castedData->value << std::endl;
-        }
 
-        const std::vector<float> expectedOutput = {0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5};
+        const auto output = filter.process(input);
+        const std::vector<int> expectedOutput = {2, 4, 6, 8, 10};
 
-        for (int i = 0; i < 10; ++i) {
-            auto castedData = dynamic_cast<Data<float>*>(output[i].get());
+        for (int i = 0; i < output.size(); ++i) {
+            auto castedData = dynamic_cast<Data<int>*>(output[i].get());
             ASSERT_NE(castedData, nullptr);
-            std::cout << "Data[" << i << "] after transformation: " << castedData->value << std::endl;
-            EXPECT_FLOAT_EQ(static_cast<float>(castedData->value), expectedOutput[i]);
+            std::cout << "Data[" << i << "] after transformation: " << *castedData << std::endl;
+            EXPECT_EQ(castedData->value, expectedOutput[i]);
         }
     }
 
     std::cout << "======================================================================" << std::endl;
 
 }
+
+// =========================================================================================================
 
 
 template <typename T>

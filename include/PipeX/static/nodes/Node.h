@@ -16,16 +16,26 @@ namespace PipeX {
     template <typename InputT, typename OutputT>
     class Node{
     public:
+        //TODO: create NodeBase to store nodes of different type in a single vector and use input_type/output_type to cast them back
+        //Fixme: does it allow to remove duplication of DynamicPipeline?
+        using input_type = InputT;
+        using output_type = OutputT;
+        // using input_vector = std::vector<input_type>;
+        // using output_vector = std::vector<output_type>;
+
         const std::string name;
+
+
 
         virtual std::unique_ptr<Node> clone() const = 0;
         virtual std::unique_ptr<Node> clone(std::string name) const = 0;
 
         Node () : name([this]() {
-                            std::ostringstream oss;
-                            oss << this;
-                            return oss.str();
-                        }()) {
+                                std::ostringstream oss;
+                                oss << this;
+                                return oss.str();
+                            }()
+                        ) {
             PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
         }
         explicit Node (std::string _name) : name(std::move(_name)) {
@@ -61,6 +71,8 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Operator(&)\n", name.c_str(), this);
             return this->process(std::move(input));
         }
+
+
 
     private:
         // To be implemented by derived classes

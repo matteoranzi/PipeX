@@ -9,8 +9,8 @@
 
 
 #include "../include/PipeX/static/Pipeline.h"
-#include "PipeX/nodes/Filter.h"
-#include "PipeX/nodes/Transformer.h"
+#include "PipeX/static//nodes/Filter.h"
+#include "PipeX/static/nodes/Transformer.h"
 
 
 using namespace PipeX;

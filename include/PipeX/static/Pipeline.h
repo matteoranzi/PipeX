@@ -9,13 +9,14 @@
 #include "extended_cpp_standard/memory.h"
 
 
-#include "../nodes/Node.h"
+#include "PipeX/static/nodes/Node.h"
 
 #include <vector>
 #include <memory>
 
 namespace PipeX {
     template<typename T>
+    // TODO : check how to properly implement factory pattern
     class Pipeline {
     public:
 
@@ -44,8 +45,7 @@ namespace PipeX {
             return *this;
         }
 
-        // Delete copy constructors
-        // TODO : check how to properly implement factory pattern
+        // Copy constructors
         Pipeline& operator=(Pipeline const& _pipeline) {
             PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
@@ -81,7 +81,7 @@ namespace PipeX {
             return std::move(*this);
         }
 
-        std::vector<T> run (std::vector<T> data) {
+        std::vector<T> run(std::vector<T> data) {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run() -> %zu nodes\n", name.c_str(), this, nodes.size());
 
             for (const auto& node : nodes) {

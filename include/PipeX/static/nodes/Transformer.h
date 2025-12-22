@@ -21,6 +21,7 @@ namespace PipeX {
         using Function = std::function<OutputT(const InputT&&)>;
 
         //fixme: move semantics on Function argument?
+        //TODO move constructor
         explicit Transformer (Function _function) : function(std::move(_function)) {
             PIPEX_PRINT_DEBUG_INFO("[Transformer] \"%s\" {%p}.Constructor(Function)\n", this->name.c_str(), this);
         }
