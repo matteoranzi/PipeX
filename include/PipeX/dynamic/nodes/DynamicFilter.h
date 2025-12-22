@@ -17,16 +17,16 @@ namespace PipeX {
         using Predicate = std::function<bool(const GenericData *)>;
 
         explicit DynamicFilter(Predicate _predicate) : predicate(std::move(_predicate)) {
-            PRINT_DEBUG_INFO("[DynamicFilter] {%p}.Constructor(Predicate)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] {%p}.Constructor(Predicate)\n", this);
         }
         DynamicFilter(std::string _name, Predicate _predicate) : DynamicNode(std::move(_name)), predicate(std::move(_predicate)) {
-            PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.Constructor(std::string, Predicate)\n", this->name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.Constructor(std::string, Predicate)\n", this->name.c_str(), this);
         }
         DynamicFilter(const DynamicFilter& other) : DynamicNode(other), predicate(other.predicate) {
-            PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.CopyConstructor(DynamicFilter)\n", this->name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.CopyConstructor(DynamicFilter)\n", this->name.c_str(), this);
         }
         DynamicFilter(const DynamicFilter&other, std::string _name) : DynamicNode(other, std::move(_name)), predicate(other.predicate) {
-            PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.CopyConstructor(DynamicFilter, std::string)\n", this->name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.CopyConstructor(DynamicFilter, std::string)\n", this->name.c_str(), this);
         }
         ~DynamicFilter() override {
             PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.Destructor()\n", this->name.c_str(), this);
@@ -46,7 +46,7 @@ namespace PipeX {
         Predicate predicate;
 
         std::vector<std::unique_ptr<GenericData>> processImpl(std::vector<std::unique_ptr<GenericData>>&& input) const override {
-            PRINT_DEBUG_INFO("[DynamicFilter] {%p}.processImpl(std::vector<Data_*>&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] {%p}.processImpl(std::vector<Data_*>&)\n", this);
             std::vector<std::unique_ptr<GenericData>> output;
             for (const auto& data : input) {
                 if (predicate(data.get())) {

@@ -6,9 +6,12 @@
 
 #include <gtest/gtest.h>
 
-#include "../include/PipeX/dynamic/DynamicPipeline.h"
+#include "PipeX/dynamic/DynamicPipeline.h"
+#include "PipeX/dynamic/nodes/DynamicAggregator.hpp"
 #include "PipeX/dynamic/nodes/DynamicFilter.h"
 #include "PipeX/dynamic/nodes/DynamicTransformer.h"
+#include "PipeX/dynamic/data/Data.h"
+
 
 using namespace PipeX;
 
@@ -99,6 +102,49 @@ TEST(DynamicNodeTest, DynamicFilter) {
 
 // =========================================================================================================
 
+TEST(DynamicNodeTest, DynamicAggregator) {
+    std::cout << "\n======================================================================" << std::endl;
+    std::cout << "DynamicNodeTest test: DynamicAggregator" << std::endl;
+    std::cout << "======================================================================" << std::endl;
+
+    {
+        DynamicAggregator::Function sumFunction = [](const std::vector<std::unique_ptr<GenericData>>&& input) -> std::unique_ptr<GenericData>  {
+            int sum = 0;
+            for (const auto& data : input) {
+                const auto castedData = dynamic_cast<const Data<int>*>(data.get());
+                if (!castedData) {
+                    throw std::bad_cast();
+                }
+                sum += castedData->value;
+            }
+            return make_unique<Data<int>>(sum);
+        };
+
+        const DynamicAggregator aggregator(sumFunction);
+
+        std::vector<std::unique_ptr<GenericData>> input;
+        input.reserve(10);
+        for (int i = 1; i <= 10; ++i) {
+            input.push_back(make_unique<Data<int>>(i)); // Even numbers
+        }
+
+
+        const auto output = aggregator.process(input);
+        const std::vector<int> expectedOutput = {55};
+
+        for (int i = 0; i < output.size(); ++i) {
+            auto castedData = dynamic_cast<Data<int>*>(output[i].get());
+            ASSERT_NE(castedData, nullptr);
+            std::cout << "Data[" << i << "] after transformation: " << *castedData << std::endl;
+            EXPECT_EQ(castedData->value, expectedOutput[i]);
+        }
+    }
+
+    std::cout << "======================================================================" << std::endl;
+
+}
+
+// =========================================================================================================
 
 template <typename T>
 void printVector(const std::vector<T>& vec) {

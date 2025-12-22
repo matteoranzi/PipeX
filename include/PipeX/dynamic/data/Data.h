@@ -1,8 +1,7 @@
 #ifndef PIPEX_DATA_HP
     #define PIPEX_DATA_HP
 
-#include <ostream>
-
+#include <type_traits>
 #include "GenericData.h"
 
 //Fixme: allow only base data types (T = int, float, double, char, bool, etc...)?
@@ -19,7 +18,9 @@ namespace PipeX {
         Data(const Data&) = default;
         Data(Data&&) = default;
 
-
+        std::unique_ptr<GenericData> clone() const override {
+            return make_unique<Data<T>>(*this);
+        }
 
         Data& operator=(const Data&) = default;
         Data& operator=(Data&&) = default;

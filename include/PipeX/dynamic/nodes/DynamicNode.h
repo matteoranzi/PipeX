@@ -33,7 +33,7 @@ namespace PipeX {
         }
 
         DynamicNode(const DynamicNode& other, std::string _name) : name(std::move(_name)) {
-            PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.CopyConstructor(newName)\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.CopyConstructor(newName)\n", name.c_str(), this);
         }
 
         virtual ~DynamicNode() {
@@ -41,22 +41,22 @@ namespace PipeX {
         }
 
         virtual std::vector<std::unique_ptr<GenericData>> process(std::vector<std::unique_ptr<GenericData>>& input) const final {
-            PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&)\n", this);
             return std::move(processImpl(std::move(input)));
         }
 
         virtual std::vector<std::unique_ptr<GenericData>> process(std::vector<std::unique_ptr<GenericData>>&& input) const final {
-            PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
             return std::move(processImpl(std::move(input)));
         }
 
         virtual std::vector<std::unique_ptr<GenericData>> operator() (std::vector<std::unique_ptr<GenericData>>& input) const final {
-            PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<GenericData>>&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<GenericData>>&)\n", this);
             return this->process(std::move(input));
         }
 
         virtual std::vector<std::unique_ptr<GenericData>> operator() (std::vector<std::unique_ptr<GenericData>>&& input) const final {
-            PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
             return this->process(std::move(input));
         }
 

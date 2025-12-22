@@ -6,9 +6,11 @@
 
 #include <gtest/gtest.h>
 
-#include "../include/PipeX/dynamic/DynamicPipeline.h"
+#include "PipeX/dynamic/DynamicPipeline.h"
 #include "PipeX/dynamic/nodes/DynamicFilter.h"
 #include "PipeX/dynamic/nodes/DynamicTransformer.h"
+#include "PipeX/dynamic/data/Data.h"
+
 
 using namespace PipeX;
 
@@ -54,15 +56,14 @@ TEST(DynamicPipelineTest, BasicDynamicPipeline) {
             inputData.push_back(make_unique<Data<int>>(i * 3));
         }
 
-        const auto outputData = dynamicPipeline.run(inputData);
-        // std::cout << "outputData size: " << outputData.size() << std::endl;
-
-        // for (int i = 0; i < inputData.size(); ++i) {
-        //     auto castedData = dynamic_cast<Data<int>*>(inputData[i].get());
-        //     ASSERT_NE(castedData, nullptr);
-        //     std::cout << "Data[" << i << "] after transformation: " << *castedData << std::endl;
-        //     //EXPECT_FLOAT_EQ(static_cast<float>(*castedData), expectedOutput[i]);
-        // }
+        const auto outputData = dynamicPipeline.run(inputData);// std::cout << "outputData size: " << outputData.size() << std::endl;
+        const std::vector<float> expectedOutput = {6.0f, 7.5f, 9.0f, 10.5f};
+        for (int i = 0; i < outputData.size(); ++i) {
+            auto castedData = dynamic_cast<Data<float>*>(outputData[i].get());
+            ASSERT_NE(castedData, nullptr);
+            std::cout << "Data[" << i << "] after transformation: " << *castedData << std::endl;
+            EXPECT_FLOAT_EQ(static_cast<float>(*castedData), expectedOutput[i]);
+        }
 
 
     }
