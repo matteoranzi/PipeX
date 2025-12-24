@@ -2,127 +2,172 @@
 // Created by Matteo Ranzi on 21/12/25.
 //
 
-#ifndef PIPEX_DYNAMICFILTER_H
-#define PIPEX_DYNAMICFILTER_H
+#ifndef PIPEX_FILTER_H
+#define PIPEX_FILTER_H
 
 #include <functional>
 
-#include "INode.h"
+#include "NodeCRTP.h"
 #include "PipeX/data/IData.h"
 #include "extended_cpp_standard/memory.h"
-#include "PipeX/debug/pipex_print_debug.h"
-#include "PipeX/data/Data.h"
-
 
 namespace PipeX {
-
     /**
      * @class Filter
-     * @brief A specialized DynamicNode that filters input data based on a predicate.
+     * @brief A specialized INode that filters input data based on a predicate.
      *
      * This class processes input data and filters it using a user-defined predicate function.
      * It supports cloning and copying, and provides debug information during its lifecycle.
+     * The Filter node inherits from NodeCRTP using the CRTP pattern, allowing compile-time
+     * polymorphism while maintaining type safety.
      *
-     * @tparam T The type of data to be filtered.
+     * @tparam T The type of data to be filtered. Must be compatible with the predicate function.
+     *
+     * @note The Filter maintains type consistency by accepting input of type T and producing
+     *       output of type T, only passing through elements that satisfy the predicate.
+     *
+     * @code
+     * // Create a filter that only passes even numbers
+     * Filter<int> evenFilter([](const int& x) { return x % 2 == 0; });
+     * @endcode
      */
     template <typename T>
-    class Filter final: public INode {
+    class Filter final: public NodeCRTP<Filter<T>, T, T> {
+
+        using Base = NodeCRTP<Filter<T>, T, T>;
+
     public:
         /**
          * @typedef Predicate
          * @brief A function type that takes a constant reference to data of type T and returns a boolean.
+         *
+         * The predicate determines whether an element should be included in the filtered output.
+         * Returns true to include the element, false to exclude it.
          */
         using Predicate = std::function<bool(const T& data)>;
 
         /**
-         * @brief Constructs a DynamicFilter with a given predicate.
-         * @param _predicate The predicate function used to filter data.
+         * @brief Constructs a Filter with a given predicate.
+         *
+         * Creates a Filter node with default name and the specified filtering predicate.
+         *
+         * @param _predicate The predicate function used to filter data. Moved into the object.
+         *
+         * @post The Filter is initialized and ready to process data.
          */
-        explicit Filter(Predicate _predicate) : predicateFilter(std::move(_predicate)) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] {%p}.Constructor(Predicate)\n", this);
+        explicit Filter(Predicate _predicate) : Base(), predicateFilter(std::move(_predicate)) {
+            this->logLifeCycle("Constructor(Filter)");
         }
 
         /**
-         * @brief Constructs a DynamicFilter with a name and a predicate.
-         * @param _name The name of the filter.
-         * @param _predicate The predicate function used to filter data.
+         * @brief Constructs a Filter with a name and a predicate.
+         *
+         * Creates a named Filter node with the specified filtering predicate.
+         *
+         * @param _name The name of the filter node for debugging and identification.
+         * @param _predicate The predicate function used to filter data. Moved into the object.
+         *
+         * @post The Filter is initialized with the given name and ready to process data.
          */
-        Filter(std::string _name, Predicate _predicate)
-            : INode(std::move(_name)), predicateFilter(std::move(_predicate)) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.Constructor(std::string, Predicate)\n", this->name.c_str(), this);
+        Filter(std::string _name, Predicate _predicate) : Base(std::move(_name)), predicateFilter(std::move(_predicate)) {
+            this->logLifeCycle("Constructor(std::string, Predicate)");
         }
 
         /**
          * @brief Copy constructor.
-         * @param other The DynamicFilter instance to copy from.
+         *
+         * Creates a new Filter by copying another Filter instance, including its predicate.
+         *
+         * @param other The Filter instance to copy from.
+         *
+         * @post A new Filter is created with the same predicate as the original.
          */
-        Filter(const Filter& other)
-            : INode(other), predicateFilter(other.predicateFilter) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.CopyConstructor(DynamicFilter)\n", this->name.c_str(), this);
+        Filter(const Filter& other) : Base(other), predicateFilter(other.predicateFilter) {
+            this->logLifeCycle("CopyConstructor(const Filter&)");
         }
 
         /**
          * @brief Copy constructor with a new name.
-         * @param other The DynamicFilter instance to copy from.
+         *
+         * Creates a new Filter by copying another Filter instance but with a different name.
+         *
+         * @param other The Filter instance to copy from.
          * @param _name The new name for the copied filter.
+         *
+         * @post A new Filter is created with the same predicate as the original but with the new name.
          */
-        Filter(const Filter& other, std::string _name)
-            : INode(other, std::move(_name)), predicateFilter(other.predicateFilter) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.CopyConstructor(DynamicFilter, std::string)\n", this->name.c_str(), this);
+        Filter(const Filter& other, std::string _name) : Base(other, std::move(_name)), predicateFilter(other.predicateFilter) {
+            this->logLifeCycle("CopyConstructor(const Filter&, std::string)");
+        }
+
+        /**
+         * @brief Move constructor.
+         * @param other The Filter to move from
+         */
+        Filter(Filter&& other) noexcept : Base(std::move(other)) {
+            this->logLifecycle("MoveConstructor(Filter&&)");
         }
 
         /**
          * @brief Destructor.
+         *
+         * Cleans up the Filter instance and logs its destruction.
          */
         ~Filter() override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.Destructor()\n", this->name.c_str(), this);
+            this->logLifeCycle("Destructor()");
         }
 
+    protected:
         /**
-         * @brief Creates a copy of the current DynamicFilter.
-         * @return A unique pointer to the cloned DynamicFilter.
+         * @brief Returns the type name of this node.
+         *
+         * Used for debugging and logging purposes to identify the node type.
+         *
+         * @return A string "Filter" identifying this node type.
          */
-        std::unique_ptr<INode> clone() const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.clone()\n", this->name.c_str(), this);
-            return make_unique<Filter>(*this);
-        }
-
-        /**
-         * @brief Creates a copy of the current DynamicFilter with a new name.
-         * @param _name The new name for the cloned filter.
-         * @return A unique pointer to the cloned DynamicFilter.
-         */
-        std::unique_ptr<INode> clone(std::string _name) const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] \"%s\" {%p}.clone(std::string)\n", this->name.c_str(), this);
-            return make_unique<Filter>(*this, std::move(_name));
+        std::string typeName() const override {
+            return "Filter";
         }
 
     private:
-        Predicate predicateFilter; ///< The predicate function used to filter data.
+        /// The predicate function used to determine which elements pass through the filter
+        Predicate predicateFilter;
 
         /**
          * @brief Processes the input data and filters it based on the predicate.
+         *
+         * This method extracts data from the IData wrapper, applies the predicate to each
+         * element, and only includes elements that satisfy the predicate in the output.
+         *
          * @param input A vector of unique pointers to IData representing the input data.
+         *
          * @return A vector of unique pointers to IData representing the filtered output data.
-         * @throws PipeXTypeError If the input data cannot be cast to the expected type.
+         *         Only elements where predicateFilter returns true are included.
+         *
+         * @throws PipeXTypeError If the input data cannot be cast to the expected type T.
+         *
+         * @note The output vector may be smaller than the input vector if elements are filtered out.
+         * @note Memory for filtered-out elements is automatically released.
          */
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] {%p}.processImpl(std::vector<std::unique_ptr<IData>>&&)\n", this);
-            std::vector<std::unique_ptr<IData>> output;
-            output.reserve(input.size());
-            for (const auto& data : input) {
-                auto castedData = dynamic_cast<const Data<T>*>(data.get());
-                if (!castedData) {
-                   // throw PipeXTypeError("Error in DynamicTransformer \"" + this->name + "\": invalid data type.");
-                }
+            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&&");
 
-                if (predicateFilter(castedData->value)) {
-                    output.push_back(make_unique<Data<T>>(std::move(castedData->value)));
+            // Extract input data using Base helper
+            auto inputData = this->extractInputData(input);
+
+            // Filter data based on predicate
+            std::vector<T> outputData;
+            outputData.reserve(inputData.size());
+            for (const auto& data : inputData) {
+                if (predicateFilter(data)) {
+                    outputData.push_back(std::move(data));
                 }
             }
-            return output;
+
+            // Wrap output data back into IData format using Base helper
+            return this->wrapOutputData(std::move(outputData));
         }
     };
 }
 
-#endif //PIPEX_DYNAMICFILTER_H
+#endif //PIPEX_FILTER_H

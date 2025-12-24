@@ -2,68 +2,122 @@
 // Created by Matteo Ranzi on 20/12/25.
 //
 
-#ifndef PIPEX_DYNAMICTRANSFORMER_H
-#define PIPEX_DYNAMICTRANSFORMER_H
+#ifndef PIPEX_TRANSFORMER_H
+#define PIPEX_TRANSFORMER_H
 #include <functional>
 
-#include "INode.h"
 #include "NodeCRTP.h"
 #include "PipeX/data/IData.h"
-#include "PipeX/data/Data.h"
-#include "extended_cpp_standard/memory.h"
-#include "PipeX/errors/TypeMismatchExpection.h"
 
 namespace PipeX {
+    /**
+     * @class Transformer
+     * @brief A specialized INode that transforms input data from one type to output data of another type.
+     *
+     * The Transformer class is a pipeline node that applies a user-defined transformation
+     * function to convert data from InputT type to OutputT type. It processes multiple
+     * input data items in a batch and produces corresponding output data.
+    *  It supports cloning and copying, and provides debug information during its lifecycle.
+     * The Transformer node inherits from NodeCRTP using the CRTP pattern, allowing compile-time
+     * polymorphism while maintaining type safety.
+     *
+     * @tparam InputT The type of input data to be transformed
+     * @tparam OutputT The type of output data after transformation
+     *
+     *  @code
+     *  // Create a transformer that calculates the square of an integer
+     *  Transformer<int, int> squareTransformer([](const int& x) { return x * x; });
+     *  @endcode
+     */
     template <typename InputT, typename OutputT>
     class Transformer final: public NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT> {
 
         using Base = NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT>;
-        friend Base;
 
     public:
+        /**
+         * @brief Type alias for the transformation function.
+         *
+         * The function takes a `InputT` data and returns a transformed `OutputT` data.
+         */
         using Function = std::function<OutputT(const InputT& data)>;
 
+        /**
+         * @brief Constructs a Transformer with a transformation function.
+         * @param _function The function to apply to each input data item
+         */
         explicit Transformer(Function _function) : Base(), transformerFunction(std::move(_function)) {
             this->logLifeCycle("Constructor(Function)");
         }
+
+        /**
+         * @brief Constructs a named Transformer with a transformation function.
+         * @param _name The name identifier for this transformer node
+         * @param _function The function to apply to each input data item
+         */
         Transformer(std::string _name, Function _function) : Base(std::move(_name)), transformerFunction(std::move(_function)) {
             this->logLifeCycle("Constructor(std::string, Function)");
         }
+
+        /**
+         * @brief Copy constructor.
+         * @param other The Transformer to copy from
+         */
         Transformer(const Transformer& other) : Base(other), transformerFunction(other.transformerFunction) {
-            this->logLifeCycle("Constructor(const Transformer&)");
+            this->logLifeCycle("CopyConstructor(const Transformer&)");
         }
+
+        /**
+         * @brief Copy constructor with name override.
+         * @param other The Transformer to copy from
+         * @param _name The name to assign to the new transformer
+         */
         Transformer(const Transformer&other, std::string _name) : Base(other, std::move(_name)), transformerFunction(other.transformerFunction) {
-            this->logLifeCycle("Constructor(const Transformer&, std::string)");
+            this->logLifeCycle("CopyConstructor(const Transformer&, std::string)");
         }
+
+        /**
+         * @brief Move constructor.
+         * @param other The Transformer to move from
+         */
         Transformer(Transformer&& other) noexcept : Base(other), transformerFunction(std::move(other.transformerFunction)) {
-            this->logLifecycle("MoveConstructor(Transformer)");
+            this->logLifecycle("MoveConstructor(Transformer&&)");
         }
+
+        /**
+         * @brief Destructor.
+         */
         ~Transformer() override {
              this->logLifeCycle("Destructor()");
         }
 
-        std::unique_ptr<INode> clone() const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicTransformer] \"%s\" {%p}.clone()\n", this->name.c_str(), this);
-            return make_unique<Transformer>(*this);
-        }
-
-        std::unique_ptr<INode> clone(std::string _name) const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicTransformer] \"%s\" {%p}.clone(std::string)\n", this->name.c_str(), this);
-            return make_unique<Transformer>(*this, std::move(_name));
-        }
-
     protected:
+        /**
+         * @brief Returns the type name of this node.
+         *
+         * Used for debugging and logging purposes to identify the node type.
+         *
+         * @return A string "Transformer" identifying this node type.
+         */
         std::string typeName() const override {
             return "Transformer";
         }
 
     private:
+        /// The transformation function applied to each input data item
         Function transformerFunction;
 
+        /**
+         * @brief Processes input data by applying the transformation function.
+         *
+         * Extracts input data from the IData wrapper, applies the transformation
+         * function to each item, and wraps the results back into IData format.
+         *
+         * @param input Vector of input data wrapped in IData interface
+         * @return Vector of transformed output data wrapped in IData interface
+         */
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&&)");
-
-            //Fixme: the solution with CRTP helper functions is cleaner but less efficient: a copy of the entire input is created (extracted) and stored
 
             // Extract input data using Base helper
             auto inputData = this->extractInputData(input);
@@ -72,7 +126,7 @@ namespace PipeX {
             std::vector<OutputT> outputData;
             outputData.reserve(inputData.size());
             for (const auto& data : inputData) {
-                outputData.push_back(transformerFunction(data));
+                outputData.push_back(std::move(transformerFunction(data)));
             }
 
             // Wrap output data using Base helper
@@ -81,4 +135,4 @@ namespace PipeX {
     };
 }
 
-#endif //PIPEX_DYNAMICTRANSFORMER_H
+#endif //PIPEX_TRANSFORMER_H

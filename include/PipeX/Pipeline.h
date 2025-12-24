@@ -1,10 +1,9 @@
-// File: include/PipeX/dynamic/DynamicPipeline.h
 //
 // Created by Matteo Ranzi on 19/12/25.
 //
 
-#ifndef PIPEX_DYNAMICPIPELINE_H
-#define PIPEX_DYNAMICPIPELINE_H
+#ifndef PIPEX_PIPELINE_H
+#define PIPEX_PIPELINE_H
 
 #include "PipeX/debug/pipex_print_debug.h"
 #include "extended_cpp_standard/memory.h"
@@ -22,7 +21,7 @@
 // e.g. if a Transformer<InputT, IntermediateT> is added, InputT must match the Pipeline InputT
 // and IntermediateT must match the InputT of the next node in the pipeline or the Pipeline OutputT if it's the last node
 
-//TODO add SFINAE to restrict NodeT in addNode to only types derived from DynamicNode
+//TODO add SFINAE to restrict NodeT in addNode to only types derived from INode
 
 //TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
 //TODO add method to remove nodes from the pipeline, either by name or by index, and check the pipeline integrity after removal
@@ -32,9 +31,10 @@
 namespace PipeX {
 
     /**
+     * @class Pipeline
      * @brief A dynamic, type-erased pipeline that transforms a sequence of InputT into OutputT.
      *
-     * The pipeline stores a list of nodes derived from DynamicNode which process data represented
+     * The pipeline stores a list of nodes derived from INode which process data represented
      * by IData wrappers. Each node consumes and produces vectors of unique_ptr<IData>.
      *
      * @tparam InputT  Type of the pipeline input elements.
@@ -50,7 +50,7 @@ namespace PipeX {
          * Sets the pipeline name to "NO_NAME" and logs construction.
          */
         Pipeline() : name("NO_NAME") {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
         }
 
         /**
@@ -68,7 +68,7 @@ namespace PipeX {
          * Logs destruction. Owned nodes are destroyed automatically.
          */
         ~Pipeline() {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
         /**
@@ -81,7 +81,7 @@ namespace PipeX {
          * @return Reference to this pipeline.
          */
         Pipeline& operator=(Pipeline const& _pipeline) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
                 name = _pipeline.name + "_copy";
                 nodes.clear();
@@ -101,7 +101,7 @@ namespace PipeX {
          * @param _pipeline Source pipeline to copy from.
          */
         Pipeline(const Pipeline& _pipeline) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
             *this = _pipeline;
         }
 
@@ -140,7 +140,7 @@ namespace PipeX {
          * Constructs a node of type NodeT in-place using the provided arguments and appends it
          * to the pipeline's node list.
          *
-         * @tparam NodeT Concrete node type deriving from DynamicNode.
+         * @tparam NodeT Concrete node type deriving from INode.
          * @tparam Args Variadic constructor argument types for NodeT.
          * @param args Constructor arguments forwarded to NodeT.
          * @return Reference to this pipeline (allows chaining).
@@ -151,7 +151,7 @@ namespace PipeX {
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
             auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->name.c_str());
             nodes.push_back(std::move(newNode));
             return *this;
         }
@@ -159,9 +159,9 @@ namespace PipeX {
         /**
          * @brief Add a node to the pipeline (rvalue ref qualified).
          *
-         * Same as the lvalue overload but returns an rvalue reference to support temporaries.
+         * Same as the lvalue overload but returns a rvalue reference to support temporaries.
          *
-         * @tparam NodeT Concrete node type deriving from DynamicNode.
+         * @tparam NodeT Concrete node type deriving from INode.
          * @tparam Args Variadic constructor argument types for NodeT.
          * @param args Constructor arguments forwarded to NodeT.
          * @return Rvalue reference to this pipeline (allows chaining on temporaries).
@@ -169,7 +169,7 @@ namespace PipeX {
         template<typename NodeT, typename... Args>
         Pipeline&& addNode(Args&&... args) && {
             auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, newNode->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, newNode->name.c_str());
             nodes.push_back(std::move(newNode));
             return std::move(*this);
         }
@@ -190,10 +190,9 @@ namespace PipeX {
          * @throws Any exceptions propagated by node processing are rethrown after logging.
          */
         std::vector<OutputT> run(const std::vector<InputT>& input) const {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
             // Convert input to IData
-            //TODO use wrap method of NodeCRTP
             std::vector<std::unique_ptr<IData>> data;
             data.reserve(input.size());
             for (auto& item : input) {
@@ -203,26 +202,29 @@ namespace PipeX {
             // Process through nodes
             for (const auto& node : nodes) {
                 try {
-                    PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->name.c_str());
+                    PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->name.c_str());
                     data = node->process(std::move(data));
                 } catch (TypeMismatchException &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[DynamicPipeline] \"%s\" {%p}.run() -> PipeXTypeError exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> PipeXTypeError exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
                     // Rethrow the exception to propagate it up the call stack
-                    throw e;
+                    throw;
                 } catch (... ) {
-                    PIPEX_PRINT_DEBUG_ERROR("[DynamicPipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->name.c_str());
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->name.c_str());
                     throw;
                 }
             }
 
             // Convert back to OutputT
-            //TODO use extract method of NodeCRTP
             std::vector<OutputT> output;
             output.reserve(data.size());
-            for (auto& IData : data) {
-                auto castedData = dynamic_cast<Data<OutputT>*>(IData.get());
+            for (auto& item : data) {
+                auto castedData = dynamic_cast<Data<OutputT>*>(item.get());
                 if (!castedData) {
-                    //throw PipeXTypeError("Error in DynamicTransformer \"" + this->name + "\": invalid data type.");
+                    throw TypeMismatchException(
+                                        this->name,
+                                        typeid(OutputT),
+                                        typeid(item.get())
+                                    );
                 }
                 output.push_back(castedData->value);
             }
@@ -252,4 +254,4 @@ namespace PipeX {
     };
 }
 
-#endif //PIPEX_DYNAMICPIPELINE_H
+#endif //PIPEX_PIPELINE_H
