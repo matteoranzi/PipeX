@@ -20,7 +20,7 @@ namespace PipeX {
      * @brief A class representing a dynamic aggregator node in the PipeX framework.
      *
      * This class processes a vector of input data, applies a user-defined aggregation function,
-     * and produces a single output value encapsulated in a `GenericData` object.
+     * and produces a single output value encapsulated in a `IData` object.
      *
      * @tparam InputT The type of the input data.
      * @tparam OutputT The type of the output data.
@@ -120,13 +120,13 @@ namespace PipeX {
         /**
          * @brief Processes the input data and applies the aggregation function.
          *
-         * @param input A vector of unique pointers to `GenericData` representing the input data.
-         * @return A vector of unique pointers to `GenericData` containing the aggregated output.
+         * @param input A vector of unique pointers to `IData` representing the input data.
+         * @return A vector of unique pointers to `IData` containing the aggregated output.
          *
          * @throws std::bad_cast If the input data cannot be cast to the expected type.
          */
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicAggregator] {%p}.processImpl(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicAggregator] {%p}.processImpl(std::vector<std::unique_ptr<IData>>&&)\n", this);
 
             std::vector<InputT> dataVector;
             dataVector.reserve(input.size());

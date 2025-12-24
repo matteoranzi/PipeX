@@ -7,8 +7,9 @@
 
 namespace PipeX {
     class PipeX {
-        PipeX() {
-        }
+    public:
+        PipeX() = default;
+        ~PipeX() = default;
     };
 }
 

@@ -13,8 +13,8 @@ namespace PipeX {
      * @brief Abstract base class representing a dynamic processing node.
      *
      * DynamicNode defines a uniform interface for nodes that accept a vector
-     * of \c GenericData wrapped in \c std::unique_ptr, perform processing and
-     * return a new vector of owned \c GenericData objects.
+     * of \c IData wrapped in \c std::unique_ptr, perform processing and
+     * return a new vector of owned \c IData objects.
      *
      * Derived classes must implement the clone methods and override
      * \c processImpl to provide their processing logic. The public \c process
@@ -115,12 +115,12 @@ namespace PipeX {
          * handling. It forwards to \c processImpl implemented by derived
          * classes.
          *
-         * @param input Immutable reference to a vector of owned GenericData.
-         * @return std::vector<std::unique_ptr<GenericData>> Resulting vector
-         *         of owned GenericData produced by the node.
+         * @param input Immutable reference to a vector of owned IData.
+         * @return std::vector<std::unique_ptr<IData>> Resulting vector
+         *         of owned IData produced by the node.
          */
         virtual std::vector<std::unique_ptr<IData>> process(const std::vector<std::unique_ptr<IData>>& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&)\n", this);
 
             return processImpl(input);
         }
@@ -132,11 +132,11 @@ namespace PipeX {
          * advantage of moved input objects if desired. The base class ensures
          * the same call path by forwarding to \c processImpl.
          *
-         * @param input An rvalue vector of owned GenericData.
-         * @return std::vector<std::unique_ptr<GenericData>> Resulting vector of owned GenericData.
+         * @param input An rvalue vector of owned IData.
+         * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
          */
         virtual std::vector<std::unique_ptr<IData>> process(std::vector<std::unique_ptr<IData>>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&&)\n", this);
             return processImpl(input);
         }
 
@@ -145,22 +145,22 @@ namespace PipeX {
          *
          * Provides a function-call style interface for executing the node.
          *
-         * @param input Immutable reference to a vector of owned GenericData.
-         * @return std::vector<std::unique_ptr<GenericData>> Resulting vector of owned GenericData.
+         * @param input Immutable reference to a vector of owned IData.
+         * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
          */
         virtual std::vector<std::unique_ptr<IData>> operator() (const std::vector<std::unique_ptr<IData>>& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<GenericData>>&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<IData>>&)\n", this);
             return this->process(input);
         }
 
         /**
          * @brief Call operator forwarding to \c process (rvalue overload).
          *
-         * @param input Rvalue vector of owned GenericData.
-         * @return std::vector<std::unique_ptr<GenericData>> Resulting vector of owned GenericData.
+         * @param input Rvalue vector of owned IData.
+         * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
          */
         virtual std::vector<std::unique_ptr<IData>> operator() (std::vector<std::unique_ptr<IData>>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<IData>>&&)\n", this);
             return this->process(std::move(input));
         }
 
@@ -176,7 +176,7 @@ namespace PipeX {
          * explicit moves from the referenced vector.\n
          *
          * @param input Immutable reference to the inputs.
-         * @return std::vector<std::unique_ptr<GenericData>> Processed outputs.
+         * @return std::vector<std::unique_ptr<IData>> Processed outputs.
          *
          * @throws std::logic_error If not overridden by a derived class.
          * @note This method is intentionally private and virtual: public

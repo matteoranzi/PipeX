@@ -32,7 +32,7 @@ namespace PipeX {
      * @brief A dynamic, type-erased pipeline that transforms a sequence of InputT into OutputT.
      *
      * The pipeline stores a list of nodes derived from DynamicNode which process data represented
-     * by GenericData wrappers. Each node consumes and produces vectors of unique_ptr<GenericData>.
+     * by IData wrappers. Each node consumes and produces vectors of unique_ptr<IData>.
      *
      * @tparam InputT  Type of the pipeline input elements.
      * @tparam OutputT Type of the pipeline output elements.
@@ -175,21 +175,21 @@ namespace PipeX {
          * @brief Run the pipeline on a vector of input values.
          *
          * The input values of type InputT are first wrapped in Data<InputT> and stored as
-         * GenericData pointers. Each node processes the vector, replacing it with the node's output.
-         * After all nodes have processed the data, the GenericData elements are dynamic_cast back
+         * IData pointers. Each node processes the vector, replacing it with the node's output.
+         * After all nodes have processed the data, the IData elements are dynamic_cast back
          * to Data<OutputT> and their contained values are extracted into the returned vector.
          *
          * @param input Vector of InputT input values.
          * @return Vector of OutputT results.
          *
-         * @throws std::bad_cast If any intermediate or final GenericData cannot be cast to the
+         * @throws std::bad_cast If any intermediate or final IData cannot be cast to the
          *         expected Data<OutputT> type.
          * @throws Any exceptions propagated by node processing are rethrown after logging.
          */
         std::vector<OutputT> run(const std::vector<InputT>& input) const {
             PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
-            // Convert input to GenericData
+            // Convert input to IData
             std::vector<std::unique_ptr<IData>> data;
             data.reserve(input.size());
             for (auto& item : input) {
@@ -214,8 +214,8 @@ namespace PipeX {
             // Convert back to OutputT
             std::vector<OutputT> output;
             output.reserve(data.size());
-            for (auto& genericData : data) {
-                auto castedData = dynamic_cast<Data<OutputT>*>(genericData.get());
+            for (auto& IData : data) {
+                auto castedData = dynamic_cast<Data<OutputT>*>(IData.get());
                 if (!castedData) {
                     throw std::bad_cast();
                 }

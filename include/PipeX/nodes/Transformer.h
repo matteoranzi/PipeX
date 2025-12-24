@@ -50,7 +50,7 @@ namespace PipeX {
         Function function;
 
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicTransformer] {%p}.processImpl(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicTransformer] {%p}.processImpl(std::vector<std::unique_ptr<IData>>&&)\n", this);
 
             std::vector<std::unique_ptr<IData>> output;
             output.reserve(input.size());
