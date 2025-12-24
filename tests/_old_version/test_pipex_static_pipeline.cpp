@@ -8,9 +8,9 @@
 #include <numeric>
 
 
-#include "../include/PipeX/static/StaticPipeline.h"
-#include "PipeX/static//nodes/StaticFilter.h"
-#include "PipeX/static/nodes/StaticTransformer.h"
+#include "../../include/PipeX/_old_version/StaticPipeline.h"
+#include "PipeX/_old_version//nodes/StaticFilter.h"
+#include "PipeX/_old_version/nodes/StaticTransformer.h"
 
 
 using namespace PipeX;

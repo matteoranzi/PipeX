@@ -83,7 +83,7 @@ namespace PipeX {
         }
 
         //fixme pass by reference or by value? WHY?
-        std::vector<OutputT> run(const std::vector<InputT> input) const {
+        std::vector<OutputT> run(const std::vector<InputT>& input) const {
             PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
             // Convert input to GenericData

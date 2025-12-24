@@ -25,7 +25,7 @@ target_link_libraries(app PRIVATE my_extended_cpp_standard)
 
 
 #================================================================================================
-set(APP_PRINT_DEBUG_LEVEL ${GLOBAL_PRINT_DEBUG_LEVEL} STRING "Debug level for main")
+set(APP_PRINT_DEBUG_LEVEL ${GLOBAL_PRINT_DEBUG_LEVEL} CACHE STRING "Debug level for main")
 define_print_debug_level_for_target(app ${APP_PRINT_DEBUG_LEVEL})
 #target_compile_definitions(app PRIVATE PIPEX_PRINT_DEBUG_ENABLED)
 #================================================================================================

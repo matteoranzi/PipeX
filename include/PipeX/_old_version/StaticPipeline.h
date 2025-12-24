@@ -9,7 +9,7 @@
 #include "extended_cpp_standard/memory.h"
 
 
-#include "PipeX/static/nodes/StaticNode.h"
+#include "PipeX/_old_version/nodes/StaticNode.h"
 
 #include <vector>
 #include <list>

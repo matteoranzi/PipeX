@@ -39,19 +39,19 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
-        virtual std::vector<std::unique_ptr<GenericData>> process(std::vector<std::unique_ptr<GenericData>>& input) const final {
+        virtual std::vector<std::unique_ptr<GenericData>> process(const std::vector<std::unique_ptr<GenericData>>& input) const final {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&)\n", this);
-            return std::move(processImpl(std::move(input)));
+            return std::move(processImpl(input));
         }
 
         virtual std::vector<std::unique_ptr<GenericData>> process(std::vector<std::unique_ptr<GenericData>>&& input) const final {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
-            return std::move(processImpl(std::move(input)));
+            return std::move(processImpl(input));
         }
 
-        virtual std::vector<std::unique_ptr<GenericData>> operator() (std::vector<std::unique_ptr<GenericData>>& input) const final {
+        virtual std::vector<std::unique_ptr<GenericData>> operator() (const std::vector<std::unique_ptr<GenericData>>& input) const final {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<GenericData>>&)\n", this);
-            return this->process(std::move(input));
+            return this->process(input);
         }
 
         virtual std::vector<std::unique_ptr<GenericData>> operator() (std::vector<std::unique_ptr<GenericData>>&& input) const final {
@@ -63,7 +63,7 @@ namespace PipeX {
         // To be implemented by derived classes
         // This way, the base Node class guarantees that std::move is applied consistently,
         // and derived classes only focus on their processing logic without worrying about move semantics
-        virtual std::vector<std::unique_ptr<GenericData>> processImpl(std::vector<std::unique_ptr<GenericData>>&& input) const {
+        virtual std::vector<std::unique_ptr<GenericData>> processImpl(const std::vector<std::unique_ptr<GenericData>>& input) const {
             PRINT_DEBUG_ERROR("THIS METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
             throw std::logic_error("DynamicNode::processImpl(const std::vector<std::unique_ptr<Data_>>&&) not implemented");
         }

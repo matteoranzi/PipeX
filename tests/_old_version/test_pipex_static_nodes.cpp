@@ -9,9 +9,9 @@
 
 #include "extended_cpp_standard/memory.h"
 
-#include "PipeX/static/nodes/StaticFilter.h"
-#include "PipeX/static/nodes/StaticAggregator.h"
-#include "PipeX/static/nodes/StaticTransformer.h"
+#include "PipeX/_old_version/nodes/StaticFilter.h"
+#include "PipeX/_old_version/nodes/StaticAggregator.h"
+#include "PipeX/_old_version/nodes/StaticTransformer.h"
 
 
 using namespace PipeX;

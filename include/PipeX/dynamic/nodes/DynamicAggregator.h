@@ -52,8 +52,8 @@ namespace PipeX {
     private:
         Function function;
 
-        std::vector<std::unique_ptr<GenericData>> processImpl(std::vector<std::unique_ptr<GenericData>>&& input) const override {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicAggregator] {%p}.processImpl(std::vector<Data_*>&)\n", this);
+        std::vector<std::unique_ptr<GenericData>> processImpl(const std::vector<std::unique_ptr<GenericData>>& input) const override {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicAggregator] {%p}.processImpl(std::vector<std::unique_ptr<GenericData>>&&)\n", this);
 
             std::vector<InputT> dataVector;
             dataVector.reserve(input.size());
