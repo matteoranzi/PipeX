@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 
 #include "nodes/DynamicNode.h"
 #include "data/GenericData.h"
@@ -28,16 +29,15 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(std::string)\n", name.c_str(), this);
         }
         ~DynamicPipeline() {
-            PIPEX_PRINT_DEBUG_WARN("[DynamicPipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
         //Copy constructor
         DynamicPipeline& operator=(DynamicPipeline const& _pipeline) {
-            PIPEX_PRINT_DEBUG_WARN("[DynamicPipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
                 name = _pipeline.name + "_copy";
                 nodes.clear();
-                nodes.reserve(_pipeline.nodes.size());
                 for (const auto& node : _pipeline.nodes) {
                     nodes.push_back(node->clone());
                 }
@@ -47,7 +47,7 @@ namespace PipeX {
         }
 
         DynamicPipeline(const DynamicPipeline& _pipeline) {
-            PIPEX_PRINT_DEBUG_WARN("[DynamicPipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
             *this = _pipeline;
         }
 
@@ -128,7 +128,7 @@ namespace PipeX {
 
     private:
         std::string name;
-        std::vector<std::unique_ptr<DynamicNode>> nodes;
+        std::list<std::unique_ptr<DynamicNode>> nodes;
     };
 }
 

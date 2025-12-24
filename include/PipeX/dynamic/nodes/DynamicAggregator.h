@@ -14,9 +14,10 @@
 #include "PipeX/debug/pipex_print_debug.h"
 
 namespace PipeX {
+    template <typename InputT, typename OutputT>
     class DynamicAggregator final: public DynamicNode {
     public:
-        using Function = std::function<std::unique_ptr<GenericData>(const std::vector<std::unique_ptr<GenericData>>&&)>;
+        using Function = std::function<OutputT(const std::vector<InputT>& dataVector)>;
 
         explicit DynamicAggregator(Function _function) : function(std::move(_function)) {
             PIPEX_PRINT_DEBUG_INFO("[DynamicAggregator] {%p}.Constructor(Function)\n", this);
@@ -53,9 +54,21 @@ namespace PipeX {
 
         std::vector<std::unique_ptr<GenericData>> processImpl(std::vector<std::unique_ptr<GenericData>>&& input) const override {
             PIPEX_PRINT_DEBUG_INFO("[DynamicAggregator] {%p}.processImpl(std::vector<Data_*>&)\n", this);
-            std::vector<std::unique_ptr<GenericData>> result;
-            result.push_back(function(std::move(input)));
-            return result;
+
+            std::vector<InputT> dataVector;
+            dataVector.reserve(input.size());
+            for (const auto& data : input) {
+                auto castedData = dynamic_cast<const Data<InputT>*>(data.get());
+                if (!castedData) {
+                    throw std::bad_cast();
+                }
+                dataVector.push_back(castedData->value);
+            }
+
+            std::vector<std::unique_ptr<GenericData>> output;
+            output.push_back(make_unique<Data<OutputT>>(std::move(function(dataVector))));
+
+            return output;
         }
     };
 }

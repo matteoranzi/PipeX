@@ -46,14 +46,18 @@ TEST(DynamicPipelineTest, BasicDynamicPipeline) {
             inputData.push_back(i * 3);
         }
 
+
         const auto outputData = dynamicPipeline.run(inputData);// std::cout << "outputData size: " << outputData.size() << std::endl;
+
+        std::cout<< "Input vector: ";
+        printVector(inputData);
+        std::cout << "Pipelined output: ";
+        printVector(outputData);
+
         const std::vector<float> expectedOutput = {6.0f, 7.5f, 9.0f, 10.5f};
         for (int i = 0; i < outputData.size(); ++i) {
-            std::cout << "Data[" << i << "] after transformation: " << outputData[i] << std::endl;
             EXPECT_FLOAT_EQ(outputData[i], expectedOutput[i]);
         }
-
-
     }
 
     std::cout << "======================================================================" << std::endl;

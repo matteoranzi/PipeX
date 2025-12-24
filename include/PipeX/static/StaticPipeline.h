@@ -12,6 +12,7 @@
 #include "PipeX/static/nodes/StaticNode.h"
 
 #include <vector>
+#include <list>
 #include <memory>
 
 namespace PipeX {
@@ -27,17 +28,17 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(std::string)\n", name.c_str(), this);
         }
         ~StaticPipeline() {
-            PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
         // Move constructors
         StaticPipeline (StaticPipeline&& _pipeline) noexcept{
-            PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Constructor(&&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(&&)\n", _pipeline.name.c_str(), this);
             *this = std::move(_pipeline);
         }
 
         StaticPipeline& operator=(StaticPipeline&& _pipeline) noexcept {
-            PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Operator=(&&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Operator=(&&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
                 this->nodes = std::move(_pipeline.nodes);
                 this->name = std::move(_pipeline.name);
@@ -47,11 +48,10 @@ namespace PipeX {
 
         // Copy constructors
         StaticPipeline& operator=(StaticPipeline const& _pipeline) {
-            PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
                 name = _pipeline.name + "_copy";
                 nodes.clear();
-                nodes.reserve(_pipeline.nodes.size());
                 for (const auto& node : _pipeline.nodes) {
                     nodes.push_back(node->clone());
                 }
@@ -60,7 +60,7 @@ namespace PipeX {
             return *this;
         }
         StaticPipeline(const StaticPipeline& _pipeline) {
-            PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
             *this = _pipeline;
         }
 
@@ -96,7 +96,7 @@ namespace PipeX {
     private:
         std::string name;
         // TODO std::vector or std::list ?
-        std::vector<std::unique_ptr<StaticNode<T, T>>> nodes;
+        std::list<std::unique_ptr<StaticNode<T, T>>> nodes;
     };
 } // PipeX
 
