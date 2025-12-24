@@ -17,6 +17,15 @@
 #include "data/IData.h"
 #include "data/Data.h"
 
+//TODO add static_assert to check that InputT and OutputT are supported by the nodes added to the pipeline
+// e.g. if a Transformer<InputT, IntermediateT> is added, InputT must match the Pipeline InputT
+// and IntermediateT must match the InputT of the next node in the pipeline or the Pipeline OutputT if it's the last node
+
+//TODO add SFINAE to restrict NodeT in addNode to only types derived from DynamicNode
+
+//TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
+//TODO add method to remove nodes from the pipeline, either by name or by index, and check the pipeline integrity after removal
+
 namespace PipeX {
 
     /**
