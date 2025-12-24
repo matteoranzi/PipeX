@@ -7,7 +7,8 @@
 
 namespace PipeX {
     class PipeX {
-        PipeX();
+        PipeX() {
+        }
     };
 }
 

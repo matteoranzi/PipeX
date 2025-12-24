@@ -16,16 +16,7 @@ namespace PipeX {
     template <typename InputT, typename OutputT>
     class StaticNode{
     public:
-        //TODO: create NodeBase to store nodes of different type in a single vector and use input_type/output_type to cast them back
-        //Fixme: does it allow to remove duplication of DynamicPipeline?
-        using input_type = InputT;
-        using output_type = OutputT;
-        // using input_vector = std::vector<input_type>;
-        // using output_vector = std::vector<output_type>;
-
         const std::string name;
-
-
 
         virtual std::unique_ptr<StaticNode> clone() const = 0;
         virtual std::unique_ptr<StaticNode> clone(std::string name) const = 0;

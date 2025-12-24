@@ -6,11 +6,11 @@
 
 #include <gtest/gtest.h>
 
-#include "PipeX/dynamic/DynamicPipeline.h"
-#include "PipeX/dynamic/nodes/DynamicAggregator.h"
-#include "PipeX/dynamic/nodes/DynamicFilter.h"
-#include "PipeX/dynamic/nodes/DynamicTransformer.h"
-#include "PipeX/dynamic/data/Data.h"
+#include "../include/PipeX/Pipeline.h"
+#include "PipeX/nodes/Aggregator.h"
+#include "PipeX/nodes/Filter.h"
+#include "PipeX/nodes/Transformer.h"
+#include "PipeX/data/Data.h"
 
 
 using namespace PipeX;
@@ -19,7 +19,7 @@ template <typename T>
 void printVector(const std::vector<T>& vec);
 
 template <typename T>
-void printVectorGenericData(const std::vector<std::unique_ptr<GenericData>>& vec);
+void printVectorGenericData(const std::vector<std::unique_ptr<IData>>& vec);
 
 TEST(DynamicNodeTest, DynamicTransformer) {
     std::cout << "\n======================================================================" << std::endl;
@@ -31,10 +31,10 @@ TEST(DynamicNodeTest, DynamicTransformer) {
             return static_cast<float>(data) / 2.0f;
         };
 
-        const DynamicTransformer<int, float> transformer(halfFunction);
+        const Transformer<int, float> transformer(halfFunction);
 
 
-        std::vector<std::unique_ptr<GenericData>> inputData;
+        std::vector<std::unique_ptr<IData>> inputData;
         inputData.reserve(10);
         for (int i = 1; i <= 10; ++i) {
             inputData.push_back(make_unique<Data<int>>(i)); // Even numbers
@@ -72,9 +72,9 @@ TEST(DynamicNodeTest, DynamicFilter) {
             return data % 2 == 0;
         };
 
-        const DynamicFilter<int> filter(evenIntegers);
+        const Filter<int> filter(evenIntegers);
 
-        std::vector<std::unique_ptr<GenericData>> inputData;
+        std::vector<std::unique_ptr<IData>> inputData;
         inputData.reserve(10);
         for (int i = 1; i <= 10; ++i) {
             inputData.push_back(make_unique<Data<int>>(i)); // Even numbers
@@ -118,9 +118,9 @@ TEST(DynamicNodeTest, DynamicAggregator) {
             return sum;
         };
 
-        const DynamicAggregator<int, int> aggregator(sumFunction);
+        const Aggregator<int, int> aggregator(sumFunction);
 
-        std::vector<std::unique_ptr<GenericData>> inputData;
+        std::vector<std::unique_ptr<IData>> inputData;
         inputData.reserve(10);
         for (int i = 1; i <= 10; ++i) {
             inputData.push_back(make_unique<Data<int>>(i)); // Even numbers
@@ -162,7 +162,7 @@ void printVector(const std::vector<T>& vec) {
 }
 
 template <typename T>
-void printVectorGenericData(const std::vector<std::unique_ptr<GenericData>>& vec) {
+void printVectorGenericData(const std::vector<std::unique_ptr<IData>>& vec) {
     std::cout << "[";
     for (const auto& element : vec) {
         auto castedData = dynamic_cast<Data<T>*>(element.get());

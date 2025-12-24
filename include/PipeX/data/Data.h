@@ -1,14 +1,11 @@
 #ifndef PIPEX_DATA_HP
     #define PIPEX_DATA_HP
 
-#include <type_traits>
-#include "GenericData.h"
+#include "IData.h"
 
-//Fixme: allow only base data types (T = int, float, double, char, bool, etc...)?
-//Fixme: arithmetic operators only work on the same type T, should we allow mixed types (e.g., Data<int> + Data<float>)?
 namespace PipeX {
     template <typename T>
-    class Data final: public GenericData {
+    class Data final: public IData {
     public:
         using type = T;
         T value;
@@ -18,7 +15,7 @@ namespace PipeX {
         Data(const Data&) = default;
         Data(Data&&) = default;
 
-        std::unique_ptr<GenericData> clone() const override {
+        std::unique_ptr<IData> clone() const override {
             return make_unique<Data<T>>(*this);
         }
 

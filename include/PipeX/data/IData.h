@@ -5,10 +5,10 @@
 #ifndef PIPEX_GENERIC_BASE_DATA_H
 #define PIPEX_GENERIC_BASE_DATA_H
 
-class GenericData {
+class IData {
 public:
-    virtual ~GenericData() = default;
-    virtual std::unique_ptr<GenericData> clone() const = 0;
+    virtual ~IData() = default;
+    virtual std::unique_ptr<IData> clone() const = 0;
 };
 
 #endif // PIPEX_GENERIC_BASE_DATA_H

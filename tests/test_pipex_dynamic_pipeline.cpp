@@ -6,10 +6,9 @@
 
 #include <gtest/gtest.h>
 
-#include "PipeX/dynamic/DynamicPipeline.h"
-#include "PipeX/dynamic/nodes/DynamicFilter.h"
-#include "PipeX/dynamic/nodes/DynamicTransformer.h"
-#include "PipeX/dynamic/data/Data.h"
+#include "PipeX/Pipeline.h"
+#include "PipeX/nodes/Filter.h"
+#include "PipeX/nodes/Transformer.h"
 
 
 using namespace PipeX;
@@ -29,14 +28,14 @@ TEST(DynamicPipelineTest, BasicDynamicPipeline) {
 
         float lowerBound = 5.5f;
         float upperBound = 10.5f;
-        DynamicFilter<float>::Predicate boundedPredicate = [lowerBound, upperBound](const float& data) {
+        Filter<float>::Predicate boundedPredicate = [lowerBound, upperBound](const float& data) {
             return data >= lowerBound && data <= upperBound;
         };
 
 
-        DynamicPipeline<int, float> dynamicPipeline("BasicDynamicPipeline");
-        dynamicPipeline.addNode<DynamicTransformer<int, float>>(halfFunction)
-                        .addNode<DynamicFilter<float>>(boundedPredicate);
+        Pipeline<int, float> dynamicPipeline("BasicDynamicPipeline");
+        dynamicPipeline.addNode<Transformer<int, float>>(halfFunction)
+                        .addNode<Filter<float>>(boundedPredicate);
 
 
         constexpr int inputDataLength = 10;

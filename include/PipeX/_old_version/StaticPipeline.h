@@ -17,7 +17,6 @@
 
 namespace PipeX {
     template<typename T>
-    // TODO : check how to properly implement factory pattern
     class StaticPipeline {
     public:
 
@@ -95,7 +94,6 @@ namespace PipeX {
 
     private:
         std::string name;
-        // TODO std::vector or std::list ?
         std::list<std::unique_ptr<StaticNode<T, T>>> nodes;
     };
 } // PipeX
