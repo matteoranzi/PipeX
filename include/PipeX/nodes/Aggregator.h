@@ -123,7 +123,7 @@ namespace PipeX {
          * @param input A vector of unique pointers to `IData` representing the input data.
          * @return A vector of unique pointers to `IData` containing the aggregated output.
          *
-         * @throws std::bad_cast If the input data cannot be cast to the expected type.
+         * @throws PipeXTypeError If the input data cannot be cast to the expected type.
          */
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
             PIPEX_PRINT_DEBUG_INFO("[DynamicAggregator] {%p}.processImpl(std::vector<std::unique_ptr<IData>>&&)\n", this);
@@ -133,7 +133,7 @@ namespace PipeX {
             for (const auto& data : input) {
                 auto castedData = dynamic_cast<const Data<InputT>*>(data.get());
                 if (!castedData) {
-                    throw std::bad_cast();
+                    //throw PipeXTypeError("Error in DynamicTransformer \"" + this->name + "\": invalid data type.");
                 }
                 dataVector.push_back(castedData->value);
             }

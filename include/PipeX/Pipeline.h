@@ -16,6 +16,7 @@
 #include "nodes/INode.h"
 #include "data/IData.h"
 #include "data/Data.h"
+#include "errors/TypeMismatchExpection.h"
 
 //TODO add static_assert to check that InputT and OutputT are supported by the nodes added to the pipeline
 // e.g. if a Transformer<InputT, IntermediateT> is added, InputT must match the Pipeline InputT
@@ -25,6 +26,8 @@
 
 //TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
 //TODO add method to remove nodes from the pipeline, either by name or by index, and check the pipeline integrity after removal
+
+//TODO a std::set of nodes names to avoid duplicates, throw exception if a node with the same name is added (if deletion by name is implemented)
 
 namespace PipeX {
 
@@ -147,9 +150,9 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, node->name.c_str());
-            nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
-
+            auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->name.c_str());
+            nodes.push_back(std::move(newNode));
             return *this;
         }
 
@@ -165,9 +168,9 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline&& addNode(Args&&... args) && {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, node->name.c_str());
-            nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
-
+            auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, newNode->name.c_str());
+            nodes.push_back(std::move(newNode));
             return std::move(*this);
         }
 
@@ -182,7 +185,7 @@ namespace PipeX {
          * @param input Vector of InputT input values.
          * @return Vector of OutputT results.
          *
-         * @throws std::bad_cast If any intermediate or final IData cannot be cast to the
+         * @throws PipeXTypeError If any intermediate or final IData cannot be cast to the
          *         expected Data<OutputT> type.
          * @throws Any exceptions propagated by node processing are rethrown after logging.
          */
@@ -190,10 +193,11 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
             // Convert input to IData
+            //TODO use wrap method of NodeCRTP
             std::vector<std::unique_ptr<IData>> data;
             data.reserve(input.size());
             for (auto& item : input) {
-                data.push_back(std::unique_ptr<IData>(make_unique<Data<InputT>>(item)));
+                data.push_back(make_unique<Data<InputT>>(item));
             }
 
             // Process through nodes
@@ -201,8 +205,8 @@ namespace PipeX {
                 try {
                     PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->name.c_str());
                     data = node->process(std::move(data));
-                } catch (std::bad_cast &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[DynamicPipeline] \"%s\" {%p}.run() -> bad_cast exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
+                } catch (TypeMismatchException &e) {
+                    PIPEX_PRINT_DEBUG_ERROR("[DynamicPipeline] \"%s\" {%p}.run() -> PipeXTypeError exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
                     // Rethrow the exception to propagate it up the call stack
                     throw e;
                 } catch (... ) {
@@ -212,12 +216,13 @@ namespace PipeX {
             }
 
             // Convert back to OutputT
+            //TODO use extract method of NodeCRTP
             std::vector<OutputT> output;
             output.reserve(data.size());
             for (auto& IData : data) {
                 auto castedData = dynamic_cast<Data<OutputT>*>(IData.get());
                 if (!castedData) {
-                    throw std::bad_cast();
+                    //throw PipeXTypeError("Error in DynamicTransformer \"" + this->name + "\": invalid data type.");
                 }
                 output.push_back(castedData->value);
             }

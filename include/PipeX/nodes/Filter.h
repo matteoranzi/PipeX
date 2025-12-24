@@ -104,7 +104,7 @@ namespace PipeX {
          * @brief Processes the input data and filters it based on the predicate.
          * @param input A vector of unique pointers to IData representing the input data.
          * @return A vector of unique pointers to IData representing the filtered output data.
-         * @throws std::bad_cast If the input data cannot be cast to the expected type.
+         * @throws PipeXTypeError If the input data cannot be cast to the expected type.
          */
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
             PIPEX_PRINT_DEBUG_INFO("[DynamicFilter] {%p}.processImpl(std::vector<std::unique_ptr<IData>>&&)\n", this);
@@ -113,7 +113,7 @@ namespace PipeX {
             for (const auto& data : input) {
                 auto castedData = dynamic_cast<const Data<T>*>(data.get());
                 if (!castedData) {
-                    throw std::bad_cast();
+                   // throw PipeXTypeError("Error in DynamicTransformer \"" + this->name + "\": invalid data type.");
                 }
 
                 if (predicateFilter(castedData->value)) {
