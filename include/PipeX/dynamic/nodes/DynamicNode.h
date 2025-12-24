@@ -7,7 +7,6 @@
 #include "../data/GenericData.h"
 
 namespace PipeX {
-    //Fixme: make use of decltype to allow mixed types in input and output?
     class DynamicNode {
     public:
         const std::string name;

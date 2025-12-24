@@ -5,7 +5,7 @@
 #ifndef PIPEX_AGGREGATOR_H
 #define PIPEX_AGGREGATOR_H
 
-#include "Node.h"
+#include "StaticNode.h"
 #include "PipeX/debug/pipex_print_debug.h"
 
 #include "extended_cpp_standard/memory.h"
@@ -15,33 +15,33 @@
 
 namespace PipeX {
     template <typename InputT, typename OutputT>
-    class Aggregator final : public Node<InputT, OutputT> {
+    class StaticAggregator final : public StaticNode<InputT, OutputT> {
     public:
         using Function = std::function<OutputT(const std::vector<InputT>&&)>;
 
-        explicit Aggregator (Function _function) : function(std::move(_function)) {
+        explicit StaticAggregator (Function _function) : function(std::move(_function)) {
             PIPEX_PRINT_DEBUG_INFO("[Aggregator] \"%s\" {%p}.Constructor(Function)\n", this->name.c_str(), this);
         }
-        Aggregator (std::string _name, Function _function) : Node<InputT, OutputT>(std::move(_name)), function(std::move(_function)) {
+        StaticAggregator (std::string _name, Function _function) : StaticNode<InputT, OutputT>(std::move(_name)), function(std::move(_function)) {
             PIPEX_PRINT_DEBUG_INFO("[Aggregator] \"%s\" {%p}.Constructor(std::string, Function)\n", this->name.c_str(), this);
         }
-        Aggregator (const Aggregator& other) : Node<InputT, OutputT>(other), function(other.function) {
+        StaticAggregator (const StaticAggregator& other) : StaticNode<InputT, OutputT>(other), function(other.function) {
             PIPEX_PRINT_DEBUG_INFO("[Aggregator] \"%s\" {%p}.CopyConstructor()\n", this->name.c_str(), this);
         }
-        Aggregator (const Aggregator& other, std::string _name) : Node<InputT, OutputT>(other, std::move(_name)), function(other.function) {
+        StaticAggregator (const StaticAggregator& other, std::string _name) : StaticNode<InputT, OutputT>(other, std::move(_name)), function(other.function) {
             PIPEX_PRINT_DEBUG_INFO("[Aggregator] \"%s\" {%p}.CopyConstructor()\n", this->name.c_str(), this);
         }
-        ~Aggregator() override {
+        ~StaticAggregator() override {
             PIPEX_PRINT_DEBUG_INFO("[Aggregator] \"%s\" {%p}.Destructor()\n", this->name.c_str(), this);
         }
 
-        std::unique_ptr<Node<InputT,OutputT>> clone() const override {
+        std::unique_ptr<StaticNode<InputT,OutputT>> clone() const override {
             PIPEX_PRINT_DEBUG_INFO("[Aggregator] \"%s\" {%p}.clone()\n", this->name.c_str(), this);
-            return make_unique<Aggregator>(*this);
+            return make_unique<StaticAggregator>(*this);
         }
-        std::unique_ptr<Node<InputT,OutputT>> clone(std::string _name) const override {
+        std::unique_ptr<StaticNode<InputT,OutputT>> clone(std::string _name) const override {
             PIPEX_PRINT_DEBUG_INFO("[Aggregator] \"%s\" {%p}.clone(std::string)\n", this->name.c_str(), this);
-            return make_unique<Aggregator>(*this, std::move(_name));
+            return make_unique<StaticAggregator>(*this, std::move(_name));
         }
 
     private:

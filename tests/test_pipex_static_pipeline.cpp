@@ -8,9 +8,9 @@
 #include <numeric>
 
 
-#include "../include/PipeX/static/Pipeline.h"
-#include "PipeX/static//nodes/Filter.h"
-#include "PipeX/static/nodes/Transformer.h"
+#include "../include/PipeX/static/StaticPipeline.h"
+#include "PipeX/static//nodes/StaticFilter.h"
+#include "PipeX/static/nodes/StaticTransformer.h"
 
 
 using namespace PipeX;
@@ -40,9 +40,9 @@ TEST(PipelineTest, SimplePipeline) {
             return value * value;
         };
 
-        auto pipeline = Pipeline<int>("SimplePipeline")
-                            .addNode<Transformer<int, int>>(powerCube)
-                            .addNode<Filter<int>>(bounded);
+        auto pipeline = StaticPipeline<int>("SimplePipeline")
+                            .addNode<StaticTransformer<int, int>>(powerCube)
+                            .addNode<StaticFilter<int>>(bounded);
 
 
         const std::vector<int> inputData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -79,11 +79,11 @@ TEST(PipelineTest, CopyPipeline) {
             return value + 5;
         };
 
-        Pipeline<int> originalPipeline("OriginalPipeline");
-        originalPipeline.addNode<Filter<int>>(isOdd);
-        originalPipeline.addNode<Transformer<int, int>>(addFive);
+        StaticPipeline<int> originalPipeline("OriginalPipeline");
+        originalPipeline.addNode<StaticFilter<int>>(isOdd);
+        originalPipeline.addNode<StaticTransformer<int, int>>(addFive);
 
-        Pipeline<int> copiedPipeline = originalPipeline; // Copy the pipeline
+        StaticPipeline<int> copiedPipeline = originalPipeline; // Copy the pipeline
 
         const std::vector<int> inputData = {1, 2, 3, 4, 5};
         const std::vector<int> outputData = copiedPipeline.run(inputData);

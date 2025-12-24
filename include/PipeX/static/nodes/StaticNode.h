@@ -14,7 +14,7 @@
 
 namespace PipeX {
     template <typename InputT, typename OutputT>
-    class Node{
+    class StaticNode{
     public:
         //TODO: create NodeBase to store nodes of different type in a single vector and use input_type/output_type to cast them back
         //Fixme: does it allow to remove duplication of DynamicPipeline?
@@ -27,10 +27,10 @@ namespace PipeX {
 
 
 
-        virtual std::unique_ptr<Node> clone() const = 0;
-        virtual std::unique_ptr<Node> clone(std::string name) const = 0;
+        virtual std::unique_ptr<StaticNode> clone() const = 0;
+        virtual std::unique_ptr<StaticNode> clone(std::string name) const = 0;
 
-        Node () : name([this]() {
+        StaticNode () : name([this]() {
                                 std::ostringstream oss;
                                 oss << this;
                                 return oss.str();
@@ -38,17 +38,17 @@ namespace PipeX {
                         ) {
             PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
         }
-        explicit Node (std::string _name) : name(std::move(_name)) {
+        explicit StaticNode (std::string _name) : name(std::move(_name)) {
             PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Constructor(std::string)\n", name.c_str(), this);
         }
-        Node (const Node& other) : name(other.name + "_copy") {
+        StaticNode (const StaticNode& other) : name(other.name + "_copy") {
             PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.CopyConstructor()\n", name.c_str(), this);
         }
-        Node (const Node& other, std::string _name) : name(std::move(_name)) {
+        StaticNode (const StaticNode& other, std::string _name) : name(std::move(_name)) {
             PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.CopyConstructor(newName)\n", name.c_str(), this);
         }
 
-        virtual ~Node() {
+        virtual ~StaticNode() {
             PIPEX_PRINT_DEBUG_INFO("[Node] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         };
 

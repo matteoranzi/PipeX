@@ -9,9 +9,9 @@
 
 #include "extended_cpp_standard/memory.h"
 
-#include "PipeX/static/nodes/Filter.h"
-#include "PipeX/static/nodes/Aggregator.h"
-#include "PipeX/static/nodes/Transformer.h"
+#include "PipeX/static/nodes/StaticFilter.h"
+#include "PipeX/static/nodes/StaticAggregator.h"
+#include "PipeX/static/nodes/StaticTransformer.h"
 
 
 using namespace PipeX;
@@ -36,7 +36,7 @@ TEST(NodesTest, Filter_evenNumbers) {
     { // Create unnamed scope to compact destructor output in this test's output
         // Create a Filter node that filters out even numbers
         auto isEven = [](int value) { return value % 2 == 0; };
-        Filter<int> filter("Filter_evenNumbers", isEven);
+        StaticFilter<int> filter("Filter_evenNumbers", isEven);
 
         // Input data
         const std::vector<int> inputData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -71,7 +71,7 @@ TEST(NodesTest, Aggregator_sumNumbers) {
             return std::accumulate(input.begin(), input.end(), 0.0);
 
         };
-        Aggregator<int, int> aggregator("Aggregator_sumNumbers", sumFunction);
+        StaticAggregator<int, int> aggregator("Aggregator_sumNumbers", sumFunction);
 
         // Input data
         const std::vector<int> inputData = {1, 2, 3, 4, 5};
@@ -102,7 +102,7 @@ TEST(NodesTest, Transformer_squareNumbers) {
     { // Create unnamed scope to compact destructor output in this test's output
         // Create a Transformer node that squares numbers
         auto squareFunction = [](int value) { return value * value; };
-        Transformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
+        StaticTransformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
 
         // Input data
         const std::vector<int> inputData = {1, 2, 3, 4, 5};
@@ -133,7 +133,7 @@ TEST(NodesTest, CopyNodes) {
     std::cout << "======================================================================" << std::endl;
     { // Create unnamed scope to compact destructor output in this test's output
         auto squareFunction = [](int value) { return value * value; };
-        Transformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
+        StaticTransformer<int, int> transformer("Transformer_squareNumbers", squareFunction);
         auto copiedTransformer = transformer; // Copy the transformer
 
         // Input data

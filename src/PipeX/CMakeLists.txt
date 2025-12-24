@@ -1,4 +1,4 @@
-add_library(PipeX INTERFACE)
+add_library(PipeX STATIC PipeX.cpp)
 
 include(${CMAKE_SOURCE_DIR}/cmake/PrintDebug.cmake)
 

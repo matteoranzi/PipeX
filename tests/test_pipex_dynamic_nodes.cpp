@@ -7,7 +7,7 @@
 #include <gtest/gtest.h>
 
 #include "PipeX/dynamic/DynamicPipeline.h"
-#include "PipeX/dynamic/nodes/DynamicAggregator.hpp"
+#include "PipeX/dynamic/nodes/DynamicAggregator.h"
 #include "PipeX/dynamic/nodes/DynamicFilter.h"
 #include "PipeX/dynamic/nodes/DynamicTransformer.h"
 #include "PipeX/dynamic/data/Data.h"
@@ -24,15 +24,11 @@ TEST(DynamicNodeTest, DynamicTransformer) {
     std::cout << "======================================================================" << std::endl;
 
     {
-        DynamicTransformer::Function halfFunction = [](const GenericData* data) {
-            auto castedData = dynamic_cast<const Data<int>*>(data);
-            if (!castedData) {
-                throw std::bad_cast();
-            }
-            return make_unique<Data<float>>(*castedData / 2.0f);
+        auto halfFunction = [](const int& data) {
+            return static_cast<float>(data) / 2.0f;
         };
 
-        const DynamicTransformer transformer(halfFunction);
+        const DynamicTransformer<int, float> transformer(halfFunction);
 
 
         std::vector<std::unique_ptr<GenericData>> input;
@@ -40,10 +36,6 @@ TEST(DynamicNodeTest, DynamicTransformer) {
         for (int i = 1; i <= 10; ++i) {
             input.push_back(make_unique<Data<int>>(i)); // Even numbers
         }
-        auto out = halfFunction(input[0].get());
-        auto castedOut = dynamic_cast<Data<float>*>(out.get());
-        ASSERT_NE(castedOut, nullptr);
-        std::cout << "Output of 'halfFunction' = " << *castedOut << std::endl;
 
         const auto output = transformer.process(input);
         const std::vector<float> expectedOutput = {0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5};
@@ -68,15 +60,11 @@ TEST(DynamicNodeTest, DynamicFilter) {
     std::cout << "======================================================================" << std::endl;
 
     {
-        DynamicFilter::Predicate evenIntegers = [](const GenericData* data) {
-            auto castedData = dynamic_cast<const Data<int>*>(data);
-            if (!castedData) {
-                throw std::bad_cast();
-            }
-            return *castedData % 2 == 0;
+        auto evenIntegers = [](const int& data) {
+            return data % 2 == 0;
         };
 
-        const DynamicFilter filter(evenIntegers);
+        const DynamicFilter<int> filter(evenIntegers);
 
         std::vector<std::unique_ptr<GenericData>> input;
         input.reserve(10);

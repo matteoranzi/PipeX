@@ -9,7 +9,7 @@
 #include "extended_cpp_standard/memory.h"
 
 
-#include "PipeX/static/nodes/Node.h"
+#include "PipeX/static/nodes/StaticNode.h"
 
 #include <vector>
 #include <memory>
@@ -17,26 +17,26 @@
 namespace PipeX {
     template<typename T>
     // TODO : check how to properly implement factory pattern
-    class Pipeline {
+    class StaticPipeline {
     public:
 
-        Pipeline() : name("NO_NAME") {
+        StaticPipeline() : name("NO_NAME") {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
         }
-        explicit Pipeline(std::string _name) : name(std::move(_name)) {
+        explicit StaticPipeline(std::string _name) : name(std::move(_name)) {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(std::string)\n", name.c_str(), this);
         }
-        ~Pipeline() {
+        ~StaticPipeline() {
             PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
         // Move constructors
-        Pipeline (Pipeline&& _pipeline) noexcept{
+        StaticPipeline (StaticPipeline&& _pipeline) noexcept{
             PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Constructor(&&)\n", _pipeline.name.c_str(), this);
             *this = std::move(_pipeline);
         }
 
-        Pipeline& operator=(Pipeline&& _pipeline) noexcept {
+        StaticPipeline& operator=(StaticPipeline&& _pipeline) noexcept {
             PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Operator=(&&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
                 this->nodes = std::move(_pipeline.nodes);
@@ -46,7 +46,7 @@ namespace PipeX {
         }
 
         // Copy constructors
-        Pipeline& operator=(Pipeline const& _pipeline) {
+        StaticPipeline& operator=(StaticPipeline const& _pipeline) {
             PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Operator=(&)\n", _pipeline.name.c_str(), this);
             if (this != &_pipeline) {
                 name = _pipeline.name + "_copy";
@@ -59,23 +59,23 @@ namespace PipeX {
 
             return *this;
         }
-        Pipeline(const Pipeline& _pipeline) {
+        StaticPipeline(const StaticPipeline& _pipeline) {
             PIPEX_PRINT_DEBUG_WARN("[Pipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
             *this = _pipeline;
         }
 
 
         template<typename NodeT, typename... Args>
-        Pipeline& addNode(Args&&... args) & {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode()&\n", name.c_str(), this);
+        StaticPipeline& addNode(Args&&... args) & {
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(Args&&...)&\n", name.c_str(), this);
             nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
 
             return *this;
         }
 
         template<typename NodeT, typename... Args>
-        Pipeline&& addNode(Args&&... args) && {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode()&&\n", name.c_str(), this);
+        StaticPipeline&& addNode(Args&&... args) && {
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(Args&&...)&&\n", name.c_str(), this);
             nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
 
             return std::move(*this);
@@ -96,7 +96,7 @@ namespace PipeX {
     private:
         std::string name;
         // TODO std::vector or std::list ?
-        std::vector<std::unique_ptr<Node<T, T>>> nodes;
+        std::vector<std::unique_ptr<StaticNode<T, T>>> nodes;
     };
 } // PipeX
 

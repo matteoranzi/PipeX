@@ -1,8 +1,8 @@
 enable_testing()
 
 add_executable(PipeX_all_tests
-        test_pipex_nodes.cpp
-        test_pipex_pipeline.cpp
+        test_pipex_static_nodes.cpp
+        test_pipex_static_pipeline.cpp
         test_pipex_dynamic_pipeline.cpp
         test_pipex_dynamic_nodes.cpp
 )

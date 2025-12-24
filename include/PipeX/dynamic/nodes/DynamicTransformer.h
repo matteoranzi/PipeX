@@ -9,13 +9,14 @@
 #include "DynamicNode.h"
 #include "debug/print_debug.h"
 #include "PipeX/dynamic/data/GenericData.h"
+#include "PipeX/dynamic/data/Data.h"
 #include "extended_cpp_standard/memory.h"
 
 namespace PipeX {
+    template <typename InputT, typename OutputT>
     class DynamicTransformer final: public DynamicNode {
     public:
-        //
-        using Function = std::function<std::unique_ptr<GenericData>(const GenericData* data)>;
+        using Function = std::function<OutputT(const InputT& data)>;
 
         explicit DynamicTransformer(Function _function) : function(std::move(_function)) {
             PIPEX_PRINT_DEBUG_INFO("[DynamicTransformer] {%p}.Constructor(Function)\n", this);
@@ -51,10 +52,15 @@ namespace PipeX {
 
         std::vector<std::unique_ptr<GenericData>> processImpl(std::vector<std::unique_ptr<GenericData>>&& input) const override {
             PIPEX_PRINT_DEBUG_INFO("[DynamicTransformer] {%p}.processImpl(std::vector<Data_*>&)\n", this);
+
             std::vector<std::unique_ptr<GenericData>> output;
             output.reserve(input.size());
             for (const auto& data : input) {
-                output.push_back(function(data.get()));
+                auto castedData = dynamic_cast<const Data<InputT>*>(data.get());
+                if (!castedData) {
+                    throw std::bad_cast();
+                }
+                output.push_back(make_unique<Data<OutputT>>(function(castedData->value)));
             }
             return output;
         }

@@ -13,9 +13,11 @@
 
 #include "nodes/DynamicNode.h"
 #include "data/GenericData.h"
+#include "data/Data.h"
 
 // FIXME: check for memory leaks
 namespace PipeX {
+    template <typename InputT, typename OutputT>
     class DynamicPipeline {
     public:
 
@@ -64,40 +66,63 @@ namespace PipeX {
             return *this;
         }
 
-        //FIXME: addNode passing parameter by reference or by value? WHY?
-        //FIXME: shared_ptr vs unique_ptr? WHY? Is it clear inside the method a new copy will be created?
-        DynamicPipeline& addNode(const std::shared_ptr<DynamicNode>& node) & {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, node->name.c_str());
-            nodes.push_back(std::unique_ptr<DynamicNode>(node->clone()));
+        template<typename NodeT, typename... Args>
+        DynamicPipeline& addNode(Args&&... args) & {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, node->name.c_str());
+            nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
+
             return *this;
         }
 
-        DynamicPipeline&& addNode(const std::shared_ptr<DynamicNode>& node) && {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, node->name.c_str());
-            nodes.push_back(std::unique_ptr<DynamicNode>(node->clone()));
+        template<typename NodeT, typename... Args>
+        DynamicPipeline&& addNode(Args&&... args) && {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, node->name.c_str());
+            nodes.push_back(make_unique<NodeT>(std::forward<Args>(args)...));
+
             return std::move(*this);
         }
 
-        //fixme logic of data ownership: who owns the data at each stage? get input data as shared_ptr or unique_ptr?
-        std::vector<std::unique_ptr<GenericData>> run(const std::vector<std::shared_ptr<GenericData>>& input) const {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<std::shared_ptr<GenericData>>) -> %zu nodes\n", name.c_str(), this, nodes.size());
+        //fixme pass by reference or by value? WHY?
+        std::vector<OutputT> run(const std::vector<InputT> input) const {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
+
+            // Convert input to GenericData
             std::vector<std::unique_ptr<GenericData>> data;
             data.reserve(input.size());
             for (auto& item : input) {
-                data.push_back(std::unique_ptr<GenericData>(item->clone()));
+                data.push_back(std::unique_ptr<GenericData>(make_unique<Data<InputT>>(item)));
             }
 
-            return run(std::move(data));
-        }
-
-        std::vector<std::unique_ptr<GenericData>> run(std::vector<std::unique_ptr<GenericData>> data) const {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run(std::vector<std::unique_ptr<GenericData>>) -> %zu nodes\n", name.c_str(), this, nodes.size());
+            // Process through nodes
             for (const auto& node : nodes) {
-                data = node->process(std::move(data));
+                try {
+                    PIPEX_PRINT_DEBUG_INFO("[DynamicPipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->name.c_str());
+                    data = node->process(std::move(data));
+                } catch (std::bad_cast &e) {
+                    PIPEX_PRINT_DEBUG_ERROR("[DynamicPipeline] \"%s\" {%p}.run() -> bad_cast exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
+                    // Rethrow the exception to propagate it up the call stack
+                    throw e;
+                } catch (... ) {
+                    PIPEX_PRINT_DEBUG_ERROR("[DynamicPipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->name.c_str());
+                    throw;
+                }
             }
 
-            return data;
+            // Convert back to OutputT
+            std::vector<OutputT> output;
+            output.reserve(data.size());
+            for (auto& genericData : data) {
+                auto castedData = dynamic_cast<Data<OutputT>*>(genericData.get());
+                if (!castedData) {
+                    throw std::bad_cast();
+                }
+                output.push_back(castedData->value);
+            }
+
+            return output;
         }
+
+
 
         std::string getName() const { return name; }
 
