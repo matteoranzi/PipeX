@@ -6,11 +6,15 @@
 
 #include <gtest/gtest.h>
 
+#include <vector>
+#include <algorithm>
+
 #include "../include/PipeX/Pipeline.h"
 #include "PipeX/nodes/Aggregator.h"
 #include "PipeX/nodes/Filter.h"
 #include "PipeX/nodes/Transformer.h"
 #include "PipeX/data/Data.h"
+#include "PipeX/nodes/Processor.h"
 
 
 using namespace PipeX;
@@ -21,9 +25,9 @@ void printVector(const std::vector<T>& vec);
 template <typename T>
 void printVectorGenericData(const std::vector<std::unique_ptr<IData>>& vec);
 
-TEST(DynamicNodeTest, DynamicTransformer) {
+TEST(NodeTest, Transformer) {
     std::cout << "\n======================================================================" << std::endl;
-    std::cout << "DynamicNodeTest test: DynamicTransformer" << std::endl;
+    std::cout << "NodeTest test: Transformer" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     {
@@ -62,9 +66,52 @@ TEST(DynamicNodeTest, DynamicTransformer) {
 
 // =========================================================================================================
 
-TEST(DynamicNodeTest, DynamicFilter) {
+TEST(NodeTest, Processor) {
     std::cout << "\n======================================================================" << std::endl;
-    std::cout << "DynamicNodeTest test: DynamicFilter" << std::endl;
+    std::cout << "NodeTest test: Processor" << std::endl;
+    std::cout << "======================================================================" << std::endl;
+
+    {
+        auto sortingFunction = [](std::vector<int>& data) {
+            std::sort(data.begin(), data.end());
+            return data;
+        };
+
+        const Processor<int> processor(sortingFunction);
+
+
+        std::vector<std::unique_ptr<IData>> inputData;
+        inputData.reserve(10);
+        inputData.emplace_back(make_unique<Data<int>>(5));
+        inputData.emplace_back(make_unique<Data<int>>(2));
+        inputData.emplace_back(make_unique<Data<int>>(9));
+        inputData.emplace_back(make_unique<Data<int>>(4));
+
+        const auto outputData = processor.process(inputData);
+
+        std::cout<< "Input vector: ";
+        printVectorGenericData<int>(inputData);
+        std::cout << "Pipelined output: ";
+        printVectorGenericData<int>(outputData);
+
+        const std::vector<float> expectedOutput = {2, 4, 5, 9};
+
+        for (int i = 0; i < outputData.size(); ++i) {
+            const auto castedData = dynamic_cast<Data<int>*>(outputData[i].get());
+            ASSERT_NE(castedData, nullptr);
+            EXPECT_FLOAT_EQ(static_cast<int>(*castedData), expectedOutput[i]);
+        }
+    }
+
+    std::cout << "======================================================================" << std::endl;
+
+}
+
+// =========================================================================================================
+
+TEST(NodeTest, Filter) {
+    std::cout << "\n======================================================================" << std::endl;
+    std::cout << "NodeTest test: Filter" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     {
@@ -104,9 +151,9 @@ TEST(DynamicNodeTest, DynamicFilter) {
 
 // =========================================================================================================
 
-TEST(DynamicNodeTest, DynamicAggregator) {
+TEST(NodeTest, Aggregator) {
     std::cout << "\n======================================================================" << std::endl;
-    std::cout << "DynamicNodeTest test: DynamicAggregator" << std::endl;
+    std::cout << "NodeTest test: Aggregator" << std::endl;
     std::cout << "======================================================================" << std::endl;
 
     {
