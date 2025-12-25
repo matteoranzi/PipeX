@@ -12,10 +12,8 @@
 #include <vector>
 #include <list>
 
-#include "IPipeline.h"
 #include "nodes/INode.h"
 #include "data/IData.h"
-#include "data/Data.h"
 #include "errors/TypeMismatchExpection.h"
 #include "nodes/Sink.h"
 #include "nodes/Source.h"
@@ -40,12 +38,9 @@ namespace PipeX {
      * The pipeline stores a list of nodes derived from INode which process data represented
      * by IData wrappers. Each node consumes and produces vectors of unique_ptr<IData>.
      *
-     * @tparam InputT  Type of the pipeline input elements.
-     * @tparam OutputT Type of the pipeline output elements.
      */
 
-    template <typename InputT, typename OutputT>
-    class Pipeline : public IPipeline {
+    class Pipeline {
     public:
 
         /**
@@ -71,7 +66,7 @@ namespace PipeX {
          *
          * Logs destruction. Owned nodes are destroyed automatically.
          */
-        ~Pipeline() override {
+        ~Pipeline() {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
@@ -92,6 +87,8 @@ namespace PipeX {
                 for (const auto& node : _pipeline.nodes) {
                     nodes.push_back(node->clone());
                 }
+                hasSourceNode = _pipeline.hasSourceNode;
+                hasSinkNode = _pipeline.hasSinkNode;
             }
 
             return *this;
@@ -193,18 +190,14 @@ namespace PipeX {
          *         expected Data<OutputT> type.
          * @throws Any exceptions propagated by node processing are rethrown after logging.
          */
-        std::vector<OutputT> run(const std::vector<InputT>& input) const {
+        void run() const {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
-            std::vector<std::unique_ptr<IData>> data;
-
-            // Convert input to IData
-            if (!hasSourceNode) {
-                data.reserve(input.size());
-                for (auto& item : input) {
-                    data.push_back(make_unique<Data<InputT>>(item));
-                }
+            if (!isValid()) {
+                throw std::runtime_error("Pipeline is not valid");
             }
+
+            std::vector<std::unique_ptr<IData>> data;
 
             // Process through nodes
             for (const auto& node : nodes) {
@@ -219,36 +212,6 @@ namespace PipeX {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->name.c_str());
                     throw;
                 }
-            }
-
-            // Convert back to OutputT
-            std::vector<OutputT> output{};
-            if (!hasSinkNode) {
-                output.reserve(data.size());
-                for (auto& item : data) {
-                    auto castedData = dynamic_cast<Data<OutputT>*>(item.get());
-                    if (!castedData) {
-                        throw TypeMismatchException(
-                                            this->name,
-                                            typeid(OutputT),
-                                            typeid(item.get())
-                                        );
-                    }
-                    output.push_back(castedData->value);
-                }
-            }
-
-            return output;
-        }
-
-        //FIXME change name to avoid confusion with Pipeline::run
-        void start() const override {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.start()\n", name.c_str(), this);
-            if (isValid()) {
-                run({});
-            } else {
-                //TODO create specific exception (check wether due to missing Source or Sink)
-                throw std::runtime_error("Pipeline is not valid");
             }
         }
 
@@ -280,12 +243,17 @@ namespace PipeX {
         bool hasSinkNode = false;
 
 
+        template<template<typename...> class Template, typename T>
+        struct is_specialization_of : std::false_type {};
+
+        template<template<typename...> class Template, typename... Args>
+        struct is_specialization_of<Template, Template<Args...>> : std::true_type {};
+
         template <typename NodeT>
         void checkPipelineIntegrity() {
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
 
-            //TODO create specific exceptions
-            if (std::is_same<NodeT, Source<InputT>>::value) {
+            if (is_specialization_of<Source, NodeT>::value) {
                 if (hasSourceNode) {
                     throw std::runtime_error("Pipeline can have only one Source node");
                 }
@@ -295,7 +263,7 @@ namespace PipeX {
                 }
 
                 hasSourceNode = true;
-            } else if (std::is_same<NodeT, Sink<OutputT>>::value) {
+            } else if (is_specialization_of<Sink, NodeT>::value) {
                 if (hasSinkNode) {
                     throw std::runtime_error("Pipeline can have only one Sink node");
                 }

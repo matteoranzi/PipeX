@@ -32,21 +32,28 @@ TEST(PipelineTest, BasicPipeline) {
             return data >= lowerBound && data <= upperBound;
         };
 
-
-        Pipeline<int, float> pipeline("BasicPipeline");
-        pipeline.addNode<Transformer<int, float>>(halfFunction)
-                        .addNode<Filter<float>>(boundedPredicate);
-
-
         constexpr int inputDataLength = 10;
         std::vector<int> inputData;
-        inputData.reserve(inputDataLength);
-        for (int i = 1; i <= inputDataLength; ++i) {
-            inputData.push_back(i * 3);
-        }
+        std::vector<float> outputData;
+
+        Pipeline pipeline("BasicPipeline");
+            pipeline.addNode<Source<int>>([&]()
+                            {
+
+                                inputData.reserve(inputDataLength);
+                                for (int i = 1; i <= inputDataLength; ++i) {
+                                    inputData.push_back(i * 3);
+                                }
+                                return inputData;
+                            })
+                .addNode<Transformer<int, float>>(halfFunction)
+                .addNode<Filter<float>>(boundedPredicate)
+                .addNode<Sink<float>>([&](const std::vector<float>& data) {
+                    outputData = data;
+                });
 
 
-        const auto outputData = pipeline.run(inputData);// std::cout << "outputData size: " << outputData.size() << std::endl;
+        pipeline.run();
 
         std::cout<< "Input vector: ";
         printVector(inputData);
@@ -78,14 +85,27 @@ TEST(PipelineTest, CopyPipeline) {
             return value + 5;
         };
 
-        Pipeline<int, int> originalPipeline("OriginalPipeline");
+        const std::vector<int> inputData = {1, 2, 3, 4, 5};
+        std::vector<int> outputData;
+
+        Pipeline originalPipeline("OriginalPipeline");
+        originalPipeline.addNode<Source<int>>([&]() {
+            std::vector<int> data;
+            data.reserve(inputData.size());
+            for (const auto& item : inputData) {
+                data.push_back(item);
+            }
+            return data;
+        });
         originalPipeline.addNode<Filter<int>>(isOdd);
         originalPipeline.addNode<Transformer<int, int>>(addFive);
+        originalPipeline.addNode<Sink<int>>([&](const std::vector<int>& data) {
+            outputData = data;
+        });
 
-        Pipeline<int, int> copiedPipeline = originalPipeline; // Copy the pipeline
+        Pipeline copiedPipeline = originalPipeline; // Copy the pipeline
 
-        const std::vector<int> inputData = {1, 2, 3, 4, 5};
-        const std::vector<int> outputData = copiedPipeline.run(inputData);
+        copiedPipeline.run();
         const std::vector<int> expectedOutput = {6, 8, 10};
 
         std::cout<< "Input vector: ";
