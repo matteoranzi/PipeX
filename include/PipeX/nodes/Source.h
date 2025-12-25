@@ -9,13 +9,13 @@
 #include "NodeCRTP.h"
 
 namespace PipeX {
-    template <typename OutputT>
-    class Source : NodeCRTP<Source<OutputT>, void, OutputT> {
+    template <typename T>
+    class Source : public NodeCRTP<Source<T>, T, T> {
 
-        using Base = NodeCRTP<Source<OutputT>, void, OutputT>;
+        using Base = NodeCRTP<Source<T>, T, T>;
 
     public:
-        using Function = std::function<OutputT()>;
+        using Function = std::function<std::vector<T>()>;
 
         /**
          * @brief Constructs a Source node with a source function.

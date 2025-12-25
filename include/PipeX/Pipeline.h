@@ -241,6 +241,17 @@ namespace PipeX {
             return output;
         }
 
+        //FIXME change name to avoid confusion with Pipeline::run
+        void start() const override {
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.start()\n", name.c_str(), this);
+            if (isValid()) {
+                run({});
+            } else {
+                //TODO create specific exception (check wether due to missing Source or Sink)
+                throw std::runtime_error("Pipeline is not valid");
+            }
+        }
+
         /**
          * @brief Get the pipeline name.
          *
@@ -275,12 +286,14 @@ namespace PipeX {
 
             //TODO create specific exceptions
             if (std::is_same<NodeT, Source<InputT>>::value) {
-                if (!nodes.empty()) {
-                    throw std::runtime_error("Source node must be the first node in the pipeline");
-                }
                 if (hasSourceNode) {
                     throw std::runtime_error("Pipeline can have only one Source node");
                 }
+
+                if (!nodes.empty()) {
+                    throw std::runtime_error("Source node must be the first node in the pipeline");
+                }
+
                 hasSourceNode = true;
             } else if (std::is_same<NodeT, Sink<OutputT>>::value) {
                 if (hasSinkNode) {

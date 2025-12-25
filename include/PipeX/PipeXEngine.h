@@ -9,8 +9,6 @@
 
 #include "Pipeline.h"
 #include "IPipeline.h"
-#include "data/Data.h"
-#include "data/IData.h"
 
 #include "extended_cpp_standard/memory.h"
 
@@ -31,7 +29,9 @@ namespace PipeX {
         }
 
         void start() const {
-
+            for (auto& pipeline : pipelines) {
+                pipeline->start();
+            }
         }
 
         void clearPipelines() {

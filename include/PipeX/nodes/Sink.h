@@ -10,13 +10,13 @@
 #include "NodeCRTP.h"
 
 namespace PipeX {
-    template <typename InputT>
-    class Sink: public NodeCRTP<Sink<InputT>, InputT, void> {
+    template <typename T>
+    class Sink: public NodeCRTP<Sink<T>, T, T> {
 
-        using Base = NodeCRTP<Sink<InputT>, InputT, void>;
+        using Base = NodeCRTP<Sink<T>, T, T>;
 
     public:
-        using Function = std::function<void(std::vector<InputT>&)>;
+        using Function = std::function<void(std::vector<T>&)>;
 
         /**
          * @brief Constructs a Sink node with a sink function.

@@ -8,7 +8,7 @@ namespace PipeX {
     class IPipeline {
     public:
         virtual ~IPipeline() = default;
-
+        virtual void start() const = 0;
     };
 }
 #endif //PIPEX_IPIPELINE_H
