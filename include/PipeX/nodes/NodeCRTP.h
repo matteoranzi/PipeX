@@ -45,7 +45,7 @@ namespace PipeX {
          *
          * @param event The lifecycle event name (e.g., "clone", "execute")
          */
-        static void logLifeCycle(const std::string& event) {
+        void logLifeCycle(const std::string& event) const {
             PIPEX_PRINT_DEBUG_INFO("[%s] \"%s\" {%p}.%s()\n",
                 typeName(),
                 this->name().c_str(),

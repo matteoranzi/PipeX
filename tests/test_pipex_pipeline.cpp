@@ -120,7 +120,55 @@ TEST(PipelineTest, CopyPipeline) {
 }
 // =========================================================================================================
 
+// =========================================================================================================
 
+TEST(PipelineTest, MovePipeline) {
+    std::cout << "\n======================================================================" << std::endl;
+    std::cout << "Pipeline test: MovePipeline" << std::endl;
+    std::cout << "======================================================================" << std::endl;
+
+    { // Create unnamed scope to compact destructor output in this test's output
+        auto isOdd = [](const int& value) {
+            return value % 2 != 0;
+        };
+        auto addFive = [](const int& value) {
+            return value + 5;
+        };
+
+        const std::vector<int> inputData = {1, 2, 3, 4, 5};
+        std::vector<int> outputData;
+
+        Pipeline originalPipeline("OriginalPipeline");
+        originalPipeline.addNode<Source<int>>([&]() {
+            std::vector<int> data;
+            data.reserve(inputData.size());
+            for (const auto& item : inputData) {
+                data.push_back(item);
+            }
+            return data;
+        });
+        originalPipeline.addNode<Filter<int>>(isOdd);
+        originalPipeline.addNode<Transformer<int, int>>(addFive);
+        originalPipeline.addNode<Sink<int>>([&](const std::vector<int>& data) {
+            outputData = data;
+        });
+
+        Pipeline copiedPipeline = std::move(originalPipeline); // Copy the pipeline
+
+        copiedPipeline.run();
+        const std::vector<int> expectedOutput = {6, 8, 10};
+
+        std::cout<< "Input vector: ";
+        printVector(inputData);
+        std::cout << "Pipeline output vector: ";
+        printVector(outputData);
+
+        // Check if the output matches the expected output
+        EXPECT_EQ(outputData, expectedOutput);
+    }
+    std::cout << "======================================================================" << std::endl;
+}
+// =========================================================================================================
 
 template <typename T>
 void printVector(const std::vector<T>& vec) {

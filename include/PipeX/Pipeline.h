@@ -130,6 +130,11 @@ namespace PipeX {
             if (this != &_pipeline) {
                 this->nodes = std::move(_pipeline.nodes);
                 this->name = std::move(_pipeline.name);
+
+                this->hasSourceNode = _pipeline.hasSourceNode;
+                this->hasSinkNode = _pipeline.hasSinkNode;
+                _pipeline.hasSourceNode = false;
+                _pipeline.hasSinkNode = false;
             }
 
             return *this;
@@ -171,7 +176,7 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline&& addNode(Args&&... args) && {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, newNode->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode()&& --> std::move to addNode()&\n", name.c_str(), this);
             return std::move(addNode<NodeT>(std::forward<Args>(args)...));
         }
 
@@ -183,10 +188,8 @@ namespace PipeX {
          * After all nodes have processed the data, the IData elements are dynamic_cast back
          * to Data<OutputT> and their contained values are extracted into the returned vector.
          *
-         * @param input Vector of InputT input values.
-         * @return Vector of OutputT results.
          *
-         * @throws PipeXTypeError If any intermediate or final IData cannot be cast to the
+         * @throws TypeMismatchException If any intermediate or final IData cannot be cast to the
          *         expected Data<OutputT> type.
          * @throws Any exceptions propagated by node processing are rethrown after logging.
          */
@@ -194,6 +197,7 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
             if (!isValid()) {
+                //TODO improve error message to specify what is missing (source/sink and on which pipeline)
                 throw std::runtime_error("Pipeline is not valid");
             }
 
@@ -205,7 +209,7 @@ namespace PipeX {
                     PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->name.c_str());
                     data = node->process(std::move(data));
                 } catch (TypeMismatchException &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> PipeXTypeError exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> TypeMismatchException exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
                     // Rethrow the exception to propagate it up the call stack
                     throw;
                 } catch (...) {
@@ -249,8 +253,28 @@ namespace PipeX {
         template<template<typename...> class Template, typename... Args>
         struct is_specialization_of<Template, Template<Args...>> : std::true_type {};
 
+        /**
+         * @brief Checks pipeline integrity rules before adding a node.
+         *
+         * This template method enforces the following constraints:
+         * - NodeT must derive from INode (compile-time check via static_assert)
+         * - Only one Source node is allowed, and it must be the first node
+         * - Only one Sink node is allowed, and it must be the last node
+         * - No nodes can be added after a Sink node
+         *
+         * @tparam NodeT The type of node being added to the pipeline.
+         *
+         * @throws std::runtime_error If a Source node already exists in the pipeline.
+         * @throws std::runtime_error If attempting to add a Source node when other nodes exist.
+         * @throws std::runtime_error If a Sink node already exists in the pipeline.
+         * @throws std::runtime_error If attempting to add a non-Sink node after a Sink node.
+         *
+         * @note This method updates the hasSourceNode and hasSinkNode flags based on the node type.
+         */
         template <typename NodeT>
         void checkPipelineIntegrity() {
+            //TODO create custom exceptions for pipeline integrity violations
+
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
 
             if (is_specialization_of<Source, NodeT>::value) {

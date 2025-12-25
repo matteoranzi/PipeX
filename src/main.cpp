@@ -19,6 +19,21 @@ int main() {
             std::cout << std::endl;
         });
 
+    pipex_engine.newPipeline("AnotherBasicPipeline")
+        .addNode<PipeX::Source<int>>([]() {
+            return std::vector<int>{10, 20, 30};
+        })
+        .addNode<PipeX::Transformer<int, int>>([](const int& data) {
+            return data + 5;
+        })
+        .addNode<PipeX::Sink<int>>([](const std::vector<int>& data) {
+            for (const auto& item : data) {
+                std::cout << item << " ";
+            }
+            std::cout << std::endl;
+        });
+
+
     pipex_engine.start();
 
 
