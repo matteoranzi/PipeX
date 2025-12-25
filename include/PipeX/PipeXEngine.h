@@ -24,7 +24,7 @@ namespace PipeX {
         ~PipeXEngine() = default;
 
         template<typename InputT, typename OutputT>
-        Pipeline<InputT, OutputT>& createPipeline(const std::string& name) {
+        Pipeline<InputT, OutputT>& newPipeline(const std::string& name) {
             auto pipeline = make_unique<Pipeline<InputT, OutputT>>(std::move(name));
             pipelines.push_back(std::move(pipeline));
             return *static_cast<Pipeline<InputT, OutputT>*>(pipelines.back().get());

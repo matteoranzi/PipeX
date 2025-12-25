@@ -17,6 +17,8 @@
 #include "data/IData.h"
 #include "data/Data.h"
 #include "errors/TypeMismatchExpection.h"
+#include "nodes/Sink.h"
+#include "nodes/Source.h"
 
 //TODO add static_assert to check that InputT and OutputT are supported by the nodes added to the pipeline
 // e.g. if a Transformer<InputT, IntermediateT> is added, InputT must match the Pipeline InputT
@@ -42,11 +44,6 @@ namespace PipeX {
      * @tparam OutputT Type of the pipeline output elements.
      */
 
-    //TODO force the usage of Source and Sink nodes at the beginning and end of the pipeline respectively
-    // in this way Pipeline doesn't need to be templatized on InputT and OutputT and PipeXEngine can store and launch pipelines easily.
-    // -> Pipeline::run() -> no template parameters, takes no arguments, returns no value
-    // -> Source node generates the input data internally (e.g. from a file, a sensor, etc.)
-    // -> Sink node consumes the output data internally (e.g. writes to a file, sends to a display, etc.)
     template <typename InputT, typename OutputT>
     class Pipeline : public IPipeline {
     public:
@@ -157,7 +154,7 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
-            static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
+            checkPipelineIntegrity<NodeT>();
 
             auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->name.c_str());
@@ -177,12 +174,8 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline&& addNode(Args&&... args) && {
-            static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
-
-            auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, newNode->name.c_str());
-            nodes.push_back(std::move(newNode));
-            return std::move(*this);
+            return std::move(addNode<NodeT>(std::forward<Args>(args)...));
         }
 
         /**
@@ -203,11 +196,14 @@ namespace PipeX {
         std::vector<OutputT> run(const std::vector<InputT>& input) const {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
-            // Convert input to IData
             std::vector<std::unique_ptr<IData>> data;
-            data.reserve(input.size());
-            for (auto& item : input) {
-                data.push_back(make_unique<Data<InputT>>(item));
+
+            // Convert input to IData
+            if (!hasSourceNode) {
+                data.reserve(input.size());
+                for (auto& item : input) {
+                    data.push_back(make_unique<Data<InputT>>(item));
+                }
             }
 
             // Process through nodes
@@ -219,25 +215,27 @@ namespace PipeX {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> PipeXTypeError exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
                     // Rethrow the exception to propagate it up the call stack
                     throw;
-                } catch (... ) {
+                } catch (...) {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->name.c_str());
                     throw;
                 }
             }
 
             // Convert back to OutputT
-            std::vector<OutputT> output;
-            output.reserve(data.size());
-            for (auto& item : data) {
-                auto castedData = dynamic_cast<Data<OutputT>*>(item.get());
-                if (!castedData) {
-                    throw TypeMismatchException(
-                                        this->name,
-                                        typeid(OutputT),
-                                        typeid(item.get())
-                                    );
+            std::vector<OutputT> output{};
+            if (!hasSinkNode) {
+                output.reserve(data.size());
+                for (auto& item : data) {
+                    auto castedData = dynamic_cast<Data<OutputT>*>(item.get());
+                    if (!castedData) {
+                        throw TypeMismatchException(
+                                            this->name,
+                                            typeid(OutputT),
+                                            typeid(item.get())
+                                        );
+                    }
+                    output.push_back(castedData->value);
                 }
-                output.push_back(castedData->value);
             }
 
             return output;
@@ -249,6 +247,10 @@ namespace PipeX {
          * @return Pipeline name by value.
          */
         std::string getName() const { return name; }
+
+        bool isValid() const {
+            return hasSourceNode && hasSinkNode;
+        }
 
     private:
         /**
@@ -262,6 +264,33 @@ namespace PipeX {
          * Nodes are stored as unique_ptr<DynamicNode> allowing polymorphic behavior.
          */
         std::list<std::unique_ptr<INode>> nodes;
+
+        bool hasSourceNode = false;
+        bool hasSinkNode = false;
+
+
+        template <typename NodeT>
+        void checkPipelineIntegrity() {
+            static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
+
+            //TODO create specific exceptions
+            if (std::is_same<NodeT, Source<InputT>>::value) {
+                if (!nodes.empty()) {
+                    throw std::runtime_error("Source node must be the first node in the pipeline");
+                }
+                if (hasSourceNode) {
+                    throw std::runtime_error("Pipeline can have only one Source node");
+                }
+                hasSourceNode = true;
+            } else if (std::is_same<NodeT, Sink<OutputT>>::value) {
+                if (hasSinkNode) {
+                    throw std::runtime_error("Pipeline can have only one Sink node");
+                }
+                hasSinkNode = true;
+            } else if (hasSinkNode) {
+                throw std::runtime_error("Sink node must be the last node in the pipeline");
+            }
+        }
     };
 }
 
