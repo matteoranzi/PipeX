@@ -7,7 +7,7 @@
 
 #ifdef PIPEX_PRINT_DEBUG_ENABLED
 
-#include <debug/print_debug.h>
+#include "debug/print_debug.h"
 
 #define PIPEX_PRINT_DEBUG_INFO(format, ...) PRINT_DEBUG_INFO("[PipeX] " format, ##__VA_ARGS__)
 #define PIPEX_PRINT_DEBUG_WARN(format, ...) PRINT_DEBUG_WARN("[PipeX] " format, ##__VA_ARGS__)

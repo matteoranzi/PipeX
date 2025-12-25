@@ -1,5 +1,5 @@
 #ifndef PIPEX_DATA_HP
-    #define PIPEX_DATA_HP
+#define PIPEX_DATA_HP
 
 #include "IData.h"
 

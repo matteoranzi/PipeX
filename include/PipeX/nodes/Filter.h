@@ -32,7 +32,7 @@ namespace PipeX {
      * @endcode
      */
     template <typename T>
-    class Filter final: public NodeCRTP<Filter<T>, T, T> {
+    class Filter: public NodeCRTP<Filter<T>, T, T> {
 
         using Base = NodeCRTP<Filter<T>, T, T>;
 
@@ -150,7 +150,7 @@ namespace PipeX {
          * @note Memory for filtered-out elements is automatically released.
          */
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
-            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&&");
+            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&");
 
             // Extract input data using Base helper
             auto inputData = this->extractInputData(input);

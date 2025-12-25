@@ -37,7 +37,7 @@ namespace PipeX {
      * @endcode
      */
     template <typename T>
-    class Processor final: public NodeCRTP<Processor<T>, T, T> {
+    class Processor: public NodeCRTP<Processor<T>, T, T> {
         using Base = NodeCRTP<Processor<T>, T, T>;
 
     public:
@@ -123,7 +123,7 @@ namespace PipeX {
          */
         std::vector<std::unique_ptr<IData>> processImpl(
             const std::vector<std::unique_ptr<IData>>& input) const override {
-            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&&)");
+            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             auto inputData = this->extractInputData(input);
             auto outputData = processorFunction(inputData);

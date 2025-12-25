@@ -104,7 +104,7 @@ namespace PipeX {
          * @param output Vector of typed output values (moved)
          * @return Vector of wrapped IData pointers ready for pipeline transmission
          */
-        //Fixme: the solution with CRTP helper functions is cleaner but less efficient: a copy of the entire input is created (extracted) and stored
+        //Fixme: the solution with CRTP helper functions is cleaner but less efficient: a copy of the entire input is created (wrapped) and stored
         std::vector<std::unique_ptr<IData>> wrapOutputData(std::vector<OutputT>&& output) const {
             std::vector<std::unique_ptr<IData>> wrappedData;
             wrappedData.reserve(output.size());

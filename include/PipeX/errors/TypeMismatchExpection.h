@@ -12,7 +12,7 @@
 
 namespace PipeX {
 
-    class TypeMismatchException : public std::runtime_error {
+    class TypeMismatchException final : public std::runtime_error {
     public:
         TypeMismatchException(
             const std::string& nodeName,

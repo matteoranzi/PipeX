@@ -30,7 +30,7 @@ namespace PipeX {
      *  @endcode
      */
     template <typename InputT, typename OutputT>
-    class Transformer final: public NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT> {
+    class Transformer: public NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT> {
 
         using Base = NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT>;
 

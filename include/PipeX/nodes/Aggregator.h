@@ -33,7 +33,7 @@ namespace PipeX {
      *  @endcode
      */
     template <typename InputT, typename OutputT>
-    class Aggregator final: public NodeCRTP<Aggregator<InputT, OutputT>, InputT, OutputT> {
+    class Aggregator: public NodeCRTP<Aggregator<InputT, OutputT>, InputT, OutputT> {
 
         using Base = NodeCRTP<Aggregator<InputT, OutputT>, InputT, OutputT>;
 
@@ -83,7 +83,7 @@ namespace PipeX {
 
         
         std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
-            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&&)");
+            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             // Extract input data
             auto inputData = this->extractInputData(input);

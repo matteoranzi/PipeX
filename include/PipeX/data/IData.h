@@ -5,6 +5,8 @@
 #ifndef PIPEX_GENERIC_BASE_DATA_H
 #define PIPEX_GENERIC_BASE_DATA_H
 
+#include <memory>
+
 class IData {
 public:
     virtual ~IData() = default;

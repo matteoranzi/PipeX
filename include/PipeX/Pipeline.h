@@ -12,6 +12,7 @@
 #include <vector>
 #include <list>
 
+#include "IPipeline.h"
 #include "nodes/INode.h"
 #include "data/IData.h"
 #include "data/Data.h"
@@ -40,8 +41,14 @@ namespace PipeX {
      * @tparam InputT  Type of the pipeline input elements.
      * @tparam OutputT Type of the pipeline output elements.
      */
+
+    //TODO force the usage of Source and Sink nodes at the beginning and end of the pipeline respectively
+    // in this way Pipeline doesn't need to be templatized on InputT and OutputT and PipeXEngine can store and launch pipelines easily.
+    // -> Pipeline::run() -> no template parameters, takes no arguments, returns no value
+    // -> Source node generates the input data internally (e.g. from a file, a sensor, etc.)
+    // -> Sink node consumes the output data internally (e.g. writes to a file, sends to a display, etc.)
     template <typename InputT, typename OutputT>
-    class Pipeline {
+    class Pipeline : public IPipeline {
     public:
 
         /**
@@ -67,7 +74,7 @@ namespace PipeX {
          *
          * Logs destruction. Owned nodes are destroyed automatically.
          */
-        ~Pipeline() {
+        ~Pipeline() override {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
@@ -150,6 +157,8 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
+            static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
+
             auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->name.c_str());
             nodes.push_back(std::move(newNode));
@@ -168,6 +177,8 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline&& addNode(Args&&... args) && {
+            static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
+
             auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&&\n", name.c_str(), this, newNode->name.c_str());
             nodes.push_back(std::move(newNode));

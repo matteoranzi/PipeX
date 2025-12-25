@@ -6,7 +6,11 @@
 #ifndef PIPEX_DYNAMICNODE_HPP
 #define PIPEX_DYNAMICNODE_HPP
 
+#include <typeindex>
+#include <sstream>
+
 #include "PipeX/data/IData.h"
+#include "PipeX/debug/pipex_print_debug.h"
 
 //TODO sort node
 //TODO nodes with pre-implemented processImpl e.g. pass-through node, logger node, etc.
@@ -187,8 +191,8 @@ namespace PipeX {
          *       (e.g. logging) while derived classes only implement the core logic.
          */
         virtual std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const {
-            PRINT_DEBUG_ERROR("'DynamicNode::processImpl' METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
-            throw std::logic_error("DynamicNode::processImpl(const std::vector<std::unique_ptr<Data_>>&&) not implemented");
+            PIPEX_PRINT_DEBUG_ERROR("'DynamicNode::processImpl' METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
+            throw std::logic_error("DynamicNode::processImpl(const std::vector<std::unique_ptr<IData>>&) not implemented");
         }
     };
 }
