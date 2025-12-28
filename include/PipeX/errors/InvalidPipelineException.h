@@ -17,7 +17,7 @@ namespace PipeX {
         const std::string pipelineName_;
         const std::string message_;
 
-        InvalidPipelineException(const std::string& pipelineName, const std::string& message) : PipeXException(formatMessage(pipelineName, message)), message_(message), pipelineName_(pipelineName) {}
+        InvalidPipelineException(const std::string& pipelineName, const std::string& message) : PipeXException(formatMessage(pipelineName, message)), pipelineName_(pipelineName), message_(message) {}
 
     private:
         static std::string formatMessage(const std::string& pipelineName, const std::string& message) {
