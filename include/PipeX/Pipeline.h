@@ -8,7 +8,7 @@
 #include <assert.h>
 
 #include "PipeX/debug/pipex_print_debug.h"
-#include "extended_cpp_standard/memory.h"
+#include "my_extended_cpp_standard/my_memory.h"
 
 #include <string>
 #include <vector>
@@ -286,13 +286,6 @@ namespace PipeX {
         bool hasSourceNode = false;
         bool hasSinkNode = false;
 
-
-        template<template<typename...> class Template, typename T>
-        struct is_specialization_of : std::false_type {};
-
-        template<template<typename...> class Template, typename... Args>
-        struct is_specialization_of<Template, Template<Args...>> : std::true_type {};
-
         /**
          * @brief Checks pipeline integrity rules before adding a node.
          *
@@ -312,7 +305,6 @@ namespace PipeX {
          * @note This method updates the hasSourceNode and hasSinkNode flags based on the node type.
          */
         template <typename NodeT, typename... Args>
-        //FIXME update using INode::isSource() and INode::isSink() instead of is_specialization_of
         //currently derived classes of Sink and Source are not recognised as Sink and Source respectively
         std::unique_ptr<NodeT> checkPipelineIntegrity(Args&&... args) {
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");

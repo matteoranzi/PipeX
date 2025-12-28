@@ -9,7 +9,7 @@
 
 #include "NodeCRTP.h"
 #include "PipeX/data/IData.h"
-#include "extended_cpp_standard/memory.h"
+#include "my_extended_cpp_standard/my_memory.h"
 
 namespace PipeX {
     /**
@@ -116,6 +116,9 @@ namespace PipeX {
         ~Filter() override {
             this->logLifeCycle("Destructor()");
         }
+
+        virtual bool isSource() const final { return  false; }
+        virtual bool isSink() const final { return  false; }
 
     protected:
         /**

@@ -71,6 +71,8 @@ namespace PipeX {
             this->logLifeCycle("Destructor()");
         }
 
+        virtual bool isSource() const final { return  false; }
+        virtual bool isSink() const final { return  false; }
 
     protected:
         

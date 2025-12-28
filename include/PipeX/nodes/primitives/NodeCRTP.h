@@ -10,7 +10,7 @@
 
 #include "INode.h"
 #include "PipeX/debug/pipex_print_debug.h"
-#include "extended_cpp_standard/memory.h"
+#include "my_extended_cpp_standard/my_memory.h"
 #include "PipeX/data/Data.h"
 #include "PipeX/errors/TypeMismatchExpection.h"
 
