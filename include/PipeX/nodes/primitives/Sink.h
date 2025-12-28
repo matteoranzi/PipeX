@@ -67,6 +67,8 @@ namespace PipeX {
             this->logLifeCycle("Destructor()");
         }
 
+        bool isSink() const override final { return true; }
+
     protected:
         std::string typeName() const override {
             return "Sink";

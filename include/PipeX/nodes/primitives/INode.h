@@ -171,6 +171,9 @@ namespace PipeX {
             return this->process(std::move(input));
         }
 
+        virtual bool isSource() const { return  false; }
+        virtual bool isSink() const { return  false; }
+
     private:
         /**
          * @brief Implementation hook for derived classes to perform processing.

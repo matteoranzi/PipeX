@@ -21,23 +21,28 @@ int main() {
             std::cout << std::endl;
         });
 
-    pipex_engine->newPipeline("AnotherBasicPipeline")
-        .addNode<PipeX::Source<int>>([]() {
-            return std::vector<int>{10, 20, 30};
-        })
-        .addNode<PipeX::Transformer<int, int>>([](const int& data) {
-            return data + 5;
-        })
-        .addNode<PipeX::Sink<int>>([](const std::vector<int>& data) {
-            for (const auto& item : data) {
-                std::cout << item << " ";
-            }
-            std::cout << std::endl;
-        });
+    try {
+        pipex_engine->newPipeline("AnotherBasicPipeline")
+            .addNode<PipeX::Source<int>>("mynode", []() {
+                return std::vector<int>{10, 20, 30};
+            })
+            .addNode<PipeX::Transformer<int, int>>("another-node", [](const int& data) {
+                return data + 5;
+            }).removeNodeByName("another-node")
+            .addNode<PipeX::Sink<int>>("another-node", [](const std::vector<int>& data) {
+                for (const auto& item : data) {
+                    std::cout << item << " ";
+                }
+                std::cout << std::endl;
+            })
+            .removeNodeByName("another-node");
+    } catch (PipeX::InvalidPipelineException& e) {
+        PRINT_DEBUG_ERROR("Test exception caught while creating pipeline: %s\n", e.what());
+        //New pipeline is not created and PipeXEngine continue with the previous ones
+    }
 
 
     pipex_engine->start();
-
 
 
     return 0;

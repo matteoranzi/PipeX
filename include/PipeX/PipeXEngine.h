@@ -51,8 +51,13 @@ namespace PipeX {
          * @return Reference to the newly created pipeline.
          */
         Pipeline& newPipeline(const std::string& name) {
-            pipelines.emplace_back(std::make_shared<Pipeline>(name));
-            return *pipelines.back();
+            try {
+                pipelines.emplace_back(std::make_shared<Pipeline>(name));
+                return *pipelines.back();
+            } catch (InvalidPipelineException& e) {
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidPipelineException exception while creating new pipeline \"%s\": %s\n", name.c_str(), e.what());
+                throw;
+            }
         }
 
         /**

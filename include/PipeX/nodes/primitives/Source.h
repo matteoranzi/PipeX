@@ -66,6 +66,8 @@ namespace PipeX {
             this->logLifeCycle("Destructor()");
         }
 
+        bool isSource() const override final { return true; }
+
     protected:
         std::string typeName() const override {
             return "Source";

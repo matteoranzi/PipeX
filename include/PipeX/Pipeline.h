@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <set>
 
 #include "nodes/primitives/INode.h"
 #include "data/IData.h"
@@ -28,7 +29,6 @@
 //TODO add SFINAE to restrict NodeT in addNode to only types derived from INode
 
 //TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
-//TODO add method to remove nodes from the pipeline, either by name or by index, and check the pipeline integrity after removal
 
 //TODO a std::set of nodes names to avoid duplicates, throw exception if a node with the same name is added (if deletion by name is implemented)
 
@@ -164,9 +164,12 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
-            checkPipelineIntegrity<NodeT>();
+            auto newNode = checkPipelineIntegrity<NodeT>(std::forward<Args>(args)...);
 
-            auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
+            if (!newNode) {
+                throw InvalidPipelineException(this->name, "Failed to create node of type " + std::string(typeid(NodeT).name()));
+            }
+
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->name.c_str());
             nodes.push_back(std::move(newNode));
             return *this;
@@ -186,6 +189,26 @@ namespace PipeX {
         Pipeline&& addNode(Args&&... args) && {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode()&& --> std::move to addNode()&\n", name.c_str(), this);
             return std::move(addNode<NodeT>(std::forward<Args>(args)...));
+        }
+
+        // If no node with the given name is found, the pipeline remains unchanged.
+        Pipeline& removeNodeByName(const std::string& nodeName) & {
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.removeNodeByName(\"%s\")&\n", name.c_str(), this, nodeName.c_str());
+
+            for (auto it = nodes.begin(); it != nodes.end(); ++it) {
+                if ((*it)->name == nodeName) {
+                    if ((*it)->isSource()) {
+                        hasSourceNode = false;
+                    } else if ((*it)->isSink()) {
+                        hasSinkNode = false;
+                    }
+
+                    nodes.erase(it);
+                    nodesNameSet.erase(nodeName);
+                    return *this;
+                }
+            }
+            return *this;
         }
 
         /**
@@ -251,6 +274,7 @@ namespace PipeX {
          * @brief Human-readable name for the pipeline used in debug logs.
          */
         std::string name;
+        std::set<std::string> nodesNameSet;
 
         /**
          * @brief List of dynamically allocated nodes (ownership).
@@ -280,37 +304,46 @@ namespace PipeX {
          *
          * @tparam NodeT The type of node being added to the pipeline.
          *
-         * @throws std::runtime_error If a Source node already exists in the pipeline.
-         * @throws std::runtime_error If attempting to add a Source node when other nodes exist.
-         * @throws std::runtime_error If a Sink node already exists in the pipeline.
-         * @throws std::runtime_error If attempting to add a non-Sink node after a Sink node.
+         * @throws InvalidPipelineException If a Source node already exists in the pipeline.
+         * @throws InvalidPipelineException If attempting to add a Source node when other nodes exist.
+         * @throws InvalidPipelineException If a Sink node already exists in the pipeline.
+         * @throws InvalidPipelineException If attempting to add a non-Sink node after a Sink node.
          *
          * @note This method updates the hasSourceNode and hasSinkNode flags based on the node type.
          */
-        template <typename NodeT>
-        void checkPipelineIntegrity() {
-
-            //TODO create custom exceptions for pipeline integrity violations
+        template <typename NodeT, typename... Args>
+        //FIXME update using INode::isSource() and INode::isSink() instead of is_specialization_of
+        //currently derived classes of Sink and Source are not recognised as Sink and Source respectively
+        std::unique_ptr<NodeT> checkPipelineIntegrity(Args&&... args) {
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
+            auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
+            const auto castedNode = dynamic_cast<INode*>(newNode.get());
 
-            if (is_specialization_of<Source, NodeT>::value) {
+            // if (is_specialization_of<Source, NodeT>::value) {
+            if (castedNode->isSource()) {
                 if (hasSourceNode) {
-                    throw std::runtime_error("Pipeline can have only one Source node");
+                    throw InvalidPipelineException(this->name, "Pipeline can have only one Source node");
                 }
-
                 if (!nodes.empty()) {
-                    throw std::runtime_error("Source node must be the first node in the pipeline");
+                    throw InvalidPipelineException(this->name, "Source node must be the first node in the pipeline");
                 }
 
                 hasSourceNode = true;
-            } else if (is_specialization_of<Sink, NodeT>::value) {
+
+            // } else if (is_specialization_of<Sink, NodeT>::value) {
+            } else if (castedNode->isSink()) {
                 if (hasSinkNode) {
-                    throw std::runtime_error("Pipeline can have only one Sink node");
+                    throw InvalidPipelineException(this->name, "Pipeline can have only one Sink node");
                 }
                 hasSinkNode = true;
             } else if (hasSinkNode) {
-                throw std::runtime_error("Sink node must be the last node in the pipeline");
+                throw InvalidPipelineException(this->name, "Sink node must be the last node in the pipeline");
             }
+
+            if (!nodesNameSet.insert(newNode->name).second) {
+                throw InvalidPipelineException(this->name, "Node with name \"" + newNode->name + "\" already exists in the pipeline");
+            }
+            return newNode;
         }
     };
 }
