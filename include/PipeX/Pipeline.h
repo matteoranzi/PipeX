@@ -12,11 +12,11 @@
 #include <vector>
 #include <list>
 
-#include "nodes/INode.h"
+#include "nodes/primitives/INode.h"
 #include "data/IData.h"
 #include "errors/TypeMismatchExpection.h"
-#include "nodes/Sink.h"
-#include "nodes/Source.h"
+#include "nodes/primitives/Sink.h"
+#include "nodes/primitives/Source.h"
 
 //TODO add static_assert to check that InputT and OutputT are supported by the nodes added to the pipeline
 // e.g. if a Transformer<InputT, IntermediateT> is added, InputT must match the Pipeline InputT

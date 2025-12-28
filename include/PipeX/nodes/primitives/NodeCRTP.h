@@ -43,14 +43,14 @@ namespace PipeX {
         /**
          * @brief Logs lifecycle events for debugging purposes
          *
-         * @param event The lifecycle event name (e.g., "clone", "execute")
+         * @param e_event The lifecycle event name (e.g., "clone", "execute")
          */
-        void logLifeCycle(const std::string& event) const {
+        void logLifeCycle(const std::string& e_event) const {
             PIPEX_PRINT_DEBUG_INFO("[%s] \"%s\" {%p}.%s()\n",
-                typeName(),
-                this->name().c_str(),
+                typeName().c_str(),
+                this->name.c_str(),
                 this,
-                event.c_str());
+                e_event.c_str());
         }
 
         /**

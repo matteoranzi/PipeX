@@ -9,12 +9,12 @@
 #include <vector>
 #include <algorithm>
 
-#include "../include/PipeX/Pipeline.h"
-#include "PipeX/nodes/Aggregator.h"
-#include "PipeX/nodes/Filter.h"
-#include "PipeX/nodes/Transformer.h"
+#include "PipeX/Pipeline.h"
+#include "PipeX/nodes/primitives/Aggregator.h"
+#include "PipeX/nodes/primitives/Filter.h"
+#include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/data/Data.h"
-#include "PipeX/nodes/Processor.h"
+#include "PipeX/nodes/primitives/Processor.h"
 
 
 using namespace PipeX;
@@ -56,7 +56,7 @@ TEST(NodeTest, Transformer) {
         for (int i = 0; i < outputData.size(); ++i) {
             const auto castedData = dynamic_cast<Data<float>*>(outputData[i].get());
             ASSERT_NE(castedData, nullptr);
-            EXPECT_FLOAT_EQ(static_cast<float>(*castedData), expectedOutput[i]);
+            EXPECT_FLOAT_EQ(castedData->value, expectedOutput[i]);
         }
     }
 
@@ -99,7 +99,7 @@ TEST(NodeTest, Processor) {
         for (int i = 0; i < outputData.size(); ++i) {
             const auto castedData = dynamic_cast<Data<int>*>(outputData[i].get());
             ASSERT_NE(castedData, nullptr);
-            EXPECT_FLOAT_EQ(static_cast<int>(*castedData), expectedOutput[i]);
+            EXPECT_FLOAT_EQ(castedData->value, expectedOutput[i]);
         }
     }
 

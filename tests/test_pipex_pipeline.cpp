@@ -7,8 +7,9 @@
 #include <gtest/gtest.h>
 
 #include "PipeX/Pipeline.h"
-#include "PipeX/nodes/Filter.h"
-#include "PipeX/nodes/Transformer.h"
+#include "PipeX/nodes/primitives/Filter.h"
+#include "PipeX/nodes/primitives/Transformer.h"
+#include "PipeX/nodes/primitives/Source.h"
 
 
 using namespace PipeX;

@@ -1,7 +1,8 @@
 #include <iostream>
+
 #include "PipeX/PipeXEngine.h"
-#include "PipeX/nodes/Transformer.h"
-#include "PipeX/nodes/Source.h"
+#include "PipeX/nodes/primitives/Transformer.h"
+#include "PipeX/nodes/primitives/Source.h"
 
 int main() {
     PipeX::PipeXEngine pipex_engine;
