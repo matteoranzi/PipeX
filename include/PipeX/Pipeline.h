@@ -5,6 +5,8 @@
 #ifndef PIPEX_PIPELINE_H
 #define PIPEX_PIPELINE_H
 
+#include <assert.h>
+
 #include "PipeX/debug/pipex_print_debug.h"
 #include "extended_cpp_standard/memory.h"
 
@@ -14,6 +16,7 @@
 
 #include "nodes/primitives/INode.h"
 #include "data/IData.h"
+#include "errors/InvalidPipelineException.h"
 #include "errors/TypeMismatchExpection.h"
 #include "nodes/primitives/Sink.h"
 #include "nodes/primitives/Source.h"
@@ -48,7 +51,12 @@ namespace PipeX {
          *
          * Sets the pipeline name to "NO_NAME" and logs construction.
          */
-        Pipeline() : name("NO_NAME") {
+        Pipeline() : name([this]()->std::string {
+                                        std::ostringstream oss;
+                                        oss << this;
+                                        return oss.str();
+                                    }()
+                                ) {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
         }
 
@@ -196,9 +204,9 @@ namespace PipeX {
         void run() const {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run(std::vector<InputT>) -> %zu nodes\n", name.c_str(), this, nodes.size());
 
-            if (!isValid()) {
-                //TODO improve error message to specify what is missing (source/sink and on which pipeline)
-                throw std::runtime_error("Pipeline is not valid");
+            std::string details;
+            if (!isValid(details)) {
+                throw InvalidPipelineException(this->name, "Cannot run pipeline, invalid configuration:" + details);
             }
 
             std::vector<std::unique_ptr<IData>> data;
@@ -226,8 +234,16 @@ namespace PipeX {
          */
         std::string getName() const { return name; }
 
-        bool isValid() const {
-            return hasSourceNode && hasSinkNode;
+        bool isValid(std::string& details) const {
+            if (!hasSourceNode) {
+                details = " missing Source node";
+                return false;
+            }
+            if (!hasSinkNode) {
+                details = " missing Sink node";
+                return false;
+            }
+            return true;
         }
 
     private:
@@ -273,8 +289,8 @@ namespace PipeX {
          */
         template <typename NodeT>
         void checkPipelineIntegrity() {
-            //TODO create custom exceptions for pipeline integrity violations
 
+            //TODO create custom exceptions for pipeline integrity violations
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
 
             if (is_specialization_of<Source, NodeT>::value) {

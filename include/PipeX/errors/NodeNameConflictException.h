@@ -8,13 +8,15 @@
 #include <stdexcept>
 #include <string>
 
+#include "PipeXException.h"
+
 namespace PipeX {
-    class NodeNameConflictException final : public std::runtime_error {
+    class NodeNameConflictException final : public PipeXException {
     public:
         const std::string pipelineName_;
         const std::string nodeName_;
 
-        NodeNameConflictException(const std::string& pipelineName, const std::string&nodeName) : std::runtime_error(formatMessage(pipelineName, nodeName)), nodeName_(nodeName), pipelineName_(pipelineName) {}
+        NodeNameConflictException(const std::string& pipelineName, const std::string&nodeName) : PipeXException(formatMessage(pipelineName, nodeName)), nodeName_(nodeName), pipelineName_(pipelineName) {}
 
     private:
         static std::string formatMessage(const std::string& pipelineName, const std::string& nodeName) {

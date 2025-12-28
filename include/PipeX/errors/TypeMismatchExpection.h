@@ -10,15 +10,17 @@
 #include <ostream>
 #include <sstream>
 
+#include "PipeXException.h"
+
 namespace PipeX {
 
-    class TypeMismatchException final : public std::runtime_error {
+    class TypeMismatchException final : public PipeXException {
     public:
         TypeMismatchException(
             const std::string& nodeName,
             const std::type_info& expected,
             const std::type_info& actual)
-            : std::runtime_error(formatMessage(nodeName, expected, actual)),
+            : PipeXException(formatMessage(nodeName, expected, actual)),
               nodeName_(nodeName),
               expectedType_(&expected),
               actualType_(&actual)

@@ -5,8 +5,9 @@
 #include "PipeX/nodes/primitives/Source.h"
 
 int main() {
-    PipeX::PipeXEngine pipex_engine;
-    pipex_engine.newPipeline("BasicPipeline")
+    const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
+
+    pipex_engine->newPipeline("BasicPipeline")
         .addNode<PipeX::Source<int>>([]() {
             return std::vector<int>{1, 2, 3, 4, 5};
         })
@@ -20,7 +21,7 @@ int main() {
             std::cout << std::endl;
         });
 
-    pipex_engine.newPipeline("AnotherBasicPipeline")
+    pipex_engine->newPipeline("AnotherBasicPipeline")
         .addNode<PipeX::Source<int>>([]() {
             return std::vector<int>{10, 20, 30};
         })
@@ -35,7 +36,7 @@ int main() {
         });
 
 
-    pipex_engine.start();
+    pipex_engine->start();
 
 
 

@@ -20,12 +20,25 @@ namespace PipeX {
      * PipeXEngine provides functionality to create, manage, and execute pipelines in parallel.
      * Each pipeline runs in its own thread when the engine is started.
      */
+    //TODO Prevent reallocation/modification while running (e.g., mutex + state flags, reserve enough capacity beforehand, or forbid API calls that mutate).
+    // TODO implement state management (running, stopped, error, etc.) and methods to query the state of the engine and individual pipelines
+
     class PipeXEngine {
+    private:
+        static PipeXEngine* pipex_engine_; // Singleton instance
+
     public:
-        /**
-         * @brief Default constructor.
-         */
-        PipeXEngine() = default;
+        // Singleton instance of the PipeXEngine
+        static PipeXEngine* getPipexEngine() {
+            if (pipex_engine_ == nullptr) {
+                pipex_engine_ = new PipeXEngine();
+            }
+            return PipeXEngine::pipex_engine_;
+        }
+
+        // Delete copy constructor and assignment
+        PipeXEngine(const PipeXEngine&) = delete;
+        PipeXEngine& operator=(const PipeXEngine&) = delete;
 
         /**
          * @brief Default destructor.
@@ -38,8 +51,8 @@ namespace PipeX {
          * @return Reference to the newly created pipeline.
          */
         Pipeline& newPipeline(const std::string& name) {
-            pipelines.emplace_back(name);
-            return pipelines.back();
+            pipelines.emplace_back(std::make_shared<Pipeline>(name));
+            return *pipelines.back();
         }
 
         /**
@@ -74,10 +87,16 @@ namespace PipeX {
         }
 
     private:
+
+        /**
+         * @brief Private default constructor for singleton pattern.
+         */
+        PipeXEngine() = default;
+
         //TODO flags to manage the state of the engine (running, ready, error, end, etc.) and of each pipeline
 
         /// Container holding all registered pipelines
-        std::vector<Pipeline> pipelines;
+        std::vector<std::shared_ptr<Pipeline>> pipelines;
 
         /**
          * @brief Executes a single pipeline.
@@ -86,18 +105,22 @@ namespace PipeX {
          * This static method is used as the entry point for pipeline execution threads.
          * Catches and suppresses all exceptions thrown during pipeline execution.
          */
-        static void runPipeline(const Pipeline& pipeline) {
+        static void runPipeline(const std::shared_ptr<Pipeline>& pipeline) {
             try {
-                pipeline.run();
+                pipeline->run();
             } catch (TypeMismatchException &e) {
-                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] TypeMismatchException exception in pipeline \"%s\": %s\n", pipeline.getName().c_str(), e.what());
-            } catch (...) {
-                // TODO handle exceptions properly
-                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] Unknown exception in pipeline: %s\n", pipeline.getName().c_str());
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] TypeMismatchException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
+            } catch (InvalidPipelineException &e) {
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidPipelineException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
+            }
+            catch (...) {
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] Unknown exception in pipeline: %s\n", pipeline->getName().c_str());
             }
         }
-    };
-}
 
+    };
+
+    PipeXEngine* PipeXEngine::pipex_engine_ = nullptr;
+}
 
 #endif //PIPEX_PIPEX_HPP
