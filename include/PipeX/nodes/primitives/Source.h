@@ -57,6 +57,7 @@ namespace PipeX {
          */
         Source(Source&& other) noexcept : Base(other), sourceFunction(std::move(other.sourceFunction)) {
             this->logLifecycle("MoveConstructor(Source&&)");
+            sourceFunction = std::move(other.sourceFunction);
         }
 
         /**
@@ -76,12 +77,13 @@ namespace PipeX {
     private:
         Function sourceFunction;
 
-        std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
+        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
             // input is ignored for Source nodes
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             //Wrap output data
-            return this->wrapOutputData(std::move(sourceFunction()));
+            auto outputData = make_unique<std::vector<T>>(std::move(sourceFunction()));
+            return this->wrapOutputData(std::move(outputData));
         }
     };
 }

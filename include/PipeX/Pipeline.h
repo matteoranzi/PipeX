@@ -5,8 +5,6 @@
 #ifndef PIPEX_PIPELINE_H
 #define PIPEX_PIPELINE_H
 
-#include <assert.h>
-
 #include "PipeX/debug/pipex_print_debug.h"
 #include "my_extended_cpp_standard/my_memory.h"
 
@@ -19,19 +17,11 @@
 #include "data/IData.h"
 #include "errors/InvalidPipelineException.h"
 #include "errors/TypeMismatchExpection.h"
-#include "nodes/primitives/Sink.h"
-#include "nodes/primitives/Source.h"
 
-//TODO add static_assert to check that InputT and OutputT are supported by the nodes added to the pipeline
-// e.g. if a Transformer<InputT, IntermediateT> is added, InputT must match the Pipeline InputT
-// and IntermediateT must match the InputT of the next node in the pipeline or the Pipeline OutputT if it's the last node
 
-//TODO add SFINAE to restrict NodeT in addNode to only types derived from INode
 
 //TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
-
-//TODO a std::set of nodes names to avoid duplicates, throw exception if a node with the same name is added (if deletion by name is implemented)
-
+//TODO verify if nodes datatypes are compatible before running/adding them in the pipeline, currently this is only checked at runtime when the pipeline is run (pipeline may throw an exception in the last node after processing all the previous nodes successfully)
 namespace PipeX {
 
     /**
@@ -170,7 +160,7 @@ namespace PipeX {
                 throw InvalidPipelineException(this->name, "Failed to create node of type " + std::string(typeid(NodeT).name()));
             }
 
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->name.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->getName().c_str());
             nodes.push_back(std::move(newNode));
             return *this;
         }
@@ -196,7 +186,7 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.removeNodeByName(\"%s\")&\n", name.c_str(), this, nodeName.c_str());
 
             for (auto it = nodes.begin(); it != nodes.end(); ++it) {
-                if ((*it)->name == nodeName) {
+                if ((*it)->getName() == nodeName) {
                     if ((*it)->isSource()) {
                         hasSourceNode = false;
                     } else if ((*it)->isSink()) {
@@ -232,19 +222,19 @@ namespace PipeX {
                 throw InvalidPipelineException(this->name, "Cannot run pipeline, invalid configuration:" + details);
             }
 
-            std::vector<std::unique_ptr<IData>> data;
+            std::unique_ptr<IData> data;
 
             // Process through nodes
             for (const auto& node : nodes) {
                 try {
-                    PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->name.c_str());
+                    PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->getName().c_str());
                     data = node->process(std::move(data));
                 } catch (TypeMismatchException &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> TypeMismatchException exception in node \"%s\": %s\n", name.c_str(), this, node->name.c_str(), e.what());
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> TypeMismatchException exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     // Rethrow the exception to propagate it up the call stack
                     throw;
                 } catch (...) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->name.c_str());
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->getName().c_str());
                     throw;
                 }
             }
@@ -332,8 +322,8 @@ namespace PipeX {
                 throw InvalidPipelineException(this->name, "Sink node must be the last node in the pipeline");
             }
 
-            if (!nodesNameSet.insert(newNode->name).second) {
-                throw InvalidPipelineException(this->name, "Node with name \"" + newNode->name + "\" already exists in the pipeline");
+            if (!nodesNameSet.insert(newNode->getName()).second) {
+                throw InvalidPipelineException(this->name, "Node with name \"" + newNode->getName() + "\" already exists in the pipeline");
             }
             return newNode;
         }

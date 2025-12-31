@@ -13,6 +13,8 @@
 #include "my_extended_cpp_standard/my_memory.h"
 #include "PipeX/data/Data.h"
 #include "PipeX/errors/TypeMismatchExpection.h"
+#include "my_extended_cpp_standard/my_memory.h"
+#include "PipeX/nodes/node_utils.h"
 
 // TODO improve extraction/wrapping logic (currently each pass copies data multiple times, once for extraction and once for wrapping, for every node step in the pipeline)
 
@@ -34,8 +36,6 @@ namespace PipeX {
     static_assert(std::is_copy_constructible<OutputT>::value || std::is_move_constructible<OutputT>::value, "OutputT must be copyable or movable");
 
     protected:
-        using inputType = InputT;
-        using outputType = OutputT;
 
         // Constructors inherited from INode
         using INode::INode;
@@ -53,6 +53,14 @@ namespace PipeX {
                 e_event.c_str());
         }
 
+        std::unique_ptr<IData> wrapOutputData(std::unique_ptr<std::vector<OutputT>>&& data) const {
+            return wrapData<OutputT>(std::move(data));
+        }
+
+        std::unique_ptr<std::vector<InputT>> extractInputData(const std::unique_ptr<IData>& data) const {
+            return extractData<InputT>(std::move(data), this->name);
+        }
+
         /**
          * @brief Returns the type name of the derived class
          *
@@ -67,62 +75,7 @@ namespace PipeX {
             return typeid(Derived).name();
         }
 
-        /**
-         * @brief Extracts and validates typed input data from generic IData vector
-         *
-         * Performs dynamic casting and type validation. Throws TypeMismatchException
-         * if any data element cannot be cast to InputT.
-         *
-         * @param input Vector of generic IData pointers
-         * @return Vector of extracted typed input values
-         * @throws TypeMismatchException if type validation fails
-         */
-        //Fixme: the solution with CRTP helper functions is cleaner but less efficient: a copy of the entire input is created (extracted) and stored
-        std::vector<InputT> extractInputData(const std::vector<std::unique_ptr<IData>>& input) const {
-            std::vector<InputT> extractedData;
-            extractedData.reserve(input.size());
-            for (const auto& data : input) {
-                auto castedData = dynamic_cast<const Data<InputT>*>(data.get());
-                if (!castedData) {
-                    throw TypeMismatchException(
-                                        this->name,
-                                        typeid(InputT),
-                                        typeid(data.get())
-                                    );
-                }
-                extractedData.push_back(std::move(castedData->value));
-            }
-            return extractedData;
-        }
-
-        /**
-         * @brief Wraps typed output data into generic IData vector
-         *
-         * Takes ownership of the output data via move semantics and wraps
-         * each element in a Data<OutputT> container.
-         *
-         * @param output Vector of typed output values (moved)
-         * @return Vector of wrapped IData pointers ready for pipeline transmission
-         */
-        //Fixme: the solution with CRTP helper functions is cleaner but less efficient: a copy of the entire input is created (wrapped) and stored -> somehow the pipeline should be able to work with typed data directly, by polymorphism (?)
-        std::vector<std::unique_ptr<IData>> wrapOutputData(std::vector<OutputT>&& output) const {
-            std::vector<std::unique_ptr<IData>> wrappedData;
-            wrappedData.reserve(output.size());
-            for (auto& item : output) {
-                wrappedData.push_back(make_unique<Data<OutputT>>(std::move(item)));
-            }
-            return wrappedData;
-        }
-
     public:
-        /**
-         * @brief Creates a deep copy of this node
-         *
-         * Uses CRTP to ensure the correct derived type is cloned.
-         * Logs the clone operation for debugging.
-         *
-         * @return Unique pointer to the cloned node
-         */
         std::unique_ptr<INode>  clone() const override {
             logLifeCycle("clone()");
             return make_unique<Derived>(static_cast<const Derived&>(*this));

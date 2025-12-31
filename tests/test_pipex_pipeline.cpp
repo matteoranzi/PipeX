@@ -8,6 +8,7 @@
 
 #include "PipeX/Pipeline.h"
 #include "PipeX/nodes/primitives/Filter.h"
+#include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/nodes/primitives/Source.h"
 

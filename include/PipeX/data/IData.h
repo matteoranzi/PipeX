@@ -10,7 +10,6 @@
 class IData {
 public:
     virtual ~IData() = default;
-    virtual std::unique_ptr<IData> clone() const = 0;
 };
 
 #endif // PIPEX_GENERIC_BASE_DATA_H

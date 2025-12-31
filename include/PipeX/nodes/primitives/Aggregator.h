@@ -84,7 +84,7 @@ namespace PipeX {
         Function aggregatorFunction;
 
         
-        std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
+        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             // Extract input data
@@ -92,10 +92,10 @@ namespace PipeX {
 
             // Apply aggregation function
             std::vector<OutputT> outputData;
-            outputData.push_back(std::move(aggregatorFunction(inputData)));
+            outputData.push_back(std::move(aggregatorFunction(*inputData)));
 
             // Wrap output data back into IData
-            return this->wrapOutputData(std::move(outputData));
+            return this->wrapOutputData(make_unique<std::vector<OutputT>>(std::move(outputData)));
         }
     };
 }

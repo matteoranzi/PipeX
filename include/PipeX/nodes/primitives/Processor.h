@@ -124,13 +124,12 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData objects.
          * @return Vector of processed data wrapped in IData objects.
          */
-        std::vector<std::unique_ptr<IData>> processImpl(
-            const std::vector<std::unique_ptr<IData>>& input) const override {
+        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             auto inputData = this->extractInputData(input);
-            auto outputData = processorFunction(inputData);
-            return this->wrapOutputData(std::move(outputData));
+            auto outputData = processorFunction(*inputData);
+            return this->wrapOutputData(make_unique<std::vector<T>>(std::move(outputData)));
         }
     };
 }

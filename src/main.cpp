@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "PipeX/PipeXEngine.h"
+#include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/nodes/primitives/Source.h"
 

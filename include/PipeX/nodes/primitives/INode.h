@@ -3,8 +3,8 @@
 // Created by Matteo Ranzi on 20/12/25.
 //
 
-#ifndef PIPEX_DYNAMICNODE_HPP
-#define PIPEX_DYNAMICNODE_HPP
+#ifndef PIPEX_INODE_HPP
+#define PIPEX_INODE_HPP
 
 #include <typeindex>
 #include <sstream>
@@ -30,13 +30,6 @@ namespace PipeX {
      */
     class INode {
     public:
-        /**
-         * @brief Read-only identifier for the node.
-         *
-         * By default, the name is generated from the object's pointer value.
-         * Derived classes or callers can supply a custom name via constructors.
-         */
-        const std::string name;
 
         /**
          * @brief Create a deep copy of this node.
@@ -106,6 +99,10 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.CopyConstructor(newName)\n", name.c_str(), this);
         }
 
+        INode(INode&& other) noexcept : name(std::move(other.name)) {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.MoveConstructor(INode&&)\n", name.c_str(), this);
+        }
+
         /**
          * @brief Virtual destructor.
          *
@@ -126,26 +123,32 @@ namespace PipeX {
          * @return std::vector<std::unique_ptr<IData>> Resulting vector
          *         of owned IData produced by the node.
          */
-        virtual std::vector<std::unique_ptr<IData>> process(const std::vector<std::unique_ptr<IData>>& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&)\n", this);
+        // virtual std::vector<std::unique_ptr<IData>> process(const std::vector<std::unique_ptr<IData>>& input) const final {
+        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&)\n", this);
+        //
+        //     return processImpl(input);
+        // }
 
+        //TODO rvalue, overload ()
+        virtual std::unique_ptr<IData> process(const std::unique_ptr<IData> input) const final {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(const std::unique_ptr<IData>&)\n", this);
             return processImpl(input);
         }
 
         /**
          * @brief Process input data (rvalue overload).
          *
-         * Accepts an rvalue vector permitting derived implementations to take
+         * Accepts a rvalue vector permitting derived implementations to take
          * advantage of moved input objects if desired. The base class ensures
          * the same call path by forwarding to \c processImpl.
          *
-         * @param input An rvalue vector of owned IData.
+         * @param input A rvalue vector of owned IData.
          * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
          */
-        virtual std::vector<std::unique_ptr<IData>> process(std::vector<std::unique_ptr<IData>>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&&)\n", this);
-            return processImpl(input);
-        }
+        // virtual std::vector<std::unique_ptr<IData>> process(std::vector<std::unique_ptr<IData>>&& input) const final {
+        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&&)\n", this);
+        //     return processImpl(input);
+        // }
 
         /**
          * @brief Call operator forwarding to \c process (const lvalue overload).
@@ -155,9 +158,15 @@ namespace PipeX {
          * @param input Immutable reference to a vector of owned IData.
          * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
          */
-        virtual std::vector<std::unique_ptr<IData>> operator() (const std::vector<std::unique_ptr<IData>>& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<IData>>&)\n", this);
-            return this->process(input);
+        // virtual std::vector<std::unique_ptr<IData>> operator() (const std::vector<std::unique_ptr<IData>>& input) const final {
+        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(std::vector<std::unique_ptr<IData>>&)\n", this);
+        //     return this->process(input);
+        // }
+
+        virtual std::unique_ptr<IData> operator() (const std::unique_ptr<IData> input) const final {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(const std::unique_ptr<IData>&)\n", this);
+            // return this->process(std::move(input));
+            return processImpl(input);
         }
 
         /**
@@ -166,13 +175,24 @@ namespace PipeX {
          * @param input Rvalue vector of owned IData.
          * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
          */
-        virtual std::vector<std::unique_ptr<IData>> operator() (std::vector<std::unique_ptr<IData>>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator(std::vector<std::unique_ptr<IData>>&&)\n", this);
-            return this->process(std::move(input));
-        }
+        // virtual std::vector<std::unique_ptr<IData>> operator() (std::vector<std::unique_ptr<IData>>&& input) const final {
+        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(std::vector<std::unique_ptr<IData>>&&)\n", this);
+        //     return this->process(std::move(input));
+        // }
 
         virtual bool isSource() const { return  false; }
         virtual bool isSink() const { return  false; }
+
+        std::string getName() const { return name; }
+
+    protected:
+        /**
+         * @brief Read-only identifier for the node.
+         *
+         * By default, the name is generated from the object's pointer value.
+         * Derived classes or callers can supply a custom name via constructors.
+         */
+        std::string name;
 
     private:
         /**
@@ -193,11 +213,16 @@ namespace PipeX {
          *       forwarding methods ensure consistent pre/post behaviour
          *       (e.g. logging) while derived classes only implement the core logic.
          */
-        virtual std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const {
+        // virtual std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const {
+        //     PIPEX_PRINT_DEBUG_ERROR("'DynamicNode::processImpl' METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
+        //     throw std::logic_error("DynamicNode::processImpl(const std::vector<std::unique_ptr<IData>>&) not implemented");
+        // }
+
+        virtual std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const {
             PIPEX_PRINT_DEBUG_ERROR("'DynamicNode::processImpl' METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
-            throw std::logic_error("DynamicNode::processImpl(const std::vector<std::unique_ptr<IData>>&) not implemented");
+            throw std::logic_error("DynamicNode::processImpl(const std::unique_ptr<IData>&) not implemented");
         }
     };
 }
 
-#endif //PIPEX_DYNAMICNODE_HPP
+#endif //PIPEX_INODE_HPP

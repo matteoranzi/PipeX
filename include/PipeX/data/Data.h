@@ -11,14 +11,11 @@ namespace PipeX {
         T value;
 
         Data() = default;
-        explicit Data(const T value): value(value) {}
         Data(const Data&) = default;
         Data(Data&&) = default;
-        ~Data() override = default;
+        explicit Data(T&& val) noexcept: value(std::forward<T>(val)) {}
 
-        std::unique_ptr<IData> clone() const override {
-            return make_unique<Data<T>>(*this);
-        }
+        ~Data() override = default;
 
         friend std::ostream& operator<<(std::ostream& os, const Data& obj) {
             return os << obj.value;

@@ -77,14 +77,14 @@ namespace PipeX {
     private:
         Function sinkFunction;
 
-        std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const override {
+        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             // Extract input data
             auto inputData = this->extractInputData(input);
 
             // Apply sink function
-            sinkFunction(inputData);
+            sinkFunction(*inputData);
 
             // Sink produces no output
             return {};
