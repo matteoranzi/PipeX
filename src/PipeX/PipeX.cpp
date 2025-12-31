@@ -21,4 +21,3 @@ namespace PipeX {
 
 
 // FIXME update all logLifeCycle prints with the proper values
-// FIXME make sure all PipeX_PRINT_DEBUG are enabled only when PIPEX_PRINT_DEBUG_ENABLED is defined in this translation unit
