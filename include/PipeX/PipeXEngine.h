@@ -14,6 +14,7 @@
 // TODO locking mechanism to avoid modifications while running asynchronously (thread safe)
 // TODO if asynch execution is implemented, add method to stop the engine and all pipelines gracefully
 // TODO Prevent reallocation/modification while running (e.g., mutex + state flags, reserve enough capacity beforehand, or forbid API calls that mutate).
+
 namespace PipeX {
     /**
      * @class PipeXEngine
@@ -126,8 +127,6 @@ namespace PipeX {
         }
 
     };
-
-    PipeXEngine* PipeXEngine::pipex_engine_ = nullptr;
 }
 
 #endif //PIPEX_PIPEX_HPP

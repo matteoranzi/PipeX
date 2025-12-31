@@ -8,9 +8,13 @@
 #include <iostream>
 #include <pthread.h>
 
+#include "PipeX/nodes/thread_safe/console_threadsafe.h"
 #include "PipeX/nodes/primitives/Source.h"
 
+
 namespace PipeX {
+    extern pthread_mutex_t console_mutex;
+
     template <typename T>
     class ConsoleSource_ts final: public Source<T> {
     public:
@@ -21,7 +25,7 @@ namespace PipeX {
                 size_t n;
                 std::vector<T> inputData;
 
-                pthread_mutex_lock(&mutex);
+                pthread_mutex_lock(&console_mutex);
                 std::cout << "ConsoleSource - " << description << std::endl;
                 std::cout << "Insert the number of elements to input: ";
                 std::cin >> n;
@@ -30,7 +34,7 @@ namespace PipeX {
                     std::cout << "Enter value #" << (i + 1) << ": ";
                     std::cin >> inputData[i];
                 }
-                pthread_mutex_unlock(&mutex);
+                pthread_mutex_unlock(&console_mutex);
 
                 return inputData;
             };
@@ -40,7 +44,7 @@ namespace PipeX {
             this->logLifecycle("CopyConstructor(const ConsoleSource&)");
         }
 
-        ConsoleSource_ts(const ConsoleSource_ts& other, std::string _name, std::string _descrption): Source<T>(other, std::move(_name)), description(_descrption) {
+        ConsoleSource_ts(const ConsoleSource_ts& other, std::string _name, const std::string& _description): Source<T>(other, std::move(_name)), description(_description) {
             this->logLifecycle("CopyConstructor(const ConsoleSource&, std::string)");
         }
 
@@ -58,12 +62,8 @@ namespace PipeX {
         }
 
     private:
-        static pthread_mutex_t mutex;
         std::string description;
     };
-
-    template <typename T>
-    pthread_mutex_t ConsoleSource_ts<T>::mutex = PTHREAD_MUTEX_INITIALIZER;
 }
 
 #endif //PIPEX_CONSOLESOURCE_H

@@ -1,5 +1,5 @@
 #TODO evaluate a header only library
-add_library(PipeX STATIC PipeXEngine.cpp)
+add_library(PipeX STATIC PipeX.cpp)
 
 include(${CMAKE_SOURCE_DIR}/cmake/PrintDebug.cmake)
 
