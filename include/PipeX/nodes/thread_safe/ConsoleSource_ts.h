@@ -12,9 +12,9 @@
 
 namespace PipeX {
     template <typename T>
-    class ConsoleSource: public Source<T> {
+    class ConsoleSource_ts final: public Source<T> {
     public:
-        explicit ConsoleSource(std::string _description) : Source<T>(), description(std::move(_description)) {
+        explicit ConsoleSource_ts(std::string _description) : Source<T>(), description(std::move(_description)) {
             this->logLifecycle("Constructor(std::string)");
 
             this->sourceFunction = [this]() -> std::vector<T> {
@@ -36,19 +36,19 @@ namespace PipeX {
             };
         }
 
-        ConsoleSource(const ConsoleSource& other): Source<T>(other), description(other.description + " - copy") {
+        ConsoleSource_ts(const ConsoleSource_ts& other): Source<T>(other), description(other.description + " - copy") {
             this->logLifecycle("CopyConstructor(const ConsoleSource&)");
         }
 
-        ConsoleSource(const ConsoleSource& other, std::string _name, std::string _descrption): Source<T>(other, std::move(_name)), description(_descrption) {
+        ConsoleSource_ts(const ConsoleSource_ts& other, std::string _name, std::string _descrption): Source<T>(other, std::move(_name)), description(_descrption) {
             this->logLifecycle("CopyConstructor(const ConsoleSource&, std::string)");
         }
 
-        ConsoleSource(ConsoleSource&& other) noexcept : Source<T>(std::move(other)), description(std::move(other.description)) {
+        ConsoleSource_ts(ConsoleSource_ts&& other) noexcept : Source<T>(std::move(other)), description(std::move(other.description)) {
             this->logLifecycle("MoveConstructor(ConsoleSource&)");
         }
 
-        ~ConsoleSource() override {
+        ~ConsoleSource_ts() override {
             this->logLifecycle("Destructor()");
         }
 
@@ -63,7 +63,7 @@ namespace PipeX {
     };
 
     template <typename T>
-    pthread_mutex_t ConsoleSource<T>::mutex = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_t ConsoleSource_ts<T>::mutex = PTHREAD_MUTEX_INITIALIZER;
 }
 
 #endif //PIPEX_CONSOLESOURCE_H
