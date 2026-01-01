@@ -14,6 +14,7 @@
 
 #include "nodes/primitives/INode.h"
 #include "data/IData.h"
+#include "errors/InvalidOperation.h"
 #include "errors/InvalidPipelineException.h"
 #include "errors/MetadataTypeMismatchException.h"
 #include "errors/TypeMismatchExpection.h"
@@ -162,14 +163,25 @@ namespace PipeX {
          */
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
-            auto newNode = checkPipelineIntegrity<NodeT>(std::forward<Args>(args)...);
+            try {
+                auto newNode = checkPipelineIntegrity<NodeT>(std::forward<Args>(args)...);
 
-            if (!newNode) {
-                throw InvalidPipelineException(this->name, "Failed to create node of type " + std::string(typeid(NodeT).name()));
+                if (!newNode) {
+                    throw InvalidPipelineException(this->name, "Failed to create node of type " + std::string(typeid(NodeT).name()));
+                }
+
+                PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->getName().c_str());
+                nodes.push_back(std::move(newNode));
+            } catch (InvalidOperation& e) {
+                PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.addNode() -> InvalidOperation exception: %s\n", name.c_str(), this, e.what());
+                throw;
+            } catch (PipeXException& e) {
+                PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.addNode() -> PipeXException exception: %s\n", name.c_str(), this, e.what());
+                throw;
+            } catch (std::exception& e) {
+                PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.addNode() -> unknown exception: %s\n", name.c_str(), this, e.what());
+                throw;
             }
-
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->getName().c_str());
-            nodes.push_back(std::move(newNode));
             return *this;
         }
 
@@ -258,6 +270,10 @@ namespace PipeX {
                     throw;
                 } catch (MetadataTypeMismatchException &e) {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> MetadataTypeMismatchException exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());
+                    throw;
+                } catch (InvalidOperation &e) {
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> InvalidOperation exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());
+                    // Rethrow the exception to propagate it up the call stack
                     throw;
                 } catch (std::exception &e) {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());

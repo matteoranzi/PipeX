@@ -9,11 +9,9 @@
 #include <iostream>
 
 #include "PipeX/nodes/primitives/Source.h"
+#include "PipeX/utils/image_utils.h"
 
 namespace PipeX {
-
-    using BIT = std::array<int, 3>; // (RGB triplet)
-    using PPM_Image = std::vector<std::vector<BIT>>;
 
     class PPM_ImagePreset_Source final : public Source<PPM_Image> {
         public:

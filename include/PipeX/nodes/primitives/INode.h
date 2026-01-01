@@ -134,7 +134,8 @@ namespace PipeX {
          */
         std::string name;
 
-        std::unique_ptr<IData> data;
+        std::unique_ptr<IData> inputData;
+        std::unique_ptr<IData> outputData;
     };
 }
 

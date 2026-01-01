@@ -1,6 +1,7 @@
 #TODO evaluate a header only library
 add_library(PipeX STATIC PipeX.cpp
-        Image/PPM_ImagePreset_Source.cpp)
+        Image/PPM_ImagePreset_Source.cpp
+        Sound/WAV_SoundPreset_Source.cpp)
 
 include(${CMAKE_SOURCE_DIR}/cmake/PrintDebug.cmake)
 

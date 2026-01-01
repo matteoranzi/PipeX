@@ -37,6 +37,7 @@ namespace PipeX {
             std::cout << "ConsoleSink - " << description << std::endl;
             std::cout << "Received data: [";
             for (const auto& item : data) {
+                //FIXME this requires that T has operator<< defined
                 std::cout << item;
                 if (&item != &data.back()) {
                     std::cout << ", ";

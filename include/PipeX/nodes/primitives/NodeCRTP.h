@@ -14,6 +14,10 @@
 #include "PipeX/data/Data.h"
 #include "PipeX/errors/TypeMismatchExpection.h"
 #include "PipeX/utils/node_utils.h"
+#include "PipeX/errors/MetadataTypeMismatchException.h"
+#include "PipeX/errors/InvalidOperation.h"
+
+
 
 // TODO improve extraction/wrapping logic (currently each pass copies data multiple times, once for extraction and once for wrapping, for every node step in the pipeline)
 
@@ -84,17 +88,61 @@ namespace PipeX {
             return typeid(Derived).name();
         }
 
+        virtual void preProcessHook() const {
+            // Default implementation does nothing
+            // Derived classes can override to add pre-processing logic
+        }
+
+        virtual void postProcessHook() const {
+            // Default implementation does nothing
+            // Derived classes can override to add pre-processing logic
+        }
+
         // Derived classes must implement this method for processing logic. derived classes' procesImpl is called via CRTP compile-time polymorphism, not virtual dispatch.
         virtual std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const = 0;
+
+        template <typename MetadataT>
+        std::shared_ptr<MetadataT> getTypedMetadata() const {
+            this->logLifeCycle("getTypedMetadata()");
+
+            if (this->inputData) {
+                if (!this->inputData->metadata) {
+                    PIPEX_PRINT_DEBUG_ERROR("[NodeCRTP] getTypedMetadata()-> in node \"%s\": no metadata available in data\n", this->getName().c_str());
+                    throw InvalidOperation("NodeCRTP::getTypedMetadata", "No metadata available in data");
+                }
+
+                const auto typedMetadata = std::dynamic_pointer_cast<MetadataT>(this->inputData->metadata);
+                if (!typedMetadata) {
+                    PIPEX_PRINT_DEBUG_ERROR("[NodeCRTP] getTypedMetadata()-> MetadataTypeMismatchException in node \"%s\": expected metadata type %s, but got %s\n",
+                        this->getName().c_str(),
+                        typeid(MetadataT).name(),
+                        typeid(this->inputData->metadata.get()).name());
+                    throw MetadataTypeMismatchException(this->getName(), typeid(MetadataT), typeid(this->inputData->metadata.get()));
+                }
+
+                return typedMetadata;
+            } else {
+                PIPEX_PRINT_DEBUG_ERROR("[NodeCRTP] getTypedMetadata()-> in node \"%s\": no data available to extract metadata from\n", this->getName().c_str());
+                throw InvalidOperation("NodeCRTP::getTypedMetadata", "No data available to extract metadata from");
+            }
+        }
 
     public:
 
         std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) override {
             logLifeCycle("process(std::unique_ptr<IData>&&)");
-            this->data = std::move(input); // store input data for potential later use (e.g., logging, debugging, etc.)
-            auto extractedInput = extractInputData(this->data);
+            this->inputData = std::move(input); // store input data for potential later use (e.g., logging, debugging, etc.)
+
+            static_cast<Derived const*>(this)->preProcessHook();
+
+            auto extractedInput = extractInputData(this->inputData);
             auto outputData = static_cast<Derived const*>(this)->processImpl(std::move(extractedInput)); // CRTP compile-time polymorphism
-            return wrapOutputData(std::move(outputData));
+            this->outputData = wrapOutputData(std::move(outputData));
+
+            static_cast<Derived const*>(this)->postProcessHook();
+
+
+            return std::move(this->outputData);
         }
 
         std::unique_ptr<INode>  clone() const override {

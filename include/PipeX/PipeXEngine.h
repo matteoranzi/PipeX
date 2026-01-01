@@ -65,6 +65,10 @@ namespace PipeX {
                     PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidPipelineException exception while creating new pipeline \"%s\": %s\n", name.c_str(), e.what());
                     unlockEngine();
                     throw;
+                } catch (PipeXException &e) {
+                    PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] PipeXException exception while creating new pipeline \"%s\": %s\n", name.c_str(), e.what());
+                    unlockEngine();
+                    throw;
                 }
             } else {
                 PIPEX_PRINT_DEBUG_WARN("[PipeXEngine] Cannot create new pipeline \"%s\" while engine is running\n", name.c_str());
@@ -139,6 +143,8 @@ namespace PipeX {
             try {
                 std::cout << "Running pipeline \"" << pipeline->getName() << "\"..." << std::endl;
                 pipeline->run();
+            } catch (InvalidOperation &e) {
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidOperation exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
             } catch (PipeXException &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] PipeXException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
             }

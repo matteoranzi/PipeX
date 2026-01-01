@@ -7,6 +7,8 @@
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/nodes/primitives/Source.h"
+#include "PipeX/nodes/Sound/WAV_SoundPreset_Source.h"
+#include "PipeX/nodes/Sound/WAV_Sound_Sink.h"
 #include "PipeX/nodes/thread_safe/ConsoleSink_ts.h"
 #include "PipeX/nodes/thread_safe/ConsoleSource_ts.h"
 
@@ -14,7 +16,19 @@ int main() {
     const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
     pipex_engine->newPipeline("PPM Image generation")
         .addNode<PipeX::PPM_ImagePreset_Source>("PPM Image Sample Source", 512, 512, 0, 5)
-        .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/gradient");
+        .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/image/gradient");
+
+    try {
+        pipex_engine->newPipeline("WAV Audio generation")
+            .addNode<PipeX::WAV_SoundPreset_Source>("WAV Audio Sample Source", 2, 44100, 16, 5, 2)
+            .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/pink_noise");
+            // .addNode<PipeX::ConsoleSink_ts<PipeX::AudioBuffer>>("Output WAV Audio Sample to Console");
+    } catch (PipeX::PipeXException& e) {
+        PRINT_DEBUG_ERROR("Exception caught while creating pipeline: %s\n", e.what());
+        //New pipeline is not created and PipeXEngine continue with the previous ones
+    } catch (...) {
+        PRINT_DEBUG_ERROR("Unknown exception caught while creating pipeline\n");
+    }
 
     pipex_engine->start();
 

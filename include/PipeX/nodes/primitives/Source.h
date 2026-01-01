@@ -9,7 +9,7 @@
 #include "NodeCRTP.h"
 
 namespace PipeX {
-    template <typename T>
+    template <typename T, typename MetadataT = IMetadata>
     class Source : public NodeCRTP<Source<T>, T, T> {
 
         using Base = NodeCRTP<Source<T>, T, T>;
@@ -70,9 +70,17 @@ namespace PipeX {
         bool isSource() const override final { return true; }
 
     protected:
+        std::shared_ptr<MetadataT> sourceMetadata;
+
+        void createMetadata() {
+            this->logLifeCycle("createTypedMetadata()");
+            this->sourceMetadata = std::make_shared<MetadataT>();
+        }
+
         std::string typeName() const override {
             return "Source";
         }
+
 
     private:
         Function sourceFunction;
@@ -82,6 +90,11 @@ namespace PipeX {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             return make_unique<std::vector<T>>(std::move(sourceFunction()));
+        }
+
+        void postProcessHook() const override {
+            this->logLifeCycle("afterProcessHook()");
+            this->outputData->metadata = this->sourceMetadata;
         }
     };
 }
