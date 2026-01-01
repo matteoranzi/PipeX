@@ -13,7 +13,7 @@
 int main() {
     const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
     pipex_engine->newPipeline("PPM Image generation")
-        .addNode<PipeX::PPM_ImagePreset_Source>("PPM Image Sample Source", 512, 512, 0, 1)
+        .addNode<PipeX::PPM_ImagePreset_Source>("PPM Image Sample Source", 512, 512, 0, 5)
         .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/gradient");
 
     pipex_engine->start();

@@ -21,28 +21,25 @@ namespace PipeX {
     }
 
     template <typename T>
-    std::unique_ptr<std::vector<T>> extractData(std::unique_ptr<IData>&& data, const std::string& sourceName) {
-        auto* rawPtr = data.release();  // Release ownership
-        if (!rawPtr) {
+    std::unique_ptr<std::vector<T>> extractData(const std::unique_ptr<IData>& data, const std::string& sourceName) {
+        if (!data) {
             PIPEX_PRINT_DEBUG_WARN("extractData -> nullptr data pointer when extracting data from source \"%s\"\n", sourceName.c_str());
             return nullptr;
         }
 
-        auto castedData = dynamic_cast<Data<std::unique_ptr<std::vector<T>>>*>(rawPtr);
+        auto* castedData = dynamic_cast<Data<std::unique_ptr<std::vector<T>>>*>(data.get());
         if (!castedData) {
-            const auto& rawPtrTypeid = typeid(*rawPtr);
-            delete rawPtr;  // Clean up on failure
+            const auto& rawPtrTypeid = typeid(data.get());
             PIPEX_PRINT_DEBUG_ERROR("extractData -> Type mismatch when extracting data from source \"%s\"\n", sourceName.c_str());
             throw TypeMismatchException(sourceName, typeid(T), rawPtrTypeid);
         }
-        auto result = std::move(castedData->value);
-        delete castedData;  // Clean up wrapper
-        return result;
+
+        return std::move(castedData->value);
     }
 
     template <typename T>
-    std::unique_ptr<std::vector<T>> extractData(std::unique_ptr<IData>&& data) {
-       return extractData<T>(std::move(data), "Unknown source");
+    std::unique_ptr<std::vector<T>> extractData(const std::unique_ptr<IData>& data) {
+        return extractData<T>(std::move(data), "Unknown source");
     }
 
 }

@@ -12,8 +12,6 @@
 
 #include "PipeX/data/IData.h"
 #include "PipeX/debug/pipex_print_debug.h"
-#include "PipeX/metadata/IMetadata.h"
-#include "PipeX/metadata/WAV_Metadata.h"
 
 //TODO sort node
 //TODO nodes with pre-implemented processImpl e.g. pass-through node, logger node, etc.
@@ -115,17 +113,12 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
-        virtual std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) const = 0;
+        virtual std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) = 0;
 
-        virtual std::unique_ptr<IData> operator() (std::unique_ptr<IData>&& input) const {
+        virtual std::unique_ptr<IData> operator() (std::unique_ptr<IData>&& input) {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(std::unique_ptr<IData>&&)\n", this);
             return this->process(std::move(input));
         }
-
-        void setMetadata(std::shared_ptr<IMetadata> metadata_) {
-            metadata = std::move(metadata_);
-        }
-
 
         virtual bool isSource() const { return  false; }
         virtual bool isSink() const { return  false; }
@@ -141,7 +134,7 @@ namespace PipeX {
          */
         std::string name;
 
-        std::shared_ptr<IMetadata> metadata;
+        std::unique_ptr<IData> data;
     };
 }
 

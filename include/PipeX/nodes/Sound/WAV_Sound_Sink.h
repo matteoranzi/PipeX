@@ -4,11 +4,12 @@
 
 #ifndef PIPEX_WAV_SOUND_SINK_H
 #define PIPEX_WAV_SOUND_SINK_H
+
 #include "PipeX/nodes/primitives/Sink.h"
+#include "PipeX/utils/sound_utils.h"
 
 namespace PipeX {
-    using SAMPLE_TYPE = int16_t;
-    class WAV_Sound_Sink final : public Sink<SAMPLE_TYPE> {
+    class WAV_Sound_Sink final : public Sink<AudioBuffer> {
     public:
         WAV_Sound_Sink();
     };

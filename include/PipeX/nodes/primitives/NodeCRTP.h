@@ -13,8 +13,7 @@
 #include "my_extended_cpp_standard/my_memory.h"
 #include "PipeX/data/Data.h"
 #include "PipeX/errors/TypeMismatchExpection.h"
-#include "my_extended_cpp_standard/my_memory.h"
-#include "../../utils/node_utils.h"
+#include "PipeX/utils/node_utils.h"
 
 // TODO improve extraction/wrapping logic (currently each pass copies data multiple times, once for extraction and once for wrapping, for every node step in the pipeline)
 
@@ -58,7 +57,7 @@ namespace PipeX {
             return wrapData<OutputT>(std::move(data));
         }
 
-        std::unique_ptr<std::vector<InputT>> extractInputData(std::unique_ptr<IData>&& data) const {
+        std::unique_ptr<std::vector<InputT>> extractInputData(const std::unique_ptr<IData>& data) const {
             try {
                 return extractData<InputT>(std::move(data), this->name);
             } catch (TypeMismatchException& e) {
@@ -90,9 +89,10 @@ namespace PipeX {
 
     public:
 
-        std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) const override {
+        std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) override {
             logLifeCycle("process(std::unique_ptr<IData>&&)");
-            auto extractedInput = extractInputData(std::move(input));
+            this->data = std::move(input); // store input data for potential later use (e.g., logging, debugging, etc.)
+            auto extractedInput = extractInputData(this->data);
             auto outputData = static_cast<Derived const*>(this)->processImpl(std::move(extractedInput)); // CRTP compile-time polymorphism
             return wrapOutputData(std::move(outputData));
         }
