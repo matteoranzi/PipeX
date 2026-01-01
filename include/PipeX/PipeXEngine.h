@@ -139,14 +139,17 @@ namespace PipeX {
             try {
                 std::cout << "Running pipeline \"" << pipeline->getName() << "\"..." << std::endl;
                 pipeline->run();
-            } catch (TypeMismatchException &e) {
+            } catch (PipeXException &e) {
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] PipeXException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
+            }
+            /*catch (TypeMismatchException &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] TypeMismatchException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
             } catch (InvalidPipelineException &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidPipelineException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
             }
             catch (...) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] Unknown exception in pipeline: %s\n", pipeline->getName().c_str());
-            }
+            }*/
         }
 
         void lockEngine() {

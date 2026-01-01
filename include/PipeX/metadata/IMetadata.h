@@ -6,7 +6,8 @@
 #define PIPEX_METADATA_H
 
 namespace PipeX {
-    struct IMetadata {
+    class IMetadata {
+    public:
         virtual ~IMetadata() = default;
     };
 }

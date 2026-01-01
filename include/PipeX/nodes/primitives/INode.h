@@ -6,12 +6,14 @@
 #ifndef PIPEX_INODE_HPP
 #define PIPEX_INODE_HPP
 
+#include <memory>
 #include <typeindex>
 #include <sstream>
 
 #include "PipeX/data/IData.h"
 #include "PipeX/debug/pipex_print_debug.h"
 #include "PipeX/metadata/IMetadata.h"
+#include "PipeX/metadata/WAV_Metadata.h"
 
 //TODO sort node
 //TODO nodes with pre-implemented processImpl e.g. pass-through node, logger node, etc.
@@ -120,8 +122,8 @@ namespace PipeX {
             return this->process(std::move(input));
         }
 
-        void setMetadata(std::shared_ptr<IMetadata> metadata) {
-            metadata_ = std::move(metadata);
+        void setMetadata(std::shared_ptr<IMetadata> metadata_) {
+            metadata = std::move(metadata_);
         }
 
 
@@ -139,7 +141,7 @@ namespace PipeX {
          */
         std::string name;
 
-        std::shared_ptr<IMetadata> metadata_;
+        std::shared_ptr<IMetadata> metadata;
     };
 }
 

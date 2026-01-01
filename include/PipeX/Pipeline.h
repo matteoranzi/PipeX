@@ -9,13 +9,13 @@
 #include "my_extended_cpp_standard/my_memory.h"
 
 #include <string>
-#include <vector>
 #include <list>
 #include <set>
 
 #include "nodes/primitives/INode.h"
 #include "data/IData.h"
 #include "errors/InvalidPipelineException.h"
+#include "errors/MetadataTypeMismatchException.h"
 #include "errors/TypeMismatchExpection.h"
 #include "metadata/IMetadata.h"
 
@@ -119,9 +119,9 @@ namespace PipeX {
          */
         Pipeline(Pipeline&& _pipeline) noexcept : name(_pipeline.name + "_copy"),
                                               nodesNameSet(std::move(_pipeline.nodesNameSet)),
+                                              nodes(std::move(_pipeline.nodes)),
                                               hasSourceNode(_pipeline.hasSourceNode),
-                                              hasSinkNode(_pipeline.hasSinkNode),
-                                              nodes(std::move(_pipeline.nodes)){
+                                              hasSinkNode(_pipeline.hasSinkNode){
             PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(&)\n", name.c_str(), this);
         }
 
@@ -255,6 +255,9 @@ namespace PipeX {
                 } catch (TypeMismatchException &e) {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> TypeMismatchException exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     // Rethrow the exception to propagate it up the call stack
+                    throw;
+                } catch (MetadataTypeMismatchException &e) {
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> MetadataTypeMismatchException exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     throw;
                 } catch (std::exception &e) {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());

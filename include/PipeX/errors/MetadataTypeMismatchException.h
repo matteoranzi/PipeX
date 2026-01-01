@@ -1,9 +1,9 @@
 //
-// Created by Matteo Ranzi on 24/12/25.
+// Created by Matteo Ranzi on 01/01/26.
 //
 
-#ifndef PIPEX_TYPEMISMATCHEXPECTION_H
-#define PIPEX_TYPEMISMATCHEXPECTION_H
+#ifndef PIPEX_METADATATYPEMISMATCHEXCEPTION_H
+#define PIPEX_METADATATYPEMISMATCHEXCEPTION_H
 
 #include <string>
 #include <ostream>
@@ -12,9 +12,9 @@
 #include "PipeXException.h"
 
 namespace PipeX {
-    class TypeMismatchException final : public PipeXException {
+    class MetadataTypeMismatchException final : public PipeXException {
     public:
-        TypeMismatchException(
+        explicit MetadataTypeMismatchException(
             const std::string& nodeName,
             const std::type_info& expected,
             const std::type_info& actual)
@@ -35,14 +35,12 @@ namespace PipeX {
             const std::type_info& actual)
         {
             std::ostringstream oss;
-            oss << "[Node: " << nodeName << "] Type mismatch: "
+            oss << "[Node: " << nodeName << "] Metadata mismatch: "
                 << "expected " << expected.name()
                 << ", got " << actual.name();
             return oss.str();
         }
     };
+}
 
-} // namespace PipeX
-
-
-#endif //PIPEX_TYPEMISMATCHEXPECTION_H
+#endif //PIPEX_METADATATYPEMISMATCHEXCEPTION_H

@@ -4,21 +4,52 @@
 
 #ifndef PIPEX_WAV_SOUNDSAMPLE_SOURCE_H
 #define PIPEX_WAV_SOUNDSAMPLE_SOURCE_H
+
+#include "WAV_Sound_Sink.h"
+#include "PipeX/errors/MetadataTypeMismatchException.h"
+#include "PipeX/metadata/WAV_Metadata.h"
 #include "PipeX/nodes/primitives/Source.h"
 
 namespace PipeX {
-    using SAMPLE_TYPE = int16_t;
-    class WAV_SoundPreset_Source final : public Source<SAMPLE_TYPE> {
+    using bit_depth_t = int32_t;
+    using AudioBuffer = std::vector<bit_depth_t>;
+
+    class WAV_SoundPreset_Source final : public Source<AudioBuffer> {
     public:
-        WAV_SoundPreset_Source(): Source<SAMPLE_TYPE>("WAV_SoundPreset_Source", []() {
+        WAV_SoundPreset_Source(std::string node_name, const int numChannels, const int sampleRate, const int bitsPerSample, const int durationSec)
+        : Source(std::move(name), []() {
             //TODO implement sound generation presets
-            return std::vector<SAMPLE_TYPE>{};
+            return std::vector<AudioBuffer>();
         }) {
             this->logLifeCycle("Constructor()");
         }
 
-    private:
 
+
+    private:
+        std::shared_ptr<WAV_Metadata> getWAV_Metadata() const {
+            const auto wav_metadata = std::dynamic_pointer_cast<WAV_Metadata>(this->metadata);
+            if (!wav_metadata) {
+                throw MetadataTypeMismatchException(this->getName(), typeid(WAV_Metadata), typeid(this->metadata.get()));
+            }
+
+            return wav_metadata;
+        }
+
+        void setupWAVMetadata() const;
+
+        AudioBuffer getSoundPreset(const int preset) {
+            switch (preset) {
+            case 0:
+                return sinusoidalWave();
+
+            default:
+                return loadWAVFile(preset);
+            }
+        }
+
+        AudioBuffer sinusoidalWave() const;
+        AudioBuffer loadWAVFile(int sample) const;
     };
 }
 

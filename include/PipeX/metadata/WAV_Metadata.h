@@ -10,7 +10,9 @@
 #include "PipeX/metadata/IMetadata.h"
 
 namespace PipeX {
-    struct WAV_Metadata final : IMetadata {
+    class WAV_Metadata final : IMetadata {
+    public:
+
         // WAV parameters
         uint16_t numChannels_;
         uint32_t sampleRate_;
@@ -38,6 +40,8 @@ namespace PipeX {
                             dataSize(numSamples * blockAlign),
                             riffSize(36 + dataSize)
         {}
+
+        ~WAV_Metadata() override = default;
     };
 }
 

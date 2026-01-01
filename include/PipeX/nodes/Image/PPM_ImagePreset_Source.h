@@ -18,7 +18,7 @@ namespace PipeX {
     class PPM_ImagePreset_Source final : public Source<PPM_Image> {
         public:
             PPM_ImagePreset_Source(std::string node_name, const int width, const int height, const int preset, const int count)
-                    : Source<PPM_Image>(std::move(node_name), [this]() {
+                    : Source(std::move(node_name), [this]() {
                         auto images = std::vector<PPM_Image>();
                         for (int i = 0; i < count_; ++i) {
                             images.push_back(getImagePreset(width_, height_, preset_));
@@ -45,7 +45,7 @@ namespace PipeX {
         const int preset_;
         const int count_;
 
-        static PPM_Image getImagePreset(const int width, const int height, const int preset) {
+        PPM_Image getImagePreset(const int width, const int height, const int preset) {
             switch (preset) {
             case 0:
                 return gradientImage(width, height);
@@ -58,10 +58,10 @@ namespace PipeX {
             }
         }
 
-        static PPM_Image gradientImage(int width, int height);
-        static PPM_Image checkerboardImage(int width, int height);
-        static PPM_Image colorCheckImage(int width, int height);
-        static PPM_Image loadImageFile(int sample);
+        PPM_Image gradientImage(int width, int height);
+        PPM_Image checkerboardImage(int width, int height);
+        PPM_Image colorCheckImage(int width, int height);
+        PPM_Image loadImageFile(int sample);
     };
 }
 
