@@ -85,6 +85,9 @@ namespace PipeX {
             return typeid(Derived).name();
         }
 
+        // Derived classes must implement this method for processing logic. derived classes' procesImpl is called via CRTP compile-time polymorphism, not virtual dispatch.
+        virtual std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const = 0;
+
     public:
 
         std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) const override {

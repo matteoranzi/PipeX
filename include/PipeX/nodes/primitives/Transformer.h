@@ -119,7 +119,7 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData interface
          * @return Vector of transformed output data wrapped in IData interface
          */
-        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const {
+        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             auto output = make_unique<std::vector<OutputT>>();

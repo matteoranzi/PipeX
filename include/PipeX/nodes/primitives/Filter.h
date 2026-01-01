@@ -137,7 +137,7 @@ namespace PipeX {
         Predicate predicateFilter;
 
 
-        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const {
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             // Filter data based on predicate

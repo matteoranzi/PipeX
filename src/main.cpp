@@ -2,6 +2,8 @@
 
 #include "debug/print_debug.h"
 #include "PipeX/PipeXEngine.h"
+#include "PipeX/nodes/Image/PPM_ImageSample_Source.h"
+#include "PipeX/nodes/Image/PPM_Image_Sink.h"
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/nodes/primitives/Source.h"
@@ -9,6 +11,18 @@
 #include "PipeX/nodes/thread_safe/ConsoleSource_ts.h"
 
 int main() {
+    const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
+    pipex_engine->newPipeline("PPM Image generation")
+        .addNode<PipeX::PPM_ImageSample_Source>("PPM Image Sample Source", 512, 512, 0, 1)
+        .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/gradient");
+
+    pipex_engine->start();
+
+    return 0;
+}
+
+// TODO put this code in a test file
+/*{
     const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
 
     pipex_engine->newPipeline("BasicPipeline")
@@ -28,7 +42,7 @@ int main() {
             .addNode<PipeX::ConsoleSource_ts<int>>("Console Source for AnotherBasicPipeline")
             .addNode<PipeX::Transformer<int, int>>("another-node", [](const int& data) {
                 return data + 5;
-            })/*.removeNodeByName("another-node")*/
+            })
             // .addNode<PipeX::Sink<int>>("another-node", [](const std::vector<int>& data) {
             //     for (const auto& item : data) {
             //         std::cout << item << " ";
@@ -55,4 +69,4 @@ int main() {
 
 
     return 0;
-}
+}*/
