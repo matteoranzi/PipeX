@@ -22,8 +22,8 @@ int main() {
     try {
         pipex_engine->newPipeline("WAV Audio generation")
             .addNode<PipeX::WAV_SoundPreset_Source>("WAV Audio Sample Source", 1, 44100, 16, 5, 2)
-            .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve", 1000.0, 6.0, 12.0)
-            .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/eq_pink_noise");
+            .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve", 500.0, 4.0, 20.0)
+            .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/eq2_pink_noise");
             // .addNode<PipeX::ConsoleSink_ts<PipeX::AudioBuffer>>("Output WAV Audio Sample to Console");
     } catch (PipeX::PipeXException& e) {
         PRINT_DEBUG_ERROR("Exception caught while creating pipeline: %s\n", e.what());
