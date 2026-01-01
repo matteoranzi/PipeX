@@ -94,8 +94,7 @@ namespace PipeX {
         }
 
         virtual void postProcessHook() const {
-            // Default implementation does nothing
-            // Derived classes can override to add pre-processing logic
+            outputData->metadata = inputData->metadata; // by default, propagate input metadata to output
         }
 
         // Derived classes must implement this method for processing logic. derived classes' procesImpl is called via CRTP compile-time polymorphism, not virtual dispatch.
