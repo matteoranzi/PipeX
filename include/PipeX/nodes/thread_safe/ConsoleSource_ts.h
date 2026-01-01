@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
-#include "PipeX/nodes/thread_safe/Console_threadsafe.h"
+#include "../../utils/Console_threadsafe_utils.h"
 #include "PipeX/nodes/primitives/Source.h"
 
 
@@ -16,23 +16,7 @@ namespace PipeX {
     template <typename T>
     class ConsoleSource_ts final: public Source<T>, protected Console_threadsafe {
     public:
-        explicit ConsoleSource_ts(std::string _description) : Source<T>([this]() -> std::vector<T> {
-                size_t n;
-                std::vector<T> inputData;
-
-                lockConsole();
-                std::cout << "ConsoleSource - " << description << std::endl;
-                std::cout << "Insert the number of elements to input: ";
-                std::cin >> n;
-                inputData.resize(n);
-                for (size_t i = 0; i < n; i++) {
-                    std::cout << "Enter value #" << (i + 1) << ": ";
-                    std::cin >> inputData[i];
-                }
-                unlockConsole();
-
-                return inputData;
-            }), description(std::move(_description)) {
+        explicit ConsoleSource_ts(std::string _description) : Source<T>([this]() -> std::vector<T> {return this->consoleInput();}), description(std::move(_description)) {
             this->logLifeCycle("Constructor(std::string)");
         }
 
@@ -59,6 +43,28 @@ namespace PipeX {
 
     private:
         std::string description;
+
+        std::vector<T> consoleInput() {
+            size_t n;
+            std::vector<T> inputData;
+
+            // lock (i.e. console_mutex) is release when lock_guard goes out of scope
+            // prevents console_mutex being locked if an in/out exception happens
+            const std::lock_guard<std::mutex> lock(this->console_mutex);
+
+            std::cout << "\n----------------------------------------" << std::endl;
+            std::cout << "ConsoleSource - " << description << std::endl;
+            std::cout << "Insert the number of elements to input: ";
+            std::cin >> n;
+            inputData.resize(n);
+            for (size_t i = 0; i < n; i++) {
+                std::cout << "Enter value #" << (i + 1) << ": ";
+                std::cin >> inputData[i];
+            }
+            std::cout << "----------------------------------------\n" << std::endl;
+
+            return inputData;
+        }
     };
 }
 

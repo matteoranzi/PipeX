@@ -81,7 +81,7 @@ namespace PipeX {
          * @param other The Transformer to move from
          */
         Transformer(Transformer&& other) noexcept : Base(other), transformerFunction(std::move(other.transformerFunction)) {
-            this->logLifecycle("MoveConstructor(Transformer&&)");
+            this->logLifeCycle("MoveConstructor(Transformer&&)");
         }
 
         /**
@@ -119,11 +119,11 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData interface
          * @return Vector of transformed output data wrapped in IData interface
          */
-        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
+        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&&)");
 
             // Extract input data using Base helper
-            auto inputData = this->extractInputData(input);
+            auto inputData = this->extractInputData(std::move(input));
 
             // Transform data
             std::vector<OutputT> outputData;

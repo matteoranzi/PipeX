@@ -15,7 +15,7 @@
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/data/Data.h"
 #include "PipeX/nodes/primitives/Processor.h"
-#include "PipeX/nodes/node_utils.h"
+#include "../include/PipeX/utils/node_utils.h"
 #include "my_extended_cpp_standard/my_memory.h"
 
 
@@ -48,8 +48,8 @@ TEST(NodeTest, Transformer) {
 
 
         auto wrappedInput = wrapData<int>(make_unique<std::vector<int>>(inputData));
-        const auto outputData = transformer.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<float>(outputData);
+        auto outputData = transformer.process(std::move(wrappedInput));
+        const auto extractedOutput = PipeX::extractData<float>(std::move(outputData));
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);
@@ -91,8 +91,8 @@ TEST(NodeTest, Processor) {
         inputData.emplace_back(4);
 
         auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
-        const auto outputData = processor.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<int>(outputData);
+        auto outputData = processor.process(std::move(wrappedInput));
+        const auto extractedOutput = PipeX::extractData<int>(std::move(outputData));
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);
@@ -132,8 +132,8 @@ TEST(NodeTest, Filter) {
 
 
         auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
-        const auto outputData = filter.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<int>(outputData);
+        auto outputData = filter.process(std::move(wrappedInput));
+        const auto extractedOutput = PipeX::extractData<int>(std::move(outputData));
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);
@@ -174,8 +174,8 @@ TEST(NodeTest, Aggregator) {
 
 
         auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
-        const auto outputData = aggregator.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<int>(outputData);
+        auto outputData = aggregator.process(std::move(wrappedInput));
+        const auto extractedOutput = PipeX::extractData<int>(std::move(outputData));
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);

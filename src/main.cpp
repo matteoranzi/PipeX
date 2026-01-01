@@ -40,6 +40,8 @@ int main() {
     } catch (PipeX::InvalidPipelineException& e) {
         PRINT_DEBUG_ERROR("Test exception caught while creating pipeline: %s\n", e.what());
         //New pipeline is not created and PipeXEngine continue with the previous ones
+    } catch (PipeX::InvalidOperation& e) {
+        PRINT_DEBUG_ERROR("Test exception caught while creating pipeline: %s\n", e.what());
     }
 
 

@@ -104,8 +104,8 @@ namespace PipeX {
          * @brief Move constructor.
          * @param other The Filter to move from
          */
-        Filter(Filter&& other) noexcept : Base(std::move(other)) {
-            this->logLifecycle("MoveConstructor(Filter&&)");
+        Filter(Filter&& other) noexcept : Base(std::move(other)), predicateFilter(std::move(other.predicateFilter)) {
+            this->logLifeCycle("MoveConstructor(Filter&&)");
         }
 
         /**
@@ -152,20 +152,22 @@ namespace PipeX {
          * @note The output vector may be smaller than the input vector if elements are filtered out.
          * @note Memory for filtered-out elements is automatically released.
          */
-        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
+        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&");
 
             // Extract input data using Base helper
-            auto inputData = this->extractInputData(input);
+            auto inputData = this->extractInputData(std::move(input));
 
             // Filter data based on predicate
             std::vector<T> outputData;
             outputData.reserve(inputData->size());
-            for (const auto& data : *inputData) {
-                if (predicateFilter(data)) {
-                    outputData.push_back(std::move(data));
-                }
-            }
+
+            std::copy_if(
+                std::make_move_iterator(inputData->begin()),
+                std::make_move_iterator(inputData->end()),
+                std::back_inserter(outputData),
+                predicateFilter
+                );
 
             // Wrap output data back into IData format using Base helper
             return this->wrapOutputData(make_unique<std::vector<T>>(std::move(outputData)));

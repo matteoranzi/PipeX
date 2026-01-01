@@ -14,7 +14,7 @@
 #include "PipeX/data/Data.h"
 #include "PipeX/errors/TypeMismatchExpection.h"
 #include "my_extended_cpp_standard/my_memory.h"
-#include "PipeX/nodes/node_utils.h"
+#include "../../utils/node_utils.h"
 
 // TODO improve extraction/wrapping logic (currently each pass copies data multiple times, once for extraction and once for wrapping, for every node step in the pipeline)
 
@@ -34,6 +34,7 @@ namespace PipeX {
 
     static_assert(std::is_copy_constructible<InputT>::value || std::is_move_constructible<InputT>::value, "InputT must be copyable or movable");
     static_assert(std::is_copy_constructible<OutputT>::value || std::is_move_constructible<OutputT>::value, "OutputT must be copyable or movable");
+    static_assert(std::is_destructible<InputT>::value, "InputT must be destructible");
 
     protected:
 
@@ -57,7 +58,7 @@ namespace PipeX {
             return wrapData<OutputT>(std::move(data));
         }
 
-        std::unique_ptr<std::vector<InputT>> extractInputData(const std::unique_ptr<IData>& data) const {
+        std::unique_ptr<std::vector<InputT>> extractInputData(std::unique_ptr<IData>&& data) const {
             return extractData<InputT>(std::move(data), this->name);
         }
 
@@ -92,7 +93,7 @@ namespace PipeX {
          */
         std::unique_ptr<INode> clone(std::string _name) const override {
             logLifeCycle("clone(std::string)");
-            return make_unique<Derived>(static_cast<const Derived&>(*this), std::move(name));
+            return make_unique<Derived>(static_cast<const Derived&>(*this), std::move(_name));
         }
     };
 }

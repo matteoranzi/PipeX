@@ -130,9 +130,9 @@ namespace PipeX {
         // }
 
         //TODO rvalue, overload ()
-        virtual std::unique_ptr<IData> process(const std::unique_ptr<IData> input) const final {
+        virtual std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) const final {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(const std::unique_ptr<IData>&)\n", this);
-            return processImpl(input);
+            return processImpl(std::move(input));
         }
 
         /**
@@ -163,10 +163,10 @@ namespace PipeX {
         //     return this->process(input);
         // }
 
-        virtual std::unique_ptr<IData> operator() (const std::unique_ptr<IData> input) const final {
+        virtual std::unique_ptr<IData> operator() (std::unique_ptr<IData>&& input) const final {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(const std::unique_ptr<IData>&)\n", this);
             // return this->process(std::move(input));
-            return processImpl(input);
+            return processImpl(std::move(input));
         }
 
         /**
@@ -218,7 +218,7 @@ namespace PipeX {
         //     throw std::logic_error("DynamicNode::processImpl(const std::vector<std::unique_ptr<IData>>&) not implemented");
         // }
 
-        virtual std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const {
+        virtual std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const {
             PIPEX_PRINT_DEBUG_ERROR("'DynamicNode::processImpl' METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
             throw std::logic_error("DynamicNode::processImpl(const std::unique_ptr<IData>&) not implemented");
         }

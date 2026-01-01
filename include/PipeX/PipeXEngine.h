@@ -10,10 +10,7 @@
 #include <thread>
 
 #include "Pipeline.h"
-
-// TODO locking mechanism to avoid modifications while running asynchronously (thread safe)
-// TODO if asynch execution is implemented, add method to stop the engine and all pipelines gracefully
-// TODO Prevent reallocation/modification while running (e.g., mutex + state flags, reserve enough capacity beforehand, or forbid API calls that mutate).
+#include "errors/InvalidOperation.h"
 
 namespace PipeX {
     /**
@@ -23,12 +20,16 @@ namespace PipeX {
      * PipeXEngine provides functionality to create, manage, and execute pipelines in parallel.
      * Each pipeline runs in its own thread when the engine is started.
      */
-    //TODO Prevent reallocation/modification while running (e.g., mutex + state flags, reserve enough capacity beforehand, or forbid API calls that mutate).
     // TODO implement state management (running, stopped, error, etc.) and methods to query the state of the engine and individual pipelines
 
     class PipeXEngine {
     private:
+        // Singleton only for academic purposes (TODO: remove it?)
         static PipeXEngine* pipex_engine_; // Singleton instance
+
+        // Safeguards if different threads access the engine simultaneously
+        bool isRunning_flag = false;
+        pthread_mutex_t pipex_engine_mutex_ = PTHREAD_MUTEX_INITIALIZER;
 
     public:
         // Singleton instance of the PipeXEngine
@@ -54,12 +55,21 @@ namespace PipeX {
          * @return Reference to the newly created pipeline.
          */
         Pipeline& newPipeline(const std::string& name) {
-            try {
-                pipelines.emplace_back(std::make_shared<Pipeline>(name));
-                return *pipelines.back();
-            } catch (InvalidPipelineException& e) {
-                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidPipelineException exception while creating new pipeline \"%s\": %s\n", name.c_str(), e.what());
-                throw;
+            lockEngine();
+            if (!isRunning_flag) {
+                try {
+                    pipelines.emplace_back(std::make_shared<Pipeline>(name));
+                    unlockEngine();
+                    return *pipelines.back();
+                } catch (InvalidPipelineException& e) {
+                    PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidPipelineException exception while creating new pipeline \"%s\": %s\n", name.c_str(), e.what());
+                    unlockEngine();
+                    throw;
+                }
+            } else {
+                PIPEX_PRINT_DEBUG_WARN("[PipeXEngine] Cannot create new pipeline \"%s\" while engine is running\n", name.c_str());
+                unlockEngine();
+                throw InvalidOperation("PipeXEngine::newPipeline", "Engine is running");
             }
         }
 
@@ -72,7 +82,9 @@ namespace PipeX {
          */
         // TODO implement parallel run via threads
         // TODO implement asynch run via flags
-        void start() const {
+        void start() {
+            isRunning(true);
+
             std::vector<std::thread> threads;
             threads.reserve(pipelines.size());
             for (auto& pipeline : pipelines) {
@@ -85,13 +97,23 @@ namespace PipeX {
                     thread.join();
                 }
             }
+
+            isRunning(false);
         }
 
         /**
          * @brief Removes all pipelines from the engine.
          */
         void clearPipelines() {
-            pipelines.clear();
+            lockEngine();
+            if (!isRunning_flag) {
+                pipelines.clear();
+            }
+            unlockEngine();
+        }
+
+        bool isRunning() const {
+            return isRunning_flag;
         }
 
     private:
@@ -100,8 +122,6 @@ namespace PipeX {
          * @brief Private default constructor for singleton pattern.
          */
         PipeXEngine() = default;
-
-        //TODO flags to manage the state of the engine (running, ready, error, end, etc.) and of each pipeline
 
         /// Container holding all registered pipelines
         std::vector<std::shared_ptr<Pipeline>> pipelines;
@@ -126,6 +146,18 @@ namespace PipeX {
             }
         }
 
+        void lockEngine() {
+            pthread_mutex_lock(&pipex_engine_mutex_);
+        }
+        void unlockEngine() {
+            pthread_mutex_unlock(&pipex_engine_mutex_);
+        }
+
+        void isRunning(const bool flag) {
+            lockEngine();
+            isRunning_flag = flag;
+            unlockEngine();
+        }
     };
 }
 

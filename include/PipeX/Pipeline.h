@@ -99,9 +99,14 @@ namespace PipeX {
          *
          * @param _pipeline Source pipeline to copy from.
          */
-        Pipeline(const Pipeline& _pipeline) {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(&)\n", _pipeline.name.c_str(), this);
-            *this = _pipeline;
+        Pipeline(const Pipeline& _pipeline) : name(_pipeline.name + "_copy"),
+                                              nodesNameSet(_pipeline.nodesNameSet),
+                                              hasSourceNode(_pipeline.hasSourceNode),
+                                              hasSinkNode(_pipeline.hasSinkNode) {
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(&)\n", name.c_str(), this);
+            for (const auto& node : _pipeline.nodes) {
+                nodes.push_back(node->clone());
+            }
         }
 
 
@@ -112,8 +117,12 @@ namespace PipeX {
          *
          * @param _pipeline Pipeline to move from.
          */
-        Pipeline(Pipeline&& _pipeline) noexcept {
-            *this = std::move(_pipeline);
+        Pipeline(Pipeline&& _pipeline) noexcept : name(_pipeline.name + "_copy"),
+                                              nodesNameSet(std::move(_pipeline.nodesNameSet)),
+                                              hasSourceNode(_pipeline.hasSourceNode),
+                                              hasSinkNode(_pipeline.hasSinkNode),
+                                              nodes(std::move(_pipeline.nodes)){
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.Constructor(&)\n", name.c_str(), this);
         }
 
         /**

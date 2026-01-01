@@ -88,7 +88,7 @@ namespace PipeX {
          */
         Processor(Processor&& other) noexcept
             : Base(std::move(other)), processorFunction(std::move(other.processorFunction)) {
-            this->logLifecycle("MoveConstructor(Processor&&)");
+            this->logLifeCycle("MoveConstructor(Processor&&)");
         }
 
         /**
@@ -124,10 +124,10 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData objects.
          * @return Vector of processed data wrapped in IData objects.
          */
-        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
+        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
-            auto inputData = this->extractInputData(input);
+            auto inputData = this->extractInputData(std::move(input));
             auto outputData = processorFunction(*inputData);
             return this->wrapOutputData(make_unique<std::vector<T>>(std::move(outputData)));
         }

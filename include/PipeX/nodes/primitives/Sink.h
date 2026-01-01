@@ -57,7 +57,7 @@ namespace PipeX {
          * @param other The Sink to move from
          */
         Sink(Sink&& other) noexcept : Base(other), sinkFunction(std::move(other.sinkFunction)) {
-            this->logLifecycle("MoveConstructor(Sink&&)");
+            this->logLifeCycle("MoveConstructor(Sink&&)");
         }
 
         /**
@@ -77,11 +77,11 @@ namespace PipeX {
     private:
         Function sinkFunction;
 
-        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
+        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             // Extract input data
-            auto inputData = this->extractInputData(input);
+            auto inputData = this->extractInputData(std::move(input));
 
             // Apply sink function
             sinkFunction(*inputData);

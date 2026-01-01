@@ -63,7 +63,7 @@ namespace PipeX {
 
         
         Aggregator(Aggregator&& other) noexcept : Base(other), aggregatorFunction(std::move(other.aggregatorFunction)) {
-            this->logLifecycle("MoveConstructor(Aggregator&&)");
+            this->logLifeCycle("MoveConstructor(Aggregator&&)");
         }
 
         
@@ -84,11 +84,11 @@ namespace PipeX {
         Function aggregatorFunction;
 
         
-        std::unique_ptr<IData> processImpl(const std::unique_ptr<IData>& input) const override {
+        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
             this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
 
             // Extract input data
-            auto inputData = this->extractInputData(input);
+            auto inputData = this->extractInputData(std::move(input));
 
             // Apply aggregation function
             std::vector<OutputT> outputData;
