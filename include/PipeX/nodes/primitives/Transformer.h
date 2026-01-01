@@ -7,7 +7,6 @@
 #include <functional>
 
 #include "NodeCRTP.h"
-#include "PipeX/data/IData.h"
 
 namespace PipeX {
     /**
@@ -119,21 +118,17 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData interface
          * @return Vector of transformed output data wrapped in IData interface
          */
-        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
-            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&&)");
+        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
+            this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
-            // Extract input data using Base helper
-            auto inputData = this->extractInputData(std::move(input));
+            auto output = make_unique<std::vector<OutputT>>();
+            output->reserve(input->size());
 
             // Transform data
-            std::vector<OutputT> outputData;
-            outputData.reserve(inputData->size());
-            for (const auto& data : *inputData) {
-                outputData.push_back(std::move(transformerFunction(data)));
+            for (const auto& data : *input) {
+                output->push_back(transformerFunction(data));
             }
-
-            // Wrap output data using Base helper
-            return this->wrapOutputData(make_unique<std::vector<OutputT>>(std::move(outputData)));
+            return output;
         }
     };
 }

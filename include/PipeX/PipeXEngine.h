@@ -83,6 +83,7 @@ namespace PipeX {
         // TODO implement parallel run via threads
         // TODO implement asynch run via flags
         void start() {
+            std::cout << "Running PipeXEngine with " << pipelines.size() << " pipelines..." << std::endl;
             isRunning(true);
 
             std::vector<std::thread> threads;
@@ -135,6 +136,7 @@ namespace PipeX {
          */
         static void runPipeline(const std::shared_ptr<Pipeline>& pipeline) {
             try {
+                std::cout << "Running pipeline \"" << pipeline->getName() << "\"..." << std::endl;
                 pipeline->run();
             } catch (TypeMismatchException &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] TypeMismatchException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());

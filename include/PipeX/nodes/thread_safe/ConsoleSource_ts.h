@@ -20,6 +20,10 @@ namespace PipeX {
             this->logLifeCycle("Constructor(std::string)");
         }
 
+        ConsoleSource_ts(std::string _name, std::string _description) : Source<T>(std::move(_name), [this]() -> std::vector<T> {return this->consoleInput();}), description(std::move(_description)) {
+            this->logLifeCycle("Constructor(std::string, std::string)");
+        }
+
         ConsoleSource_ts(const ConsoleSource_ts& other): Source<T>(other), description(other.description + " - copy") {
             this->logLifeCycle("CopyConstructor(const ConsoleSource&)");
         }

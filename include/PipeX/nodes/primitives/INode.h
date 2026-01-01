@@ -112,73 +112,13 @@ namespace PipeX {
             PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
         }
 
-        /**
-         * @brief Process input data (const lvalue reference overload).
-         *
-         * This function is \c final to centralize logging and move-semantics
-         * handling. It forwards to \c processImpl implemented by derived
-         * classes.
-         *
-         * @param input Immutable reference to a vector of owned IData.
-         * @return std::vector<std::unique_ptr<IData>> Resulting vector
-         *         of owned IData produced by the node.
-         */
-        // virtual std::vector<std::unique_ptr<IData>> process(const std::vector<std::unique_ptr<IData>>& input) const final {
-        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&)\n", this);
-        //
-        //     return processImpl(input);
-        // }
+        virtual std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) const = 0;
 
-        //TODO rvalue, overload ()
-        virtual std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(const std::unique_ptr<IData>&)\n", this);
-            return processImpl(std::move(input));
+        virtual std::unique_ptr<IData> operator() (std::unique_ptr<IData>&& input) const {
+            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(std::unique_ptr<IData>&&)\n", this);
+            return this->process(std::move(input));
         }
 
-        /**
-         * @brief Process input data (rvalue overload).
-         *
-         * Accepts a rvalue vector permitting derived implementations to take
-         * advantage of moved input objects if desired. The base class ensures
-         * the same call path by forwarding to \c processImpl.
-         *
-         * @param input A rvalue vector of owned IData.
-         * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
-         */
-        // virtual std::vector<std::unique_ptr<IData>> process(std::vector<std::unique_ptr<IData>>&& input) const final {
-        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.process(std::vector<std::unique_ptr<IData>>&&)\n", this);
-        //     return processImpl(input);
-        // }
-
-        /**
-         * @brief Call operator forwarding to \c process (const lvalue overload).
-         *
-         * Provides a function-call style interface for executing the node.
-         *
-         * @param input Immutable reference to a vector of owned IData.
-         * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
-         */
-        // virtual std::vector<std::unique_ptr<IData>> operator() (const std::vector<std::unique_ptr<IData>>& input) const final {
-        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(std::vector<std::unique_ptr<IData>>&)\n", this);
-        //     return this->process(input);
-        // }
-
-        virtual std::unique_ptr<IData> operator() (std::unique_ptr<IData>&& input) const final {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(const std::unique_ptr<IData>&)\n", this);
-            // return this->process(std::move(input));
-            return processImpl(std::move(input));
-        }
-
-        /**
-         * @brief Call operator forwarding to \c process (rvalue overload).
-         *
-         * @param input Rvalue vector of owned IData.
-         * @return std::vector<std::unique_ptr<IData>> Resulting vector of owned IData.
-         */
-        // virtual std::vector<std::unique_ptr<IData>> operator() (std::vector<std::unique_ptr<IData>>&& input) const final {
-        //     PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(std::vector<std::unique_ptr<IData>>&&)\n", this);
-        //     return this->process(std::move(input));
-        // }
 
         virtual bool isSource() const { return  false; }
         virtual bool isSink() const { return  false; }
@@ -193,35 +133,6 @@ namespace PipeX {
          * Derived classes or callers can supply a custom name via constructors.
          */
         std::string name;
-
-    private:
-        /**
-         * @brief Implementation hook for derived classes to perform processing.
-         *
-         * Derived classes must override this method to implement their logic.
-         * The base implementation reports an error and throws \c std::logic_error.
-         *
-         * Implementations receive a const reference to the input vector. If a
-         * derived class needs to take ownership of elements, it may perform
-         * explicit moves from the referenced vector.\n
-         *
-         * @param input Immutable reference to the inputs.
-         * @return std::vector<std::unique_ptr<IData>> Processed outputs.
-         *
-         * @throws std::logic_error If not overridden by a derived class.
-         * @note This method is intentionally private and virtual: public
-         *       forwarding methods ensure consistent pre/post behaviour
-         *       (e.g. logging) while derived classes only implement the core logic.
-         */
-        // virtual std::vector<std::unique_ptr<IData>> processImpl(const std::vector<std::unique_ptr<IData>>& input) const {
-        //     PIPEX_PRINT_DEBUG_ERROR("'DynamicNode::processImpl' METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
-        //     throw std::logic_error("DynamicNode::processImpl(const std::vector<std::unique_ptr<IData>>&) not implemented");
-        // }
-
-        virtual std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const {
-            PIPEX_PRINT_DEBUG_ERROR("'DynamicNode::processImpl' METHOD HAS TO BE OVERRIDDEN IN DERIVED CLASSES!\n");
-            throw std::logic_error("DynamicNode::processImpl(const std::unique_ptr<IData>&) not implemented");
-        }
     };
 }
 

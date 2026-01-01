@@ -233,6 +233,7 @@ namespace PipeX {
 
             std::unique_ptr<IData> data;
 
+            std::cout << "Valid pipeline \"" << name << "\" starting execution with " << nodes.size() << " nodes." << std::endl;
             // Process through nodes
             for (const auto& node : nodes) {
                 try {
@@ -242,8 +243,9 @@ namespace PipeX {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> TypeMismatchException exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     // Rethrow the exception to propagate it up the call stack
                     throw;
-                } catch (...) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\"\n", name.c_str(), this, node->getName().c_str());
+                } catch (std::exception &e) {
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());
+                    // Rethrow the exception to propagate it up the call stack
                     throw;
                 }
             }

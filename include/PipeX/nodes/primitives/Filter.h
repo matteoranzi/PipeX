@@ -8,8 +8,6 @@
 #include <functional>
 
 #include "NodeCRTP.h"
-#include "PipeX/data/IData.h"
-#include "my_extended_cpp_standard/my_memory.h"
 
 namespace PipeX {
     /**
@@ -152,25 +150,21 @@ namespace PipeX {
          * @note The output vector may be smaller than the input vector if elements are filtered out.
          * @note Memory for filtered-out elements is automatically released.
          */
-        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
-            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&");
-
-            // Extract input data using Base helper
-            auto inputData = this->extractInputData(std::move(input));
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
+            this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             // Filter data based on predicate
-            std::vector<T> outputData;
-            outputData.reserve(inputData->size());
+            auto output = make_unique<std::vector<T>>();
+            output->reserve(input->size());
 
             std::copy_if(
-                std::make_move_iterator(inputData->begin()),
-                std::make_move_iterator(inputData->end()),
-                std::back_inserter(outputData),
+                std::make_move_iterator(input->begin()),
+                std::make_move_iterator(input->end()),
+                std::back_inserter(*output),
                 predicateFilter
                 );
 
-            // Wrap output data back into IData format using Base helper
-            return this->wrapOutputData(make_unique<std::vector<T>>(std::move(outputData)));
+            return output;
         }
     };
 }

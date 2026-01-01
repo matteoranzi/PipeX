@@ -23,10 +23,17 @@ namespace PipeX {
     template <typename T>
     std::unique_ptr<std::vector<T>> extractData(std::unique_ptr<IData>&& data, const std::string& sourceName) {
         auto* rawPtr = data.release();  // Release ownership
+        if (!rawPtr) {
+            PIPEX_PRINT_DEBUG_WARN("extractData -> nullptr data pointer when extracting data from source \"%s\"\n", sourceName.c_str());
+            return nullptr;
+        }
+
         auto castedData = dynamic_cast<Data<std::unique_ptr<std::vector<T>>>*>(rawPtr);
         if (!castedData) {
+            const auto& rawPtrTypeid = typeid(*rawPtr);
             delete rawPtr;  // Clean up on failure
-            throw TypeMismatchException(sourceName, typeid(T), typeid(*rawPtr));
+            PIPEX_PRINT_DEBUG_ERROR("extractData -> Type mismatch when extracting data from source \"%s\"\n", sourceName.c_str());
+            throw TypeMismatchException(sourceName, typeid(T), rawPtrTypeid);
         }
         auto result = std::move(castedData->value);
         delete castedData;  // Clean up wrapper

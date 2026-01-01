@@ -12,10 +12,10 @@ int main() {
     const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
 
     pipex_engine->newPipeline("BasicPipeline")
-        .addNode<PipeX::Source<int>>([]() {
+        .addNode<PipeX::Source<int>>("Source", []() {
             return std::vector<int>{1, 2, 3, 4, 5};
         })
-        .addNode<PipeX::Transformer<int, int>>([](const int& data) {
+        .addNode<PipeX::Transformer<int, int>>("Transformer", [](const int& data) {
             return data * 2;
         })
         .addNode<PipeX::ConsoleSink_ts<int>>("Console Sink for BasicPipeline");
@@ -42,10 +42,16 @@ int main() {
         //New pipeline is not created and PipeXEngine continue with the previous ones
     } catch (PipeX::InvalidOperation& e) {
         PRINT_DEBUG_ERROR("Test exception caught while creating pipeline: %s\n", e.what());
+    } catch (... ) {
+        PRINT_DEBUG_ERROR("Unknown exception caught while creating pipeline\n");
     }
 
 
-    pipex_engine->start();
+    try {
+        pipex_engine->start();
+    } catch (PipeX::InvalidOperation& e) {
+        PRINT_DEBUG_WARN("Invalid operation detected: %s\n", e.what());
+    }
 
 
     return 0;

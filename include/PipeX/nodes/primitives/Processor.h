@@ -7,7 +7,6 @@
 
 #include <functional>
 #include "NodeCRTP.h"
-#include "PipeX/data/IData.h"
 
 namespace PipeX {
     /**
@@ -124,12 +123,10 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData objects.
          * @return Vector of processed data wrapped in IData objects.
          */
-        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
-            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
+            this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
-            auto inputData = this->extractInputData(std::move(input));
-            auto outputData = processorFunction(*inputData);
-            return this->wrapOutputData(make_unique<std::vector<T>>(std::move(outputData)));
+            return make_unique<std::vector<T>>(std::move(processorFunction(*input)));
         }
     };
 }

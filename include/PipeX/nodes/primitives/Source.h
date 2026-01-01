@@ -76,13 +76,11 @@ namespace PipeX {
     private:
         Function sourceFunction;
 
-        std::unique_ptr<IData> processImpl(std::unique_ptr<IData>&& input) const override {
-            // input is ignored for Source nodes
-            this->logLifeCycle("processImpl(std::vector<std::unique_ptr<IData>>&)");
+        // input is ignored for Source nodes
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
+            this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
-            //Wrap output data
-            auto outputData = make_unique<std::vector<T>>(std::move(sourceFunction()));
-            return this->wrapOutputData(std::move(outputData));
+            return make_unique<std::vector<T>>(std::move(sourceFunction()));
         }
     };
 }
