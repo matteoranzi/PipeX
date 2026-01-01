@@ -43,6 +43,8 @@ namespace PipeX {
          * Returns true to include the element, false to exclude it.
          */
         using Predicate = std::function<bool(const T& data)>;
+        friend Base;
+
 
         /**
          * @brief Constructs a Filter with a given predicate.
@@ -134,23 +136,8 @@ namespace PipeX {
         /// The predicate function used to determine which elements pass through the filter
         Predicate predicateFilter;
 
-        /**
-         * @brief Processes the input data and filters it based on the predicate.
-         *
-         * This method extracts data from the IData wrapper, applies the predicate to each
-         * element, and only includes elements that satisfy the predicate in the output.
-         *
-         * @param input A vector of unique pointers to IData representing the input data.
-         *
-         * @return A vector of unique pointers to IData representing the filtered output data.
-         *         Only elements where predicateFilter returns true are included.
-         *
-         * @throws PipeXTypeError If the input data cannot be cast to the expected type T.
-         *
-         * @note The output vector may be smaller than the input vector if elements are filtered out.
-         * @note Memory for filtered-out elements is automatically released.
-         */
-        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
+
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             // Filter data based on predicate

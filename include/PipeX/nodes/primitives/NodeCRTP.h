@@ -90,7 +90,7 @@ namespace PipeX {
         std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) const override {
             logLifeCycle("process(std::unique_ptr<IData>&&)");
             auto extractedInput = extractInputData(std::move(input));
-            auto outputData = processImpl(std::move(extractedInput));
+            auto outputData = static_cast<Derived const*>(this)->processImpl(std::move(extractedInput)); // CRTP compile-time polymorphism
             return wrapOutputData(std::move(outputData));
         }
 
@@ -112,9 +112,6 @@ namespace PipeX {
             logLifeCycle("clone(std::string)");
             return make_unique<Derived>(static_cast<const Derived&>(*this), std::move(_name));
         }
-
-    private:
-        virtual std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const = 0;
     };
 }
 

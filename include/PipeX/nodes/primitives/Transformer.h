@@ -32,6 +32,7 @@ namespace PipeX {
     class Transformer: public NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT> {
 
         using Base = NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT>;
+        friend Base;
 
     public:
         /**
@@ -118,7 +119,7 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData interface
          * @return Vector of transformed output data wrapped in IData interface
          */
-        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
+        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             auto output = make_unique<std::vector<OutputT>>();

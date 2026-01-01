@@ -35,6 +35,7 @@ namespace PipeX {
     class Aggregator: public NodeCRTP<Aggregator<InputT, OutputT>, InputT, OutputT> {
 
         using Base = NodeCRTP<Aggregator<InputT, OutputT>, InputT, OutputT>;
+        friend Base;
 
     public:
 
@@ -83,7 +84,7 @@ namespace PipeX {
         Function aggregatorFunction;
 
 
-        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
+        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             // Apply aggregation function

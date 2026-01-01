@@ -14,6 +14,7 @@ namespace PipeX {
     class Sink: public NodeCRTP<Sink<T>, T, T> {
 
         using Base = NodeCRTP<Sink<T>, T, T>;
+        friend Base;
 
     public:
         using Function = std::function<void(std::vector<T>&)>;
@@ -77,7 +78,7 @@ namespace PipeX {
     private:
         Function sinkFunction;
 
-        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             // Apply sink function

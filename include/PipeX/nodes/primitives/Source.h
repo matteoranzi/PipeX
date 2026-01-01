@@ -13,6 +13,7 @@ namespace PipeX {
     class Source : public NodeCRTP<Source<T>, T, T> {
 
         using Base = NodeCRTP<Source<T>, T, T>;
+        friend Base;
 
     public:
         using Function = std::function<std::vector<T>()>;
@@ -77,7 +78,7 @@ namespace PipeX {
         Function sourceFunction;
 
         // input is ignored for Source nodes
-        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             return make_unique<std::vector<T>>(std::move(sourceFunction()));
