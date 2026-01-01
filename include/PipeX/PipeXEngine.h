@@ -127,6 +127,7 @@ namespace PipeX {
         /// Container holding all registered pipelines
         std::vector<std::shared_ptr<Pipeline>> pipelines;
 
+
         /**
          * @brief Executes a single pipeline.
          * @param pipeline The pipeline to execute.

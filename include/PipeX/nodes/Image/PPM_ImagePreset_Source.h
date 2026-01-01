@@ -15,13 +15,13 @@ namespace PipeX {
     using BIT = std::array<int, 3>; // (RGB triplet)
     using PPM_Image = std::vector<std::vector<BIT>>;
 
-    class PPM_ImageSample_Source final : public Source<PPM_Image> {
+    class PPM_ImagePreset_Source final : public Source<PPM_Image> {
         public:
-            PPM_ImageSample_Source(std::string node_name, const int width, const int height, const int sample, const int count)
+            PPM_ImagePreset_Source(std::string node_name, const int width, const int height, const int preset, const int count)
                     : Source<PPM_Image>(std::move(node_name), [this]() {
                         auto images = std::vector<PPM_Image>();
                         for (int i = 0; i < count_; ++i) {
-                            images.push_back(getImageSample(width_, height_, sample_));
+                            images.push_back(getImagePreset(width_, height_, preset_));
                             auto& image = images.back();
                             if (image.empty() || image[0].empty()) {
                                 this->logLifeCycle("Error: Generated image is empty.");
@@ -30,7 +30,7 @@ namespace PipeX {
                             }
                         }
                         return images;
-                    }), width_(width), height_(height), sample_(sample), count_(count) {
+                    }), width_(width), height_(height), preset_(preset), count_(count) {
                 this->logLifeCycle("Constructor(width, height, sample, name)");
             }
 
@@ -42,26 +42,26 @@ namespace PipeX {
     private:
         const int width_;
         const int height_;
-        const int sample_;
+        const int preset_;
         const int count_;
 
-        static PPM_Image getImageSample(const int width, const int height, const int sample) {
-            switch (sample) {
+        static PPM_Image getImagePreset(const int width, const int height, const int preset) {
+            switch (preset) {
             case 0:
-                return gradientSample(width, height);
+                return gradientImage(width, height);
             case 1:
-                return checkerboardSample(width, height);
+                return checkerboardImage(width, height);
             case 2:
-                return colorCheckSample(width, height);
+                return colorCheckImage(width, height);
             default:
-                return loadSampleFile(sample);
+                return loadImageFile(preset);
             }
         }
 
-        static PPM_Image gradientSample(int width, int height);
-        static PPM_Image checkerboardSample(int width, int height);
-        static PPM_Image colorCheckSample(int width, int height);
-        static PPM_Image loadSampleFile(int sample);
+        static PPM_Image gradientImage(int width, int height);
+        static PPM_Image checkerboardImage(int width, int height);
+        static PPM_Image colorCheckImage(int width, int height);
+        static PPM_Image loadImageFile(int sample);
     };
 }
 

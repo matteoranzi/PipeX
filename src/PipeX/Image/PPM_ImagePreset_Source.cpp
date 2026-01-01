@@ -2,11 +2,11 @@
 // Created by Matteo Ranzi on 01/01/26.
 //
 
-#include "PipeX/nodes/Image/PPM_ImageSample_Source.h"
+#include "PipeX/nodes/Image/PPM_ImagePreset_Source.h"
 
 #include <iostream>
 
-PipeX::PPM_Image PipeX::PPM_ImageSample_Source::gradientSample(const int width, const int height) {
+PipeX::PPM_Image PipeX::PPM_ImagePreset_Source::gradientImage(const int width, const int height) {
     PPM_Image image;
     image.resize(height);
     for (auto& column : image) {
@@ -29,14 +29,14 @@ PipeX::PPM_Image PipeX::PPM_ImageSample_Source::gradientSample(const int width, 
     return image;
 }
 
-PipeX::PPM_Image PipeX::PPM_ImageSample_Source::checkerboardSample(const int width, const int height) {
+PipeX::PPM_Image PipeX::PPM_ImagePreset_Source::checkerboardImage(const int width, const int height) {
     return {};
 }
 
-PipeX::PPM_Image PipeX::PPM_ImageSample_Source::colorCheckSample(const int width, const int height) {
+PipeX::PPM_Image PipeX::PPM_ImagePreset_Source::colorCheckImage(const int width, const int height) {
     return {};
 }
 
-PipeX::PPM_Image PipeX::PPM_ImageSample_Source::loadSampleFile(const int sample) {
+PipeX::PPM_Image PipeX::PPM_ImagePreset_Source::loadImageFile(const int sample) {
     return {};
 }

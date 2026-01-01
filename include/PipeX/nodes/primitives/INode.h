@@ -11,6 +11,7 @@
 
 #include "PipeX/data/IData.h"
 #include "PipeX/debug/pipex_print_debug.h"
+#include "PipeX/metadata/IMetadata.h"
 
 //TODO sort node
 //TODO nodes with pre-implemented processImpl e.g. pass-through node, logger node, etc.
@@ -119,6 +120,10 @@ namespace PipeX {
             return this->process(std::move(input));
         }
 
+        void setMetadata(std::shared_ptr<IMetadata> metadata) {
+            metadata_ = std::move(metadata);
+        }
+
 
         virtual bool isSource() const { return  false; }
         virtual bool isSink() const { return  false; }
@@ -133,6 +138,8 @@ namespace PipeX {
          * Derived classes or callers can supply a custom name via constructors.
          */
         std::string name;
+
+        std::shared_ptr<IMetadata> metadata_;
     };
 }
 

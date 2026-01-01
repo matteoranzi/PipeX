@@ -17,7 +17,7 @@
 #include "data/IData.h"
 #include "errors/InvalidPipelineException.h"
 #include "errors/TypeMismatchExpection.h"
-
+#include "metadata/IMetadata.h"
 
 
 //TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
@@ -210,6 +210,18 @@ namespace PipeX {
             return *this;
         }
 
+        template<typename MetadataT, typename... Args>
+        Pipeline& setMetadata(Args&&... args) & {
+            metadata = std::make_shared<MetadataT>(std::forward<Args>(args)...);
+            return *this;
+        }
+
+        template<typename MetadataT, typename... Args>
+        Pipeline&& setMetadata(Args&&... args) && {
+            metadata = std::make_shared<MetadataT>(std::forward<Args>(args)...);
+            return std::move(*this);
+        }
+
         /**
          * @brief Run the pipeline on a vector of input values.
          *
@@ -238,6 +250,7 @@ namespace PipeX {
             for (const auto& node : nodes) {
                 try {
                     PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->getName().c_str());
+                    node->setMetadata(metadata);
                     data = node->process(std::move(data));
                 } catch (TypeMismatchException &e) {
                     PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> TypeMismatchException exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
@@ -286,6 +299,8 @@ namespace PipeX {
 
         bool hasSourceNode = false;
         bool hasSinkNode = false;
+
+        std::shared_ptr<IMetadata> metadata;
 
         /**
          * @brief Checks pipeline integrity rules before adding a node.
