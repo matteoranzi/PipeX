@@ -281,6 +281,8 @@ namespace PipeX {
                     throw;
                 }
             }
+
+            std::cout << "***Pipeline \"" << name << "\" execution completed." << std::endl;
         }
 
         /**

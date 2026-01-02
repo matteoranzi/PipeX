@@ -12,32 +12,32 @@
 namespace PipeX {
     class WAV_SoundPreset_Source final : public Source<WAV_AudioBuffer, WAV_Metadata> {
     public:
-        WAV_SoundPreset_Source(std::string node_name, const int numChannels, const int sampleRate, const int bitsPerSample, const int durationSec, const int preset = 0)
+        WAV_SoundPreset_Source(std::string node_name, const int nStreams, const int sampleRate, const int bitsPerSample, const int durationSec, const int preset = 0)
         : Source(std::move(node_name), [this]() {
             this->createMetadata();
             this->setupWAVMetadata();
 
             auto audioTracks = std::vector<WAV_AudioBuffer>();
             audioTracks.reserve(this->sourceMetadata->numChannels);
-            for (int i = 0; i < this->sourceMetadata->numChannels; i++) {
+            for (int i = 0; i < this->nStreams; i++) {
                 audioTracks.push_back(getSoundPreset());
             }
 
             return audioTracks;
-        }), numChannels(numChannels), sampleRate(sampleRate), bitsPerSample(bitsPerSample), durationSec(durationSec), preset(preset) {
+        }), nStreams(nStreams), sampleRate(sampleRate), bitsPerSample(bitsPerSample), durationSec(durationSec), preset(preset) {
             this->logLifeCycle("Constructor(std::string node_name, const int numChannels, const int sampleRate, const int bitsPerSample, const int durationSec)");
         }
 
 
     private:
-        int numChannels;
+        int nStreams;
         int sampleRate;
         int bitsPerSample;
         int durationSec;
         int preset;
 
         void setupWAVMetadata() const {
-            sourceMetadata->setParameters(numChannels, sampleRate, bitsPerSample, durationSec);
+            sourceMetadata->setParameters(1, sampleRate, bitsPerSample, durationSec);
         }
 
         WAV_AudioBuffer getSoundPreset() const {

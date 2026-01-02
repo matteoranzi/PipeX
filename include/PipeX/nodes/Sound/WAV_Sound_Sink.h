@@ -33,30 +33,36 @@ namespace PipeX {
 
             // RIFF
             file.write("RIFF", 4);
-            file.write(reinterpret_cast<char*>(&(metadata->riffSize)), 4);
+            file.write(reinterpret_cast<const char*>(&(metadata->riffSize)), 4);
             file.write("WAVE", 4);
 
             // fmt chunk
             file.write("fmt ", 4);
             uint32_t fmtSize = 16;
             uint16_t audioFormat = 1; // PCM
-            file.write(reinterpret_cast<char*>(&fmtSize), 4);
-            file.write(reinterpret_cast<char*>(&audioFormat), 2);
-            uint16_t numChannels = 1;
-            file.write(reinterpret_cast<char*>(&(numChannels)), 2);
-            // file.write(reinterpret_cast<char*>(&(metadata->numChannels)), 2);
-            file.write(reinterpret_cast<char*>(&(metadata->sampleRate)), 4);
-            file.write(reinterpret_cast<char*>(&(metadata->byteRate)), 4);
-            file.write(reinterpret_cast<char*>(&(metadata->blockAlign)), 2);
-            file.write(reinterpret_cast<char*>(&(metadata->bitsPerSample)), 2);
+            file.write(reinterpret_cast<const char*>(&fmtSize), 4);
+            file.write(reinterpret_cast<const char*>(&audioFormat), 2);
+            file.write(reinterpret_cast<const char*>(&(metadata->numChannels)), 2);
+            file.write(reinterpret_cast<const char*>(&(metadata->sampleRate)), 4);
+            file.write(reinterpret_cast<const char*>(&(metadata->byteRate)), 4);
+            file.write(reinterpret_cast<const char*>(&(metadata->blockAlign)), 2);
+            file.write(reinterpret_cast<const char*>(&(metadata->bitsPerSample)), 2);
 
             // data chunk
             file.write("data", 4);
-            file.write(reinterpret_cast<char*>(&(metadata->dataSize)), 4);
+            file.write(reinterpret_cast<const char*>(&(metadata->dataSize)), 4);
 
-            // write samples
+            // write samples - convert to the correct bit depth
             for (const auto& sample : audio) {
-                file.write(reinterpret_cast<const char*>(&sample), sizeof(bit_depth_t));
+                if (metadata->bitsPerSample == 16) {
+                    int16_t sample16 = static_cast<int16_t>(sample);
+                    file.write(reinterpret_cast<const char*>(&sample16), sizeof(int16_t));
+                } else if (metadata->bitsPerSample == 32) {
+                    file.write(reinterpret_cast<const char*>(&sample), sizeof(int32_t));
+                } else {
+                    // Handle other bit depths as needed
+                    file.write(reinterpret_cast<const char*>(&sample), metadata->bytesPerSample);
+                }
             }
         }
     };
