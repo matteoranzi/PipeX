@@ -6,7 +6,7 @@
 
 #include <iostream>
 namespace PipeX {
-    PPM_Image PPM_ImagePreset_Source::gradientImage(const int width, const int height) {
+    PPM_Image PPM_ImagePreset_Source::gradientImage(const int width, const int height) const {
         PPM_Image image;
         image.resize(height);
         for (auto& column : image) {
@@ -22,24 +22,24 @@ namespace PipeX {
                 const int ig = static_cast<int>(255.999 * g);
                 constexpr int ib = static_cast<int>(255.999 * b);
 
-                image[j].emplace_back(BIT{ir, ig, ib});
+                image[j].emplace_back(channels{ir, ig, ib});
             }
         }
 
         return image;
     }
 
-    PPM_Image PPM_ImagePreset_Source::checkerboardImage(const int width, const int height) {
+    PPM_Image PPM_ImagePreset_Source::checkerboardImage(const int width, const int height) const {
         throw PipeXException("PPM_ImagePreset_Source::checkerboardImage NOT IMPLEMENTED");
         return {};
     }
 
-    PPM_Image PPM_ImagePreset_Source::colorCheckImage(const int width, const int height) {
+    PPM_Image PPM_ImagePreset_Source::colorCheckImage(const int width, const int height) const {
         throw PipeXException("PPM_ImagePreset_Source::colorCheckImage NOT IMPLEMENTED");
         return {};
     }
 
-    PPM_Image PPM_ImagePreset_Source::loadImageFile(const int sample) {
+    PPM_Image PPM_ImagePreset_Source::loadImageFile(const int sample) const {
         throw PipeXException("PPM_ImagePreset_Source::loadImageFile NOT IMPLEMENTED");
         return {};
     }

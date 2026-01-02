@@ -2,12 +2,13 @@
 
 #include "debug/print_debug.h"
 #include "PipeX/PipeXEngine.h"
+#include "PipeX/nodes/Image/GainExposure.h"
 #include "PipeX/nodes/Image/PPM_ImagePreset_Source.h"
 #include "PipeX/nodes/Image/PPM_Image_Sink.h"
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/nodes/primitives/Source.h"
-#include "PipeX/nodes/Sound/EQ_BellCurve.hpp"
+#include "PipeX/nodes/Sound/EQ_BellCurve.h"
 #include "PipeX/nodes/Sound/WAV_SoundPreset_Source.h"
 #include "PipeX/nodes/Sound/WAV_Sound_Sink.h"
 #include "PipeX/nodes/thread_safe/ConsoleSink_ts.h"
@@ -15,10 +16,18 @@
 
 int main() {
     const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
-    // pipex_engine->newPipeline("PPM Image generation")
-    //     .addNode<PipeX::PPM_ImagePreset_Source>("PPM Image Sample Source", 512, 512, 0, 5)
-    //     .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/image/gradient");
+    pipex_engine->newPipeline("PPM Image generation")
+        .addNode<PipeX::PPM_ImagePreset_Source>("PPM Image Sample Source", 1024, 1024, 0, 1)
+        .addNode<PipeX::GainExposure>("Gain Exposure", -1.3, 10)
+        .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/image/gain_contrast_gradient_square");
 
+    pipex_engine->newPipeline("WAV Audio generation")
+            .addNode<PipeX::WAV_SoundPreset_Source>("WAV Audio Sample Source", 1, 44100, 16, 5, 2)
+            .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve", 450.0, 6.0, 25.0)
+            .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/eq3_pink_noise");
+
+
+    /*
     try {
         pipex_engine->newPipeline("WAV Audio generation")
             .addNode<PipeX::WAV_SoundPreset_Source>("WAV Audio Sample Source", 1, 44100, 16, 5, 2)
@@ -30,7 +39,7 @@ int main() {
         //New pipeline is not created and PipeXEngine continue with the previous ones
     } catch (...) {
         PRINT_DEBUG_ERROR("Unknown exception caught while creating pipeline\n");
-    }
+    }*/
 
     pipex_engine->start();
 

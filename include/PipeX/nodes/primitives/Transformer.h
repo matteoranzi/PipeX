@@ -28,10 +28,10 @@ namespace PipeX {
      *  Transformer<int, int> squareTransformer([](const int& x) { return x * x; });
      *  @endcode
      */
-    template <typename InputT, typename OutputT>
-    class Transformer: public NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT> {
+    template <typename InputT, typename OutputT, typename MetadataT = IMetadata>
+    class Transformer: public NodeCRTP<Transformer<InputT, OutputT, MetadataT>, InputT, OutputT, MetadataT> {
 
-        using Base = NodeCRTP<Transformer<InputT, OutputT>, InputT, OutputT>;
+        using Base = NodeCRTP<Transformer, InputT, OutputT, MetadataT>;
         friend Base;
 
     public:
@@ -40,7 +40,7 @@ namespace PipeX {
          *
          * The function takes a `InputT` data and returns a transformed `OutputT` data.
          */
-        using Function = std::function<OutputT(const InputT& data)>;
+        using Function = std::function<OutputT(InputT& data)>;
 
         /**
          * @brief Constructs a Transformer with a transformation function.
@@ -126,7 +126,7 @@ namespace PipeX {
             output->reserve(input->size());
 
             // Transform data
-            for (const auto& data : *input) {
+            for (auto& data : *input) {
                 output->push_back(transformerFunction(data));
             }
             return output;

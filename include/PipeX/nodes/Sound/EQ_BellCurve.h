@@ -9,13 +9,13 @@
 #include "PipeX/utils/sound_utils.h"
 
 namespace PipeX {
-    class EQ_BellCurve final : public Transformer<AudioBuffer, AudioBuffer> {
+    class EQ_BellCurve final : public Transformer<WAV_AudioBuffer, WAV_AudioBuffer, WAV_Metadata> {
     public:
         EQ_BellCurve(std::string node_name, double centerFrequency, double qFactor, double gainDB)
-            : Transformer(std::move(node_name), [this, centerFrequency, qFactor, gainDB](const AudioBuffer& input) {
+            : Transformer(std::move(node_name), [this, centerFrequency, qFactor, gainDB] (WAV_AudioBuffer& input) {
                 return this->applyEQ(input, centerFrequency, qFactor, gainDB);
             }) {
-            this->logLifeCycle("Constructor(std::string node_name, double centerFrequency, double qFactor, double gainDB)");
+            this->logLifeCycle("EQ_BellCurve(std::string node_name, double centerFrequency, double qFactor, double gainDB)");
         }
 
     private:
@@ -36,18 +36,15 @@ namespace PipeX {
             }
         };
 
-        AudioBuffer applyEQ(const AudioBuffer& input, double centerFrequency, double qFactor, double gainDB) const {
-            const auto& metadata = this->getTypedMetadata<WAV_Metadata>();
-
-            auto output = AudioBuffer();
-            output.reserve(input.size());
+        WAV_AudioBuffer applyEQ(WAV_AudioBuffer& data, double centerFrequency, double qFactor, double gainDB) const {
+            const auto& metadata = this->getMetadata();
 
             Biquad eq = makePeakingEQ(centerFrequency, qFactor, gainDB, metadata->sampleRate);
-            for (const auto& sample: input) {
-                output.push_back(eq.process(sample));
+            for (auto& sample: data) {
+                sample = eq.process(sample);
             }
 
-            return output;
+            return data;
         }
 
 

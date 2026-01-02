@@ -9,10 +9,11 @@
 #include "NodeCRTP.h"
 
 namespace PipeX {
+    //TODO make MetadataT a template parameter of NodeCRTP too, with templated getMetadata/setMetadata
     template <typename T, typename MetadataT = IMetadata>
-    class Source : public NodeCRTP<Source<T>, T, T> {
+    class Source : public NodeCRTP<Source<T, MetadataT>, T, T, MetadataT> {
 
-        using Base = NodeCRTP<Source<T>, T, T>;
+        using Base = NodeCRTP<Source, T, T, MetadataT>;
         friend Base;
 
     public:

@@ -10,14 +10,14 @@
 #include "PipeX/utils/sound_utils.h"
 
 namespace PipeX {
-    class WAV_SoundPreset_Source final : public Source<AudioBuffer, WAV_Metadata> {
+    class WAV_SoundPreset_Source final : public Source<WAV_AudioBuffer, WAV_Metadata> {
     public:
         WAV_SoundPreset_Source(std::string node_name, const int numChannels, const int sampleRate, const int bitsPerSample, const int durationSec, const int preset = 0)
         : Source(std::move(node_name), [this]() {
             this->createMetadata();
             this->setupWAVMetadata();
 
-            auto audioTracks = std::vector<AudioBuffer>();
+            auto audioTracks = std::vector<WAV_AudioBuffer>();
             audioTracks.reserve(this->sourceMetadata->numChannels);
             for (int i = 0; i < this->sourceMetadata->numChannels; i++) {
                 audioTracks.push_back(getSoundPreset());
@@ -34,12 +34,13 @@ namespace PipeX {
         int sampleRate;
         int bitsPerSample;
         int durationSec;
-
         int preset;
 
-        void setupWAVMetadata() const;
+        void setupWAVMetadata() const {
+            sourceMetadata->setParameters(numChannels, sampleRate, bitsPerSample, durationSec);
+        }
 
-        AudioBuffer getSoundPreset() const {
+        WAV_AudioBuffer getSoundPreset() const {
             switch (preset) {
             case 0:
                 return sinusoidalWave();
@@ -52,10 +53,10 @@ namespace PipeX {
             }
         }
 
-        AudioBuffer sinusoidalWave() const;
-        AudioBuffer whiteNoise() const;
-        AudioBuffer pinkNoise() const;
-        AudioBuffer loadWAVFile(int sample) const;
+        WAV_AudioBuffer sinusoidalWave() const;
+        WAV_AudioBuffer whiteNoise() const;
+        WAV_AudioBuffer pinkNoise() const;
+        WAV_AudioBuffer loadWAVFile(int sample) const;
     };
 }
 

@@ -9,9 +9,9 @@
 
 namespace PipeX {
     using bit_depth_t = std::int32_t;
-    using AudioBuffer = std::vector<bit_depth_t>;
+    using WAV_AudioBuffer = std::vector<bit_depth_t>;
 
-    inline std::ostream& operator<<(std::ostream& os, const AudioBuffer& buf) {
+    inline std::ostream& operator<<(std::ostream& os, const WAV_AudioBuffer& buf) {
         os << '[';
         for (std::size_t i = 0; i < buf.size(); ++i) {
             if (i<buf.size()) os << ", ";

@@ -6,12 +6,8 @@
 
 namespace PipeX {
 
-    void WAV_SoundPreset_Source::setupWAVMetadata() const {
-        sourceMetadata->setParameters(numChannels, sampleRate, bitsPerSample, durationSec);
-    }
-
-    AudioBuffer WAV_SoundPreset_Source::sinusoidalWave() const{
-        AudioBuffer audio;
+    WAV_AudioBuffer WAV_SoundPreset_Source::sinusoidalWave() const{
+        WAV_AudioBuffer audio;
         audio.resize(this->sourceMetadata->numSamples);
         for (bit_depth_t i = 0; i < this->sourceMetadata->numSamples; ++i) {
             constexpr double frequency = 440.0; // A4 note
@@ -22,8 +18,8 @@ namespace PipeX {
         return audio;
     }
 
-    AudioBuffer WAV_SoundPreset_Source::whiteNoise() const {
-        AudioBuffer audio;
+    WAV_AudioBuffer WAV_SoundPreset_Source::whiteNoise() const {
+        WAV_AudioBuffer audio;
         audio.resize(this->sourceMetadata->numSamples);
         for (bit_depth_t i = 0; i < this->sourceMetadata->numSamples; ++i) {
             double u = (rand() + 1.0) / (RAND_MAX + 1.0);
@@ -37,8 +33,8 @@ namespace PipeX {
         return audio;
     }
 
-    AudioBuffer WAV_SoundPreset_Source::pinkNoise() const {
-        AudioBuffer audio;
+    WAV_AudioBuffer WAV_SoundPreset_Source::pinkNoise() const {
+        WAV_AudioBuffer audio;
         audio.resize(this->sourceMetadata->numSamples);
         std::srand((unsigned)time(nullptr));
 
@@ -70,7 +66,7 @@ namespace PipeX {
         return audio;
     }
 
-    AudioBuffer WAV_SoundPreset_Source::loadWAVFile(const int sample) const{
+    WAV_AudioBuffer WAV_SoundPreset_Source::loadWAVFile(const int sample) const{
         throw PipeXException("WAV_SoundPreset_Source::loadWAVFile NOT IMPLEMENTED");
         return {};
     }

@@ -9,8 +9,8 @@
 #include <vector>
 
 namespace PipeX {
-    using BIT = std::array<int, 3>; // (RGB triplet)
-    using PPM_Image = std::vector<std::vector<BIT>>;
+    using channels = std::array<int, 3>; // (RGB triplet)
+    using PPM_Image = std::vector<std::vector<channels>>;
 }
 
 #endif //PIPEX_IMAGE_UTILS_HPP

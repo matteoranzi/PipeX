@@ -12,10 +12,10 @@
 #include "PipeX/utils/sound_utils.h"
 
 namespace PipeX {
-    class WAV_Sound_Sink final : public Sink<AudioBuffer> {
+    class WAV_Sound_Sink final : public Sink<WAV_AudioBuffer, WAV_Metadata> {
     public:
         WAV_Sound_Sink(std::string node_name, std::string filename)
-                : Sink<AudioBuffer>(std::move(node_name), [this](std::vector<AudioBuffer>& audios) {
+                : Sink(std::move(node_name), [this](std::vector<WAV_AudioBuffer>& audios) {
                     int index = 0;
                     for (auto& audio : audios) {
                         saveWAV2File(audio, filename_ + "_" + std::to_string(index++) + ".wav");
@@ -27,8 +27,8 @@ namespace PipeX {
     private:
         const std::string filename_;
 
-        void saveWAV2File(const AudioBuffer& audio, const std::string& filename) const {
-            const auto& metadata = this->getTypedMetadata<WAV_Metadata>();
+        void saveWAV2File(const WAV_AudioBuffer& audio, const std::string& filename) const {
+            const auto& metadata = this->getMetadata();
             std::ofstream file(filename, std::ios::binary);
 
             // RIFF

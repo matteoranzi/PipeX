@@ -32,7 +32,7 @@ namespace PipeX {
      * @tparam InputT The input data type for this node
      * @tparam OutputT The output data type for this node
      */
-    template <typename Derived, typename InputT, typename OutputT>
+    template <typename Derived, typename InputT, typename OutputT, typename MetadataT = IMetadata>
     class NodeCRTP: public INode {
 
     static_assert(std::is_copy_constructible<InputT>::value || std::is_move_constructible<InputT>::value, "InputT must be copyable or movable");
@@ -100,8 +100,7 @@ namespace PipeX {
         // Derived classes must implement this method for processing logic. derived classes' procesImpl is called via CRTP compile-time polymorphism, not virtual dispatch.
         virtual std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const = 0;
 
-        template <typename MetadataT>
-        std::shared_ptr<MetadataT> getTypedMetadata() const {
+        std::shared_ptr<MetadataT> getMetadata() const {
             this->logLifeCycle("getTypedMetadata()");
 
             if (this->inputData) {

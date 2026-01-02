@@ -29,10 +29,10 @@ namespace PipeX {
      * Filter<int> evenFilter([](const int& x) { return x % 2 == 0; });
      * @endcode
      */
-    template <typename T>
-    class Filter: public NodeCRTP<Filter<T>, T, T> {
+    template <typename T, typename MetadataT = IMetadata>
+    class Filter: public NodeCRTP<Filter<T, MetadataT>, T, T, MetadataT> {
 
-        using Base = NodeCRTP<Filter<T>, T, T>;
+        using Base = NodeCRTP<Filter, T, T, MetadataT>;
 
     public:
         /**

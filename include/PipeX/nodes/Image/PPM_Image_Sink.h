@@ -11,10 +11,10 @@
 #include "PipeX/utils/image_utils.h"
 
 namespace PipeX {
-    class PPM_Image_Sink final: public Sink<PPM_Image> {
+    class PPM_Image_Sink final: public Sink<PPM_Image, PPM_Metadata> {
     public:
         PPM_Image_Sink(std::string node_name, std::string filename)
-                : Sink<PPM_Image>(std::move(node_name), [this](const std::vector<PPM_Image>& images) {
+                : Sink(std::move(node_name), [this](const std::vector<PPM_Image>& images) {
                     int index = 0;
                     for (auto& image : images) {
                         saveImage(image, filename_ + "_" + std::to_string(index++) + ".ppm");
@@ -26,15 +26,16 @@ namespace PipeX {
     private:
         const std::string filename_;
 
-        static void saveImage(const PPM_Image& image, const std::string& filename) {
+        void saveImage(const PPM_Image& image, const std::string& filename) const {
+            const auto&metadata = this->getMetadata();
             std::ofstream file(filename);
             if (!file) {
                 //TODO create a proper exception class
                 throw std::runtime_error("Could not open file for writing: " + filename);
             }
-            const int height = static_cast<int>(image.size());
-            const int width = static_cast<int>(image[120].size());
-            file << "P3\n" << width << " " << height << "\n255\n";
+            const int height = metadata->height;
+            const int width = metadata->width;
+            file << "P3\n" << width << " " << height << "\n" << metadata->bit_depth << "\n";
             for (const auto& row : image) {
                 for (const auto& pixel : row) {
                     file << pixel[0] << " " << pixel[1] << " " << pixel[2] << "\n";

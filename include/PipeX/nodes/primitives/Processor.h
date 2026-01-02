@@ -35,9 +35,9 @@ namespace PipeX {
      * });
      * @endcode
      */
-    template <typename T>
-    class Processor: public NodeCRTP<Processor<T>, T, T> {
-        using Base = NodeCRTP<Processor<T>, T, T>;
+    template <typename T, typename MetadataT = IMetadata>
+    class Processor: public NodeCRTP<Processor<T, MetadataT>, T, T, MetadataT> {
+        using Base = NodeCRTP<Processor, T, T, MetadataT>;
 
     public:
         /// Function type that accepts a vector of T and returns a vector of T

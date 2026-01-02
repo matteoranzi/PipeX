@@ -10,10 +10,10 @@
 #include "NodeCRTP.h"
 
 namespace PipeX {
-    template <typename T>
-    class Sink: public NodeCRTP<Sink<T>, T, T> {
+    template <typename T, typename MetadataT = IMetadata>
+    class Sink: public NodeCRTP<Sink<T, MetadataT>, T, T, MetadataT> {
 
-        using Base = NodeCRTP<Sink<T>, T, T>;
+        using Base = NodeCRTP<Sink, T, T, MetadataT>;
         friend Base;
 
     public:

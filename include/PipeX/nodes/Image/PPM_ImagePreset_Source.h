@@ -8,19 +8,24 @@
 
 #include <iostream>
 
+#include "PipeX/metadata/PPM_Metadata.h"
 #include "PipeX/nodes/primitives/Source.h"
 #include "PipeX/utils/image_utils.h"
 
 namespace PipeX {
 
-    class PPM_ImagePreset_Source final : public Source<PPM_Image> {
+    class PPM_ImagePreset_Source final : public Source<PPM_Image, PPM_Metadata> {
         public:
             PPM_ImagePreset_Source(std::string node_name, const int width, const int height, const int preset, const int count)
                     : Source(std::move(node_name), [this]() {
+                        this->createMetadata();
+                        this->setupPPMMetadata();
+
                         auto images = std::vector<PPM_Image>();
                         for (int i = 0; i < count_; ++i) {
                             images.push_back(getImagePreset(width_, height_, preset_));
                             auto& image = images.back();
+
                             if (image.empty() || image[0].empty()) {
                                 this->logLifeCycle("Error: Generated image is empty.");
                                 //TODO create a proper exception class
@@ -28,7 +33,7 @@ namespace PipeX {
                             }
                         }
                         return images;
-                    }), width_(width), height_(height), preset_(preset), count_(count) {
+                    }), width_(width), height_(height), count_(count), preset_(preset) {
                 this->logLifeCycle("Constructor(width, height, sample, name)");
             }
 
@@ -40,10 +45,16 @@ namespace PipeX {
     private:
         const int width_;
         const int height_;
-        const int preset_;
         const int count_;
+        const int preset_;
 
-        PPM_Image getImagePreset(const int width, const int height, const int preset) {
+        void setupPPMMetadata() const {
+            sourceMetadata->width = width_;
+            sourceMetadata->height = height_;
+            sourceMetadata->bit_depth = 255; // 8 bits per channel
+        }
+
+        PPM_Image getImagePreset(const int width, const int height, const int preset) const {
             switch (preset) {
             case 0:
                 return gradientImage(width, height);
@@ -56,10 +67,10 @@ namespace PipeX {
             }
         }
 
-        PPM_Image gradientImage(int width, int height);
-        PPM_Image checkerboardImage(int width, int height);
-        PPM_Image colorCheckImage(int width, int height);
-        PPM_Image loadImageFile(int sample);
+        PPM_Image gradientImage(int width, int height) const;
+        PPM_Image checkerboardImage(int width, int height) const;
+        PPM_Image colorCheckImage(int width, int height) const;
+        PPM_Image loadImageFile(int sample) const;
     };
 }
 

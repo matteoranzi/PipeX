@@ -31,10 +31,10 @@ namespace PipeX {
      *  });
      *  @endcode
      */
-    template <typename InputT, typename OutputT>
-    class Aggregator: public NodeCRTP<Aggregator<InputT, OutputT>, InputT, OutputT> {
+    template <typename InputT, typename OutputT, typename MetadataT = IMetadata>
+    class Aggregator: public NodeCRTP<Aggregator<InputT, OutputT, MetadataT>, InputT, OutputT, MetadataT> {
 
-        using Base = NodeCRTP<Aggregator<InputT, OutputT>, InputT, OutputT>;
+        using Base = NodeCRTP<Aggregator, InputT, OutputT, MetadataT>;
         friend Base;
 
     public:
