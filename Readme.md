@@ -442,7 +442,7 @@ sequenceDiagram
         Engine->>Pipe: run()
         
         rect rgb(240, 248, 255)
-            note right of Pipe: Data Flow
+            note right of Pipe: Data Flow Loop
             
             Pipe->>Src: process(nullptr)
             activate Src
