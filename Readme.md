@@ -1882,6 +1882,7 @@ Il framework garantisce che un'eccezione in una pipeline non comprometta l'esecu
 26. **ChatGPT:** (https://chat.openai.com/) - Strumento di supporto alla scrittura del codice basato su AI.
 
 ### 11.a Note sull'uso di AI per la scrittura del codice
+
 > Gli strumenti di AI (ChatGPT e Copilot) sono stati utilizzati esclusivamente per suggerimenti di refactoring, miglioramento della leggibilità del codice e generazione di commenti/documentazione. Tutta la logica, il design e l'implementazione sono stati realizzati autonomamente dall'autore del progetto, che si assume la piena responsabilità della correttezza del codice finale.
 
 ---
