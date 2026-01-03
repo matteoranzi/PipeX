@@ -17,22 +17,22 @@
 - **Matteo Ranzi** (matteo.ranzi@studenti.unitn.it)
 
 ## 4. Indice del progetto
-1. [Descrizione del progetto](#5-descrizione-del-progetto)
-2. [Elenco e descrizione dei Requisiti](#6-elenco-e-descrizione-dei-requisiti)
+5. [Descrizione del progetto](#5-descrizione-del-progetto)
+6. [Elenco e descrizione dei Requisiti](#6-elenco-e-descrizione-dei-requisiti)
     - [Istruzioni per la Compilazione](#istruzioni-per-la-compilazione)
-3. [Attività svolte per la realizzazione della soluzione](#7-attività-svolte-per-la-realizzazione-della-soluzione)
-4. [Attività di implementazione](#8-attività-di-implementazione)
+7. [Attività svolte per la realizzazione della soluzione](#7-attività-svolte-per-la-realizzazione-della-soluzione)
+8. [Attività di implementazione](#8-attività-di-implementazione)
     - [OOD (Object-Oriented Design)](#8a-ood-object-oriented-design)
     - [Strategie di Implementazione dei Nodi](#8b-strategie-di-implementazione-dei-nodi)
     - [Descrizione degli Use Case](#8c-descrizione-degli-use-case)
     - [Eventuale base di dati utilizzata](#8d-eventuale-base-di-dati-utilizzata)
     - [Modalità di interazione](#8e-modalità-di-interazione-con-lapplicazione)
-5. [Altre indicazioni utili](#9-indicazioni-utili)
+9. [Altre indicazioni utili](#9-indicazioni-utili)
     - [Descrizione di eventuali librerie integrate](#9a-descrizione-di-eventuali-librerie-integrate)
     - [Pattern e Algoritmi del Core Framework](#9b-pattern-e-algoritmi-del-core-framework)
     - **[Organizzazione del Codice Sorgente](#9c-organizzazione-del-codice-sorgente)**
-6. [Gestione Errori ed Eccezioni](#10-gestione-errori-ed-eccezioni)
-7. [Bibliografia](#11-bibliografia)
+10. [Gestione Errori ed Eccezioni](#10-gestione-errori-ed-eccezioni)
+11. [Bibliografia](#11-bibliografia)
 
 ---
 
