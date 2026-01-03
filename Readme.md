@@ -30,6 +30,7 @@
 5. [Altre indicazioni utili](#9-indicazioni-utili)
     - [Descrizione di eventuali librerie integrate](#9a-descrizione-di-eventuali-librerie-integrate)
     - [Pattern e Algoritmi del Core Framework](#9b-pattern-e-algoritmi-del-core-framework)
+    - [Organizzazione del Codice Sorgente](#9c-organizzazione-del-codice-sorgente)
 6. [Gestione Errori ed Eccezioni](#10-gestione-errori-ed-eccezioni)
 7. [Bibliografia](#11-bibliografia)
 
@@ -542,15 +543,37 @@ Il cuore di PipeX si basa su diversi pattern architetturali e idiomi C++ avanzat
 
 4.  **Singleton Pattern:**
     -   **Utilizzo:** Classe `PipeXEngine`.
-    -   **Scopo:** Garantire l'esistenza di un'unica istanza di coordinamento per l'esecuzione delle pipeline e la gestione delle risorse globali (es. thread pool implicito).
+    -   **Scopo:** Garantire l'esistenza di un'unica istanza di coordinamento per l'esecuzione delle pipeline e la gestione delle risorse globali.
 
 5.  **RAII (Resource Acquisition Is Initialization):**
-    -   **Utilizzo:** Gestione di `std::unique_ptr` per nodi e dati.
+    - **Utilizzo:** Gestione di `std::unique_ptr` per nodi e dati.
     -   **Scopo:** Garantire che la memoria e le risorse vengano rilasciate automaticamente e in modo deterministico, prevenendo memory leak anche in caso di eccezioni.
 
 6. **Factory Method Pattern:**
     -   **Utilizzo:** Metodo `addNode<NodeType>(args...)` in `Pipeline`.
     -   **Scopo:** Permettere la creazione di nodi di tipo specifico senza esporre la logica di istanziazione all'utente, facilitando l'aggiunta di nuovi tipi di nodi in futuro.
+
+### 9.c Organizzazione del Codice Sorgente
+
+Il codice sorgente è organizzato separando chiaramente le interfacce (header files) dalle implementazioni, seguendo una struttura modulare.
+
+- **`include/PipeX/`**: Contiene tutti gli header files del framework.
+    - **`PipeXEngine.h`**: Definizione del motore principale e gestione delle pipeline.
+    - **`Pipeline.h`**: Definizione della classe Pipeline.
+    - **`nodes/`**: Definizioni dei nodi (interfaccia `INode`, template `NodeCRTP`, e nodi primitivi come `Source`, `Sink`, `Filter`, `Transformer` e `Processor`).
+    - **`data/`**: Definizioni per il sistema di tipi (`IData`, `Data<T>`).
+    - **`metadata/`**: Gestione dei metadati associati ai dati.
+    - **`errors/`**: Definizioni delle eccezioni personalizzate.
+    - **`utils/`**: Utility varie.
+    - **`debug/`**: Strumenti per il debug e logging.
+
+- **`src/`**: Contiene i file sorgente `.cpp`.
+    - **`main.cpp`**: Entry point dell'applicazione dimostrativa.
+    - **`PipeX/`**: Implementazioni specifiche del framework.
+        - **`PipeX.cpp`**: Implementazione di funzionalità core non-template.
+        - **`Image/`**: Implementazioni specifiche per l'elaborazione immagini (es. nodi PPM).
+        - **`Sound/`**: Implementazioni specifiche per l'elaborazione audio (es. nodi WAV, filtri DSP).
+
 ---
 
 ## 10. Gestione Errori ed Eccezioni
