@@ -69,6 +69,7 @@ Per compilare ed eseguire PipeX sono necessari i seguenti requisiti:
 ### Istruzioni per la Compilazione
 
 **Passaggi per la compilazione ed esecuzione:**
+Dentro la cartella del progetto, eseguire i seguenti comandi nel terminale:
 
 1.  **Creazione directory di build:**
 ```bash
@@ -76,12 +77,16 @@ mkdir build
 cd build
 ```
 2.  **Configurazione:**
+
+2.a **Configurazione di base**
+
 ```bash
 cmake ..
 ```
 *Nota: CMake scaricherà automaticamente GoogleTest se non presente.*
 
-**Configurazione Log di Debug:**
+2.b **Configurazione Log di Debug:**
+
 È possibile controllare il livello di verbosità dei log di debug configurando la variabile CMake `GLOBAL_PRINT_DEBUG_LEVEL`.
 I livelli disponibili sono:
 - `0` (NONE): Nessun log.
@@ -93,11 +98,14 @@ Esempio per disabilitare i log:
 ```bash
 cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
 ```
+2.b **Attivazione/disattivazione test e sandbox:**
 
-**Attivazione/disattivazione test e sandbox:**
 Per abilitare o disabilitare la compilazione dei test e della sandbox, utilizzare le seguenti opzioni:
+**`PIPEX_BUILD_TESTS`**: ON/OFF (default OFF)
+**`PIPEX_BUILD_SANDBOX`**: ON/OFF (default OFF)
+Esempio per abilitare entrambi:
 ```bash
-cmake -DBUILD_TESTS=ON -DBUILD_SANDBOX=ON ..
+cmake -DPIPEX_BUILD_TESTS=ON -DPIPEX_BUILD_SANDBOX=ON ..
 ```
 
 3.  **Compilazione:**
@@ -111,8 +119,9 @@ cmake --build .
 ```
 
 5.  **Esecuzione Test:**
+L'eseguibile dei test si trova in `tests/PipeX_all_tests` e viene creato solamente se la variabile `PIPEX_BUILD_TESTS` è stata impostata su `ON` durante la configurazione con CMake.
 ```bash
-ctest --output-on-failure
+./tests/PipeX_all_tests
 ```
 
 ---

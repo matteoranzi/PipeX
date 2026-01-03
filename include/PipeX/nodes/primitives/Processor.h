@@ -38,6 +38,7 @@ namespace PipeX {
     template <typename T, typename MetadataT = IMetadata>
     class Processor: public NodeCRTP<Processor<T, MetadataT>, T, T, MetadataT> {
         using Base = NodeCRTP<Processor, T, T, MetadataT>;
+        friend Base;
 
     public:
         /// Function type that accepts a vector of T and returns a vector of T
@@ -123,7 +124,7 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData objects.
          * @return Vector of processed data wrapped in IData objects.
          */
-        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const  {
+        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             return make_unique<std::vector<T>>(std::move(processorFunction(*input)));

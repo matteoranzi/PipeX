@@ -37,7 +37,7 @@ TEST(NodeTest, Transformer) {
             return static_cast<float>(data) / 2.0f;
         };
 
-        const Transformer<int, float> transformer(halfFunction);
+        Transformer<int, float> transformer(halfFunction);
 
 
         std::vector<int> inputData;
@@ -49,7 +49,7 @@ TEST(NodeTest, Transformer) {
 
         auto wrappedInput = wrapData<int>(make_unique<std::vector<int>>(inputData));
         auto outputData = transformer.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<float>(std::move(outputData));
+        const auto extractedOutput = PipeX::extractData<float>(outputData);
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);
@@ -80,7 +80,7 @@ TEST(NodeTest, Processor) {
             return data;
         };
 
-        const Processor<int> processor(sortingFunction);
+        Processor<int> processor(sortingFunction);
 
 
         std::vector<int> inputData;
@@ -92,7 +92,7 @@ TEST(NodeTest, Processor) {
 
         auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
         auto outputData = processor.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<int>(std::move(outputData));
+        const auto extractedOutput = PipeX::extractData<int>(outputData);
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);
@@ -122,7 +122,7 @@ TEST(NodeTest, Filter) {
             return data % 2 == 0;
         };
 
-        const Filter<int> filter(evenIntegers);
+        Filter<int> filter(evenIntegers);
 
         std::vector<int> inputData;
         inputData.reserve(10);
@@ -133,7 +133,7 @@ TEST(NodeTest, Filter) {
 
         auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
         auto outputData = filter.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<int>(std::move(outputData));
+        const auto extractedOutput = PipeX::extractData<int>(outputData);
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);
@@ -164,7 +164,7 @@ TEST(NodeTest, Aggregator) {
             return sum;
         };
 
-        const Aggregator<int, int> aggregator(sumFunction);
+        Aggregator<int, int> aggregator(sumFunction);
 
         std::vector<int> inputData;
         inputData.reserve(10);
@@ -175,7 +175,7 @@ TEST(NodeTest, Aggregator) {
 
         auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
         auto outputData = aggregator.process(std::move(wrappedInput));
-        const auto extractedOutput = PipeX::extractData<int>(std::move(outputData));
+        const auto extractedOutput = PipeX::extractData<int>(outputData);
 
         std::cout<< "Input vector: ";
         printVector<int>(inputData);
