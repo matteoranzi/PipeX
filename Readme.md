@@ -62,7 +62,7 @@ Caratteristiche principali:
 Per compilare ed eseguire PipeX sono necessari i seguenti requisiti:
 
 - **Compilatore C++:** Compatibile con lo standard **C++11** o superiore (GCC, Clang, MSVC).
-- **CMake:** Versione **3.15** o superiore per la gestione della build.
+- **CMake:** Versione **4.1** o superiore per la gestione della build.
 - **GoogleTest:** Framework per i test unitari (scaricato automaticamente da CMake tramite `FetchContent`).
 - **Sistema Operativo:** Cross-platform (testato su macOS, compatibile con Linux e Windows).
 
