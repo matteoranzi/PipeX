@@ -7,21 +7,21 @@ This document outlines comprehensive unit tests to validate the PipeX Pipelined 
 
 ## Test Categories Summary
 
-| Category | Priority | Tests Count | Status |
-|----------|----------|-------------|--------|
-| **Exception Handling** | 🔴 High | 10 | Needed |
-| **Pipeline Construction** | 🟡 Medium | 11 | 4 Existing |
-| **Pipeline Integrity** | 🔴 High | 7 | Needed |
-| **Node Removal** | 🔴 High | 5 | Needed |
-| **Node Interface Tests** | 🔴 High | 3 | Needed |
-| **Individual Nodes** | 🟡 Medium | 12 | 4 Existing |
-| **Pipeline Execution** | 🔴 High | 8 | 1 Existing |
-| **PipeXEngine** | 🟡 Medium | 8 | Needed |
-| **Memory Management** | 🟢 Low | 3 | Needed |
-| **Integration Tests** | 🟡 Medium | 5 | Needed |
-| **Type Safety** | 🟢 Low | 2 | Needed |
-| **Debug/Logging** | 🟢 Low | 3 | Needed |
-| **Concurrency** | 🟢 Future | 2 | Future |
+| Category                  | Priority  | Tests Count | Status     |
+|---------------------------|-----------|-------------|------------|
+| **Exception Handling**    | 🔴 High   | 10          | Needed     |
+| **Pipeline Construction** | 🟡 Medium | 11          | 4 Existing |
+| **Pipeline Integrity**    | 🔴 High   | 7           | Needed     |
+| **Node Removal**          | 🔴 High   | 5           | Needed     |
+| **Node Interface Tests**  | 🔴 High   | 3           | Needed     |
+| **Individual Nodes**      | 🟡 Medium | 12          | 4 Existing |
+| **Pipeline Execution**    | 🔴 High   | 8           | 1 Existing |
+| **PipeXEngine**           | 🟡 Medium | 8           | Needed     |
+| **Memory Management**     | 🟢 Low    | 3           | Needed     |
+| **Integration Tests**     | 🟡 Medium | 5           | Needed     |
+| **Type Safety**           | 🟢 Low    | 2           | Needed     |
+| **Debug/Logging**         | 🟢 Low    | 3           | Needed     |
+| **Concurrency**           | 🟢 Future | 2           | Future     |
 
 **Current Coverage:** 7 tests ✅  
 **Recommended Total:** 81 tests  
