@@ -94,6 +94,12 @@ Esempio per disabilitare i log:
 cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
 ```
 
+**Attivazione/disattivazione test e sandbox:**
+Per abilitare o disabilitare la compilazione dei test e della sandbox, utilizzare le seguenti opzioni:
+```bash
+cmake -DBUILD_TESTS=ON -DBUILD_SANDBOX=ON ..
+```
+
 3.  **Compilazione:**
 ```bash
 cmake --build .

@@ -13,8 +13,16 @@ include(cmake/fetch_googletest.cmake)
 
 
 add_subdirectory(src/PipeX)
-add_subdirectory(tests)
-add_subdirectory(sandbox)
+option(PIPEX_BUILD_TESTS "Build tests" OFF)
+option(PIPEX_BUILD_SANDBOX "Build sandbox utilities" OFF)
+
+if(PIPEX_BUILD_TESTS)
+  add_subdirectory(tests)
+endif()
+
+if(PIPEX_BUILD_SANDBOX)
+  add_subdirectory(sandbox)
+endif()
 
 
 add_executable(app src/main.cpp)
@@ -25,7 +33,7 @@ target_link_libraries(app PRIVATE my_extended_cpp_standard)
 
 
 #================================================================================================
-#set(APP_PRINT_DEBUG_LEVEL ${GLOBAL_PRINT_DEBUG_LEVEL} STRING "Debug level for main")
-set(APP_PRINT_DEBUG_LEVEL ${PRINT_DEBUG_LEVEL_INFO} STRING "Debug level for main")
+set(APP_PRINT_DEBUG_LEVEL ${GLOBAL_PRINT_DEBUG_LEVEL} STRING "Debug level for main")
+#set(APP_PRINT_DEBUG_LEVEL ${PRINT_DEBUG_LEVEL_INFO} STRING "Debug level for main")
 define_print_debug_level_for_target(app ${APP_PRINT_DEBUG_LEVEL})
 #================================================================================================
