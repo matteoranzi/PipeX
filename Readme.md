@@ -2,8 +2,13 @@
 [![C++ Standard](https://img.shields.io/badge/C%2B%2B-11-blue.svg)](https://isocpp.org/)
 [![Build](https://img.shields.io/badge/build-CMake-green.svg)](https://cmake.org/)
 [![Tests](https://img.shields.io/badge/tests-GoogleTest-lightgrey.svg)](https://github.com/google/googletest)
+[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)]()
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+<p align="center">
+  <img src="img/PipeX logo 2 - transparent.png" alt="PipeX logo" style="max-width:300px; width:100%; height:auto;" />
+</p>
 
 ## 1. Titolo progetto e nome gruppo
 **Titolo:** PipeX - Data Processing Pipeline Framework  
