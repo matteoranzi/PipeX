@@ -90,19 +90,26 @@ cmake ..
 È possibile controllare il livello di verbosità dei log di debug configurando la variabile CMake `GLOBAL_PRINT_DEBUG_LEVEL`.
 I livelli disponibili sono:
 - `0` (NONE): Nessun log.
-    - `1` (ERROR): Solo errori (valore di default).
-    - `2` (WARN): Errori e avvisi.
+- `1` (ERROR): Solo errori (valore di default).
+- `2` (WARN): Errori e avvisi.
 - `3` (INFO): Log completi (default).
 
 Esempio per disabilitare i log:
 ```bash
 cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
 ```
+
+È inoltre possibile sovrascrivere il livello di log sei singoli moduli tramite le variabili:
+- **`APP_PRINT_DEBUG_LEVEL`**: livello di log per l'applicazione principale.
+- **`TESTING_PRINT_DEBUG_LEVEL`**: livello di log per i test.
+- **`PIPEX_PRINT_DEBUG_LEVEL`**: livello di log per il core framework PipeX.
+
+
 2.b **Attivazione/disattivazione test e sandbox:**
 
 Per abilitare o disabilitare la compilazione dei test e della sandbox, utilizzare le seguenti opzioni:
-**`PIPEX_BUILD_TESTS`**: ON/OFF (default OFF)
-**`PIPEX_BUILD_SANDBOX`**: ON/OFF (default OFF)
+- **`PIPEX_BUILD_TESTS`**: ON/OFF (default OFF)
+- **`PIPEX_BUILD_SANDBOX`**: ON/OFF (default OFF)
 Esempio per abilitare entrambi:
 ```bash
 cmake -DPIPEX_BUILD_TESTS=ON -DPIPEX_BUILD_SANDBOX=ON ..
