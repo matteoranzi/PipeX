@@ -82,9 +82,9 @@ I livelli disponibili sono:
 - `0` (NONE): Nessun log.
     - `1` (ERROR): Solo errori.
     - `2` (WARN): Errori e avvisi.
-    - `3` (INFO): Log completi (default).
+- `3` (INFO): Log completi (default).
 
-      Esempio per disabilitare i log:
+Esempio per disabilitare i log:
 ```bash
 cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
 ```
