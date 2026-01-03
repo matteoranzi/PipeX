@@ -520,7 +520,7 @@ Esempio di output console:
 ## 9. Indicazioni utili
 
 
-### 9.a Descrizione di eventuali librerie integrate
+### 9.a Descrizione librerie integrate
 
 -   **`my_extended_cpp_standard`:** Una libreria di utilità personalizzata (inclusa nel progetto) che fornisce helper per la gestione della memoria (`my_memory.h`) e type traits (`my_type_traits.h`), estendendo le funzionalità standard del C++11.
 -   **GoogleTest:** Framework standard de-facto per il testing C++, integrato tramite CMake FetchContent per garantire che i test siano sempre eseguibili in un ambiente isolato.
