@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 <p align="center">
-  <img src="img/PipeX logo 2 - transparent.png" alt="PipeX logo" style="width:100px; height:auto;" />
+  <img src="img/PipeX logo 2 - transparent.png" alt="PipeX logo" style="width:300px; height:auto;" />
 </p>
 
 ## 1. Titolo progetto e nome gruppo
