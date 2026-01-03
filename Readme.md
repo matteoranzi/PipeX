@@ -74,7 +74,7 @@ Per compilare ed eseguire PipeX sono necessari i seguenti requisiti:
 ```bash
 cmake ..
 ```
-    *Nota: CMake scaricherà automaticamente GoogleTest se non presente.*
+*Nota: CMake scaricherà automaticamente GoogleTest se non presente.*
 
 **Configurazione Log di Debug:**
 È possibile controllare il livello di verbosità dei log di debug configurando la variabile CMake `GLOBAL_PRINT_DEBUG_LEVEL`.
