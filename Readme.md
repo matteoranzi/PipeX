@@ -66,10 +66,10 @@ Per compilare ed eseguire PipeX sono necessari i seguenti requisiti:
 **Passaggi per la compilazione ed esecuzione:**
 
 1.  **Creazione directory di build:**
-    ```bash
-    mkdir build
-    cd build
-    ```
+```bash
+mkdir build
+cd build
+```
 2.  **Configurazione:**
 ```bash
 cmake ..
@@ -95,14 +95,14 @@ cmake --build .
 ```
 
 4.  **Esecuzione Applicazione:**
-    ```bash
-    ./app
-    ```
+```bash
+./app
+```
 
 5.  **Esecuzione Test:**
-    ```bash
-    ctest --output-on-failure
-    ```
+```bash
+ctest --output-on-failure
+```
 
 ---
 
