@@ -30,7 +30,7 @@
 5. [Altre indicazioni utili](#9-indicazioni-utili)
     - [Descrizione di eventuali librerie integrate](#9a-descrizione-di-eventuali-librerie-integrate)
     - [Pattern e Algoritmi del Core Framework](#9b-pattern-e-algoritmi-del-core-framework)
-    - [Organizzazione del Codice Sorgente](#9c-organizzazione-del-codice-sorgente)
+    - **[Organizzazione del Codice Sorgente](#9c-organizzazione-del-codice-sorgente)**
 6. [Gestione Errori ed Eccezioni](#10-gestione-errori-ed-eccezioni)
 7. [Bibliografia](#11-bibliografia)
 
@@ -111,7 +111,7 @@ ctest --output-on-failure
 Il processo di sviluppo è stato iterativo e si è articolato nelle seguenti fasi principali:
 
 1.  **Analisi dei Requisiti e Progettazione Architetturale:**
-    *   **Studio dello Stato dell'Arte:** Analisi di framework esistenti (GStreamer, Apache Beam) per comprendere i pattern di progettazione delle pipeline dati.
+    *   **Studio dello Stato dell'Arte:** Analisi di framework esistenti (GStreamer, ffmpeg) per comprendere i pattern di progettazione delle pipeline dati.
     *   **Definizione dell'Architettura:** Progettazione del sistema basato su un Engine centrale (`PipeXEngine`) che gestisce pipeline indipendenti. Scelta del pattern **CRTP** (Curiously Recurring Template Pattern) per i nodi al fine di combinare l'interfaccia polimorfica necessaria alla pipeline (`INode`) con le ottimizzazioni di tipo statico all'interno dei nodi specifici.
     *   **Design del Sistema di Tipi:** Ideazione del meccanismo di **Type Erasure** (`IData` -> `Data<T>`) per permettere il passaggio di dati eterogenei attraverso un'interfaccia comune, garantendo al contempo la Type Safety a runtime tramite controlli dinamici.
 
