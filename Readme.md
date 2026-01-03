@@ -28,7 +28,7 @@
     - [Eventuale base di dati utilizzata](#8d-eventuale-base-di-dati-utilizzata)
     - [Modalità di interazione](#8e-modalità-di-interazione-con-lapplicazione)
 9. [Altre indicazioni utili](#9-indicazioni-utili)
-    - [Descrizione di eventuali librerie integrate](#9a-descrizione-di-eventuali-librerie-integrate)
+    - [Descrizione librerie integrate](#9a-descrizione-librerie-integrate)
     - [Pattern e Algoritmi del Core Framework](#9b-pattern-e-algoritmi-del-core-framework)
     - **[Organizzazione del Codice Sorgente](#9c-organizzazione-del-codice-sorgente)**
 10. [Gestione Errori ed Eccezioni](#10-gestione-errori-ed-eccezioni)
