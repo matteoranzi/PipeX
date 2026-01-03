@@ -126,7 +126,10 @@ cmake --build .
 ```
 
 5.  **Esecuzione Test:**
-L'eseguibile dei test si trova in `tests/PipeX_all_tests` e viene creato solamente se la variabile `PIPEX_BUILD_TESTS` è stata impostata su `ON` durante la configurazione con CMake.
+
+Gli eseguibili dei test si trovano in `tests/` e vengono creati solamente se la variabile `PIPEX_BUILD_TESTS` è stata impostata su `ON` durante la configurazione con CMake.
+
+Per eseguire tutti i test:
 ```bash
 ./tests/PipeX_all_tests
 ```
