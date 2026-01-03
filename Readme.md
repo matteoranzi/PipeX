@@ -1853,6 +1853,8 @@ Il framework garantisce che un'eccezione in una pipeline non comprometta l'esecu
 1.  **C++ Reference:** [https://en.cppreference.com/](https://en.cppreference.com/) - Riferimento per standard C++11, smart pointers, e type traits.
 2.  **CMake Documentation:** [https://cmake.org/documentation/](https://cmake.org/documentation/) - Guida per la configurazione del sistema di build.
 3.  **GoogleTest User Guide:** [https://google.github.io/googletest/](https://google.github.io/googletest/) - Documentazione per il framework di testing.
+4.  **GStreamer - open source multimedia framework:** (https://gstreamer.freedesktop.org/) - Ispirazione per il design a pipeline.
+5.  **ffmpeg - A complete, cross-platform solution to record, convert and stream audio and video:** (https://ffmpeg.org/) - Ispirazione per il design a pipeline.
 4.  **Audio EQ Cookbook (Robert Bristow-Johnson):** Riferimento standard per le formule dei filtri Biquad audio.
 5.  **Netpbm Format Specification:** [http://netpbm.sourceforge.net/doc/ppm.html](http://netpbm.sourceforge.net/doc/ppm.html) - Specifiche del formato immagine PPM.
 6.  **CRTP (Curiously Recurring Template Pattern):** [https://en.cppreference.com/w/cpp/language/crtp.html](https://en.cppreference.com/w/cpp/language/crtp.html)
