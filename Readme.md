@@ -24,7 +24,7 @@
 ## 4. Indice del progetto
 5. [Descrizione del progetto](#5-descrizione-del-progetto)
 6. [Elenco e descrizione dei Requisiti](#6-elenco-e-descrizione-dei-requisiti)
-    - [Istruzioni per la Compilazione](#istruzioni-per-la-compilazione)
+    - **[Istruzioni per la Compilazione](#istruzioni-per-la-compilazione)**
 7. [Attività svolte per la realizzazione della soluzione](#7-attività-svolte-per-la-realizzazione-della-soluzione)
 8. [Attività di implementazione](#8-attività-di-implementazione)
     - [OOD (Object-Oriented Design)](#8a-ood-object-oriented-design)
@@ -85,7 +85,7 @@ cmake ..
 È possibile controllare il livello di verbosità dei log di debug configurando la variabile CMake `GLOBAL_PRINT_DEBUG_LEVEL`.
 I livelli disponibili sono:
 - `0` (NONE): Nessun log.
-    - `1` (ERROR): Solo errori.
+    - `1` (ERROR): Solo errori (valore di default).
     - `2` (WARN): Errori e avvisi.
 - `3` (INFO): Log completi (default).
 

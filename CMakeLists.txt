@@ -31,6 +31,10 @@ add_executable(app src/main.cpp)
 target_link_libraries(app PRIVATE PipeX)
 target_link_libraries(app PRIVATE my_extended_cpp_standard)
 
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output/audio)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output/image)
+
 
 #================================================================================================
 set(APP_PRINT_DEBUG_LEVEL ${GLOBAL_PRINT_DEBUG_LEVEL} STRING "Debug level for main")

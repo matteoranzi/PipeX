@@ -47,5 +47,5 @@ endfunction()
 
 #================================================================================================
 # Global debug level (used as default for all modules)
-set(GLOBAL_PRINT_DEBUG_LEVEL ${PRINT_DEBUG_LEVEL_INFO} CACHE STRING "Global debug level for all modules")
+set(GLOBAL_PRINT_DEBUG_LEVEL ${PRINT_DEBUG_LEVEL_ERROR} CACHE STRING "Global debug level for all modules")
 #================================================================================================
