@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.1)
+cmake_minimum_required(VERSION 3.31.6)
 project(PipeX)
 
 enable_language(CXX)
@@ -13,7 +13,7 @@ include(cmake/fetch_googletest.cmake)
 
 
 add_subdirectory(src/PipeX)
-option(PIPEX_BUILD_TESTS "Build tests" OFF)
+option(PIPEX_BUILD_TESTS "Build tests" ON)
 option(PIPEX_BUILD_SANDBOX "Build sandbox utilities" OFF)
 
 if(PIPEX_BUILD_TESTS)
