@@ -24,9 +24,9 @@ namespace PipeX {
     class WAV_Sound_Sink final : public Sink<WAV_AudioBuffer, WAV_Metadata> {
     public:
         WAV_Sound_Sink(std::string node_name, std::string filename)
-                : Sink(std::move(node_name), [this](std::vector<WAV_AudioBuffer>& audios) {
+                : Sink(std::move(node_name), [this](const std::vector<WAV_AudioBuffer>& audios) {
                     int index = 0;
-                    for (auto& audio : audios) {
+                    for (const auto& audio : audios) {
                         saveToFile(audio, filename_ + "_" + std::to_string(index++) + ".wav");
                     }
                 }), filename_(std::move(filename)) {
@@ -69,7 +69,7 @@ namespace PipeX {
             // write samples - convert to the correct bit depth
             for (const auto& sample : audio) {
                 if (metadata->bitsPerSample == 16) {
-                    int16_t sample16 = static_cast<int16_t>(sample);
+                    const auto sample16 = static_cast<int16_t>(sample);
                     file.write(reinterpret_cast<const char*>(&sample16), sizeof(int16_t));
                 } else if (metadata->bitsPerSample == 32) {
                     file.write(reinterpret_cast<const char*>(&sample), sizeof(int32_t));

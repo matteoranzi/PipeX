@@ -25,6 +25,8 @@
 5. [Descrizione del progetto](#5-descrizione-del-progetto)
 6. [Elenco e descrizione dei Requisiti](#6-elenco-e-descrizione-dei-requisiti)
     - **[Istruzioni per la Compilazione](#istruzioni-per-la-compilazione)**
+      - [Compilazione con CMake](#compilazione-con-cmake)
+      - [Compilazione con g++](#compilazione-con-g)
 7. [Attività svolte per la realizzazione della soluzione](#7-attività-svolte-per-la-realizzazione-della-soluzione)
 8. [Attività di implementazione](#8-attività-di-implementazione)
     - [OOD (Object-Oriented Design)](#8a-ood-object-oriented-design)
@@ -69,7 +71,7 @@ Per compilare ed eseguire PipeX sono necessari i seguenti requisiti:
 
 ### Istruzioni per la Compilazione
 
-**Passaggi per la compilazione ed esecuzione**
+#### Compilazione con CMake
 
 Dentro la cartella del progetto, eseguire i seguenti comandi nel terminale:
 
@@ -115,7 +117,7 @@ Per abilitare o disabilitare la compilazione dei test e della sandbox, utilizzar
 - **`PIPEX_BUILD_TESTS`**: ON/OFF (default ON)
 - **`PIPEX_BUILD_SANDBOX`**: ON/OFF (default OFF)
 
-Esempio per abilitare la sendobox senza testing:
+Esempio per abilitare la sandbox senza testing:
 ```bash
 cmake -DPIPEX_BUILD_TESTS=OFF -DPIPEX_BUILD_SANDBOX=ON ..
 ```
@@ -138,7 +140,21 @@ Per eseguire tutti i test:
 ```bash
 ctest --output-on-failure
 ```
+#### Compilazione con g++
+Se si preferisce compilare manualmente senza CMake, è necessario assicurarsi di includere la directory `include` per i file header e collegare le librerie necessarie.
 
+Assicurarsi anche di creare le cartelle `output/audio` e `output/images` prima di eseguire l'applicazione di esempio contenuta in `main.cpp`.
+
+Comando g++ per compilazione di base (no tests), impostando il livello di debug a ERROR:
+```bash
+g++ src/main.cpp \
+    src/PipeX/PipeX.cpp \
+    src/PipeX/Image/PPM_ImagePreset_Source.cpp \
+    src/PipeX/Audio/WAV_AudioPreset_Source.cpp \
+    -I ./include \
+    -DPRINT_DEBUG_LEVEL=1 \
+    -DPIPEX_PRINT_DEBUG_ENABLED
+```
 ---
 
 ## 7. Attività svolte per la realizzazione della soluzione
