@@ -38,7 +38,6 @@ namespace PipeX {
             const auto&metadata = this->getMetadata();
             std::ofstream file(filename);
             if (!file) {
-                //TODO create a proper exception class
                 throw PipeXException("[PPM_Image_Sink::saveImage] Could not open file for writing: " + filename);
             }
             const int height = metadata->height;

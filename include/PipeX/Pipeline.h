@@ -21,9 +21,9 @@
 #include "errors/TypeMismatchExpection.h"
 
 
-//TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
-//TODO verify if nodes datatypes are compatible before running/adding them in the pipeline, currently this is only checked at runtime when the pipeline is run (pipeline may throw an exception in the last node after processing all the previous nodes successfully)
-//FIXME currently pipeline integrity check don't consider compatibility of InputT/OutputT between nodes, only the presence of source/sink nodes and unique names is checked
+
+
+
 namespace PipeX {
 
     /**
@@ -206,7 +206,7 @@ namespace PipeX {
 
         // If no node with the given name is found, the pipeline remains unchanged.
         Pipeline& removeNodeByName(const std::string& nodeName) & {
-            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.removeNodeByName(\"%s\")&\n", name.c_str(), this, nodeName.c_str());
+            PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p} :: removeNodeByName(\"%s\") &\n", name.c_str(), this, nodeName.c_str());
 
             for (auto it = nodes.begin(); it != nodes.end(); ++it) {
                 if ((*it)->getName() == nodeName) {

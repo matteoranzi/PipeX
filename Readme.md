@@ -38,17 +38,18 @@
     - **[Organizzazione del Codice Sorgente](#9c-organizzazione-del-codice-sorgente)**
 10. [Gestione Errori ed Eccezioni](#10-gestione-errori-ed-eccezioni)
 11. [Bibliografia](#11-bibliografia)
+12. [Dichiarazione sull'uso dell'IA](#12-dichiarazione-sulluso-dellia)
 
 ---
 
 ## 5. Descrizione del progetto
 
-**PipeX** è un framework **header-only C++11** progettato per la costruzione di pipeline di elaborazione dati modulari, componibili ed efficienti. Il framework permette di definire flussi di lavoro lineari in cui i dati vengono generati, trasformati, filtrati e infine consumati da una serie di nodi interconnessi.
+**PipeX** è un framework **C++11** progettato per la costruzione di pipeline di elaborazione dati modulari, componibili ed efficienti. Il framework permette di definire flussi di lavoro lineari in cui i dati vengono generati, trasformati, filtrati e infine consumati da una serie di nodi interconnessi.
 
 L'obiettivo principale di PipeX è fornire un'interfaccia C++ moderna e pulita per la creazione di pipeline, incoraggiando la modularità e la riusabilità attraverso l'uso di nodi basati su template. Il sistema è progettato per essere estensibile, permettendo agli utenti di implementare facilmente nuovi tipi di nodi personalizzati.
 
 Caratteristiche principali:
-- **Header-only:** Nessuna necessità di linking complesso, facile integrazione.
+- **Architettura Ibrida:** Core basato su template per massime prestazioni, con componenti compilati per la gestione delle risorse e funzionalità specifiche.
 - **Compatibilità C++11:** Utilizza funzionalità moderne del linguaggio (smart pointers, lambda functions, move semantics).
 - **Type Safety & Polymorphism:** Utilizza il pattern **CRTP (Curiously Recurring Template Pattern)** per combinare polimorfismo statico e sicurezza dei tipi, riducendo l'overhead delle chiamate virtuali dove possibile e garantendo che i tipi di dati tra i nodi siano coerenti.
 - **Gestione della Memoria:** Uso estensivo di `std::unique_ptr` per la gestione automatica della memoria e il trasferimento di proprietà dei dati lungo la pipeline.
@@ -662,8 +663,12 @@ Il framework garantisce che un'eccezione in una pipeline non comprometta l'esecu
 28. **Copilot:** (https://github.com/copilot/)) - Strumento di supporto alla scrittura del codice basato su AI.
 29. **ChatGPT:** (https://chat.openai.com/) - Strumento di supporto alla scrittura del codice basato su AI.
 
-### 11.a Note sull'uso di AI per la scrittura del codice
+---
 
-> Gli strumenti di AI (ChatGPT e Copilot) sono stati utilizzati esclusivamente per suggerimenti di refactoring, miglioramento della leggibilità del codice e generazione di commenti/documentazione. Tutta la logica, il design e l'implementazione sono stati realizzati autonomamente dall'autore del progetto, che si assume la piena responsabilità della correttezza del codice finale.
+## 12. Dichiarazione sull'uso dell'IA
+
+> Gli strumenti di AI (ChatGPT e Github Copilot) sono stati utilizzati esclusivamente per suggerimenti di name refactoring,
+> supporto nella creazione di commenti/documentazione e supporto per il debug e per la correzione degli errori.
+> Tutta la logica, il design e l'implementazione sono stati realizzati autonomamente dall'autore del progetto, che si assume la piena responsabilità della correttezza del codice finale.
 
 ---

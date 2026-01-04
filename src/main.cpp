@@ -52,7 +52,7 @@ int main() {
     return 0;
 }
 
-// TODO put this code in a test file
+// TODO use this code as a demonstration usage of PiPeX
 /*{
     const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
 

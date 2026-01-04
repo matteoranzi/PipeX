@@ -14,9 +14,6 @@
 #include "PipeX/data/IData.h"
 #include "PipeX/debug/pipex_print_debug.h"
 
-//TODO sort node
-//TODO nodes with pre-implemented processImpl e.g. pass-through node, logger node, etc.
-
 namespace PipeX {
     /**
      * @brief Abstract base class representing a dynamic processing node.

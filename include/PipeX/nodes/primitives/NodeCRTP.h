@@ -21,9 +21,6 @@
 #include "PipeX/errors/InvalidOperation.h"
 
 
-
-// TODO improve extraction/wrapping logic (currently each pass copies data multiple times, once for extraction and once for wrapping, for every node step in the pipeline)
-
 namespace PipeX {
     /**
      * @brief CRTP base class for pipeline nodes with typed input/output.

@@ -21,11 +21,10 @@ namespace PipeX {
      * PipeXEngine provides functionality to create, manage, and execute pipelines in parallel.
      * Each pipeline runs in its own thread when the engine is started.
      */
-    // TODO implement state management (running, stopped, error, etc.) and methods to query the state of the engine and individual pipelines
 
     class PipeXEngine {
     private:
-        // Singleton only for academic purposes (TODO: remove it?)
+        // Singleton only for academic purposes
         static PipeXEngine* pipex_engine_; // Singleton instance
 
         // Safeguards if different threads access the engine simultaneously
@@ -85,8 +84,6 @@ namespace PipeX {
          * Blocks until all pipelines have completed execution.
          * Exceptions thrown during pipeline execution are caught but not propagated.
          */
-        // TODO implement parallel run via threads
-        // TODO implement asynch run via flags
         void start() {
             std::cout << "Running PipeXEngine with " << pipelines.size() << " pipelines..." << std::endl;
             isRunning(true);
@@ -146,17 +143,15 @@ namespace PipeX {
                 pipeline->run();
             } catch (InvalidOperation &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] :: runPipeline() -> InvalidOperation exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
+            } catch (TypeMismatchException &e) {
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] :: runPipeline() -> TypeMismatchException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
+            } catch (InvalidPipelineException &e) {
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] :: runPipeline() -> InvalidPipelineException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
             } catch (PipeXException &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] :: runPipeline() -> PipeXException in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
-            }
-            /*catch (TypeMismatchException &e) {
-                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] TypeMismatchException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
-            } catch (InvalidPipelineException &e) {
-                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidPipelineException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
-            }
-            catch (...) {
+            } catch (...) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] Unknown exception in pipeline: %s\n", pipeline->getName().c_str());
-            }*/
+            }
         }
 
         void lockEngine() {

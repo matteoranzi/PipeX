@@ -13,7 +13,6 @@
 #include "NodeCRTP.h"
 
 namespace PipeX {
-    //TODO make MetadataT a template parameter of NodeCRTP too, with templated getMetadata/setMetadata
     /**
      * @brief A specialized INode that produces data.
      *
