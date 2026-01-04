@@ -21,17 +21,18 @@ namespace PipeX {
      * a complete vector of output data. Useful for operations requiring
      * access to all elements simultaneously (e.g., sorting, shuffling).
      *
-     * @tparam T The type of data to be processed.
+     * @tparam InputT The type of data to be processed.
+     * @tparam OutputT The type of data to be returned.
      * @tparam MetadataT The type of metadata associated with the data.
      */
-    template <typename T, typename MetadataT = IMetadata>
-    class Processor: public NodeCRTP<Processor<T, MetadataT>, T, T, MetadataT> {
-        using Base = NodeCRTP<Processor, T, T, MetadataT>;
+    template <typename InputT, typename OutputT, typename MetadataT = IMetadata>
+    class Processor: public NodeCRTP<Processor<InputT, OutputT, MetadataT>, InputT, OutputT, MetadataT> {
+        using Base = NodeCRTP<Processor, InputT, OutputT, MetadataT>;
         friend Base;
 
     public:
         /// Function type that accepts a vector of T and returns a vector of T
-        using Function = std::function<std::vector<T>(std::vector<T>& data)>;
+        using Function = std::function<std::vector<OutputT>(std::vector<InputT>& data)>;
 
         /**
          * @brief Constructs a Processor with the given function.
@@ -113,10 +114,10 @@ namespace PipeX {
          * @param input Vector of input data wrapped in IData objects.
          * @return Vector of processed data wrapped in IData objects.
          */
-        std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
+        std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
-            return extended_std::make_unique<std::vector<T>>(std::move(processorFunction(*input)));
+            return extended_std::make_unique<std::vector<OutputT>>(std::move(processorFunction(*input)));
         }
     };
 }

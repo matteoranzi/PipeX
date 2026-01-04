@@ -84,28 +84,54 @@ namespace PipeX {
         bool isSource() const override final { return true; }
 
     protected:
+        /// Metadata associated with the source data
         std::shared_ptr<MetadataT> sourceMetadata;
 
+        /**
+         * @brief Creates and initializes metadata for the source.
+         *
+         * This method allocates and initializes the metadata object that will be
+         * associated with the data produced by this source.
+         */
         void createMetadata() {
             this->logLifeCycle("createTypedMetadata()");
             this->sourceMetadata = std::make_shared<MetadataT>();
         }
 
+        /**
+         * @brief Returns the type name of this node.
+         * @return A string "Source" identifying this node type
+         */
         std::string typeName() const override {
             return "Source";
         }
 
 
     private:
+        /// The source function that generates the initial data
         Function sourceFunction;
 
-        // input is ignored for Source nodes
+        /**
+         * @brief Processes (generates) data for the pipeline.
+         *
+         * For Source nodes, the input parameter is ignored as they generate data
+         * from the sourceFunction rather than transforming existing data.
+         *
+         * @param input Ignored for Source nodes
+         * @return A unique pointer to a vector of generated data
+         */
         std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             return extended_std::make_unique<std::vector<T>>(std::move(sourceFunction()));
         }
 
+        /**
+         * @brief Post-processing hook that attaches metadata to the output.
+         *
+         * This method is called after data generation to associate the source
+         * metadata with the output data.
+         */
         void postProcessHook() const override {
             this->logLifeCycle("afterProcessHook()");
             this->outputData->metadata = this->sourceMetadata;

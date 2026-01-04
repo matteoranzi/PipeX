@@ -110,7 +110,16 @@ namespace PipeX {
             this->logLifeCycle("Destructor()");
         }
 
+        /**
+         * @brief Checks if this node is a source node.
+         * @return Always returns false for Filter nodes
+         */
         virtual bool isSource() const final { return  false; }
+
+        /**
+         * @brief Checks if this node is a sink node.
+         * @return Always returns false for Filter nodes
+         */
         virtual bool isSink() const final { return  false; }
 
     protected:
@@ -130,6 +139,18 @@ namespace PipeX {
         Predicate predicateFilter;
 
 
+        /**
+         * @brief Processes input data by filtering it based on the predicate.
+         *
+         * This method overrides the base class implementation to filter the input data.
+         * It creates a new output vector containing only the elements that satisfy
+         * the predicate function.
+         *
+         * @param input A unique pointer to a vector of input data to be filtered.
+         * @return A unique pointer to a vector containing the filtered output data.
+         *
+         * @post The output vector contains only elements for which the predicate returned true.
+         */
         std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 

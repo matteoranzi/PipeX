@@ -12,6 +12,7 @@
 
 #include "Pipeline.h"
 #include "errors/InvalidOperation.h"
+#include "errors/PipelineNameConflictException.h"
 
 namespace PipeX {
     /**
@@ -57,6 +58,10 @@ namespace PipeX {
         Pipeline& newPipeline(const std::string& name) {
             lockEngine();
             if (!isRunning_flag) {
+                if (!pipelinesNameSet.insert(name).second) {
+                    throw PipelineNameConflictException(name);
+                }
+
                 try {
                     pipelines.emplace_back(std::make_shared<Pipeline>(name));
                     unlockEngine();
@@ -78,6 +83,65 @@ namespace PipeX {
         }
 
         /**
+         * @brief Adds an existing pipeline to the engine.
+         * @param pipeline The pipeline to be added.
+         * @return Reference to the added pipeline, a copy of the input pipeline.
+         */
+        Pipeline& addPipeline(const Pipeline& pipeline) {
+            lockEngine();
+            if (!isRunning_flag) {
+                if (!pipelinesNameSet.insert(pipeline.getName()).second) {
+                    throw PipelineNameConflictException(pipeline.getName());
+                }
+
+                pipelines.push_back(std::make_shared<Pipeline>(pipeline));
+                unlockEngine();
+                return *pipelines.back();
+            } else {
+                PIPEX_PRINT_DEBUG_WARN("[PipeXEngine] Cannot add pipeline \"%s\" while engine is running\n", pipeline->getName().c_str());
+                unlockEngine();
+                throw InvalidOperation("PipeXEngine::addPipeline", "Engine is running");
+            }
+        }
+
+        /**
+         * @brief Adds an existing pipeline to the engine using move semantics.
+         * @param pipeline The pipeline to be added.
+         * @return Reference to the added pipeline, a moved instance of the input pipeline.
+         */
+        Pipeline& addPipeline(Pipeline&& pipeline) {
+            lockEngine();
+            if (!isRunning_flag) {
+                if (!pipelinesNameSet.insert(pipeline.getName()).second) {
+                    throw PipelineNameConflictException(pipeline.getName());
+                }
+                pipelines.push_back(std::make_shared<Pipeline>(std::move(pipeline)));
+                unlockEngine();
+                return *pipelines.back();
+            } else {
+                PIPEX_PRINT_DEBUG_WARN("[PipeXEngine] Cannot add pipeline \"%s\" while engine is running\n", pipeline.getName().c_str());
+                unlockEngine();
+                throw InvalidOperation("PipeXEngine::addPipeline", "Engine is running");
+            }
+        }
+
+        PipeXEngine& removePipeline(const std::string& pipelineName) {
+            lockEngine();
+
+            for (auto it = pipelines.begin(); it != pipelines.end(); ++it) {
+                if ((*it)->getName() == pipelineName) {
+                    pipelines.erase(it);
+                    pipelinesNameSet.erase(pipelineName);
+                    unlockEngine();
+                    return *this;
+                }
+            }
+            unlockEngine();
+
+            return *this;
+        }
+
+        /**
          * @brief Starts execution of all pipelines in parallel.
          *
          * Creates a separate thread for each pipeline and executes them concurrently.
@@ -85,7 +149,7 @@ namespace PipeX {
          * Exceptions thrown during pipeline execution are caught but not propagated.
          */
         void start() {
-            std::cout << "Running PipeXEngine with " << pipelines.size() << " pipelines..." << std::endl;
+            // std::cout << "Running PipeXEngine with " << pipelines.size() << " pipelines..." << std::endl;
             isRunning(true);
 
             std::vector<std::thread> threads;
@@ -106,6 +170,7 @@ namespace PipeX {
 
         /**
          * @brief Removes all pipelines from the engine.
+         * The operation is only allowed when the engine is not running.
          */
         void clearPipelines() {
             lockEngine();
@@ -120,14 +185,15 @@ namespace PipeX {
         }
 
     private:
+        /// Container holding all registered pipelines
+        std::vector<std::shared_ptr<Pipeline>> pipelines;
+        std::set<std::string> pipelinesNameSet;
+
 
         /**
          * @brief Private default constructor for singleton pattern.
          */
         PipeXEngine() = default;
-
-        /// Container holding all registered pipelines
-        std::vector<std::shared_ptr<Pipeline>> pipelines;
 
 
         /**
@@ -139,7 +205,7 @@ namespace PipeX {
          */
         static void runPipeline(const std::shared_ptr<Pipeline>& pipeline) {
             try {
-                std::cout << "Running pipeline \"" << pipeline->getName() << "\"..." << std::endl;
+                // std::cout << "Running pipeline \"" << pipeline->getName() << "\"..." << std::endl;
                 pipeline->run();
             } catch (PipeXException &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] :: runPipeline() -> PipeXException in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());

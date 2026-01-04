@@ -46,7 +46,7 @@ namespace PipeX {
 
             std::cout << "\n----------------------------------------" << std::endl;
             std::cout << "ConsoleSink - " << description << std::endl;
-            std::cout << "Received data: [";
+            std::cout << "Output data: [";
             for (const auto& item : data) {
                 std::cout << item;
                 if (&item != &data.back()) {

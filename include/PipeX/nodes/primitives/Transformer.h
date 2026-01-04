@@ -107,13 +107,19 @@ namespace PipeX {
         Function transformerFunction;
 
         /**
-         * @brief Processes input data by applying the transformation function.
+         * @brief Process a batch of input items and produce transformed output items.
          *
-         * Extracts input data from the IData wrapper, applies the transformation
-         * function to each item, and wraps the results back into IData format.
+         * This method applies the configured transformation function to each element
+         * in the provided input vector. The input is received as an rvalue reference
+         * to a `std::unique_ptr<std::vector<InputT>>`, transferring ownership to this
+         * method. A new `std::unique_ptr<std::vector<OutputT>>` is allocated and
+         * returned containing one transformed element for each input element.
          *
-         * @param input Vector of input data wrapped in IData interface
-         * @return Vector of transformed output data wrapped in IData interface
+         * @pre `input` must not be null.
+         *
+         * @param input A rvalue reference to a unique pointer that owns the input
+         *              vector of items to transform.
+         * @return A unique pointer to a vector of transformed output items.
          */
         std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");

@@ -18,6 +18,7 @@
 #include "errors/InvalidOperation.h"
 #include "errors/InvalidPipelineException.h"
 #include "errors/MetadataTypeMismatchException.h"
+#include "errors/NodeNameConflictException.h"
 #include "errors/PipeX_IO_Exception.h"
 #include "errors/TypeMismatchExpection.h"
 
@@ -162,25 +163,18 @@ namespace PipeX {
          * @param args Constructor arguments forwarded to NodeT.
          * @return Reference to this pipeline (allows chaining).
          *
-         * @note The debug log references member `node->name` but no local `node` variable is present
-         *       in this scope; this is left unchanged from the original implementation.
+         * @throws InvalidPipelineException If adding the node would violate pipeline integrity
          */
         template<typename NodeT, typename... Args>
         Pipeline& addNode(Args&&... args) & {
             try {
                 auto newNode = checkPipelineIntegrity<NodeT>(std::forward<Args>(args)...);
 
-                if (!newNode) {
-                    throw InvalidPipelineException(this->name, "Failed to create node of type " + std::string(typeid(NodeT).name()));
-                }
-
                 PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.addNode(\"%s\")&\n", name.c_str(), this, newNode->getName().c_str());
                 nodes.push_back(std::move(newNode));
-            } catch (InvalidOperation& e) {
-                PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.addNode() -> InvalidOperation exception: %s\n", name.c_str(), this, e.what());
-                throw;
-            } catch (PipeXException& e) {
-                PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.addNode() -> PipeXException exception: %s\n", name.c_str(), this, e.what());
+
+            } catch (InvalidPipelineException& e) {
+                PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.addNode() -> InvalidPipelineException: %s\n", name.c_str(), this, e.what());
                 throw;
             } catch (std::exception& e) {
                 PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.addNode() -> unknown exception: %s\n", name.c_str(), this, e.what());
@@ -248,7 +242,7 @@ namespace PipeX {
             }
 
             std::unique_ptr<IData> data;
-            std::cout << "Valid pipeline \"" << name << "\" starting execution with " << nodes.size() << " nodes." << std::endl;
+            // std::cout << "Valid pipeline \"" << name << "\" starting execution with " << nodes.size() << " nodes." << std::endl;
             // Process through nodes
             for (const auto& node : nodes) {
                 try {
@@ -282,7 +276,7 @@ namespace PipeX {
                 }
             }
 
-            std::cout << "***Pipeline \"" << name << "\" execution completed." << std::endl;
+            // std::cout << "***Pipeline \"" << name << "\" execution completed." << std::endl;
         }
 
         /**
@@ -340,12 +334,21 @@ namespace PipeX {
          * @note This method updates the hasSourceNode and hasSinkNode flags based on the node type.
          */
         template <typename NodeT, typename... Args>
-
         std::unique_ptr<NodeT> checkPipelineIntegrity(Args&&... args) {
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
             auto newNode = extended_std::make_unique<NodeT>(std::forward<Args>(args)...);
-            const auto castedNode = dynamic_cast<INode*>(newNode.get());
 
+            if (!newNode) {
+                throw InvalidPipelineException(this->name, "Failed to create node of type " + std::string(typeid(NodeT).name()));
+            }
+
+            const auto castedNode = dynamic_cast<INode*>(newNode.get());
+            checkNodeValidity(castedNode);
+
+            return newNode;
+        }
+
+        void checkNodeValidity(const INode* castedNode) {
             if (castedNode->isSource()) {
                 if (hasSourceNode) {
                     throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Pipeline can have only one Source node");
@@ -365,10 +368,9 @@ namespace PipeX {
                 throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Sink node must be the last node in the pipeline");
             }
 
-            if (!nodesNameSet.insert(newNode->getName()).second) {
-                throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Node with name \"" + newNode->getName() + "\" already exists in the pipeline");
+            if (!nodesNameSet.insert(castedNode->getName()).second) {
+                throw NodeNameConflictException(this->name, "[checkPipelineIntegrity] Node with name \"" + castedNode->getName() + "\" already exists in the pipeline");
             }
-            return newNode;
         }
     };
 }

@@ -80,7 +80,7 @@ TEST(NodeTest, Processor) {
             return data;
         };
 
-        Processor<int> processor(sortingFunction);
+        Processor<int, int> processor(sortingFunction);
 
 
         std::vector<int> inputData;

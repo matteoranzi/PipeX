@@ -88,6 +88,22 @@ namespace PipeX {
         Function aggregatorFunction;
 
 
+        /**
+         * @brief Process implementation that aggregates an input vector into a single output value.
+         *
+         * Applies the configured aggregator function to the given input vector and returns a
+         * newly allocated vector containing exactly one aggregated value.
+         *
+         * @param input A \c std::unique_ptr to the input \c std::vector of \c InputT. The pointer
+         *              may be a rvalue; this function reads from \c *input. If \c input is null,
+         *              an empty output vector is returned.
+         * @return std::unique_ptr<std::vector<OutputT>> A unique pointer to a vector containing
+         *         a single aggregated \c OutputT value produced by \c aggregatorFunction.
+         *
+         * @note The aggregator function receives a const reference to the input vector and
+         *       must not attempt to modify it.
+         * @note This method logs its lifecycle entry via \c logLifeCycle.
+         */
         std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 

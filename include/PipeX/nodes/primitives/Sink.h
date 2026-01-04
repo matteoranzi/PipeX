@@ -81,16 +81,34 @@ namespace PipeX {
             this->logLifeCycle("Destructor()");
         }
 
+        /**
+         * @brief Checks if this node is a sink node.
+         * @return Always returns true for Sink nodes
+         */
         bool isSink() const override final { return true; }
 
     protected:
+        /**
+         * @brief Returns the type name of this node.
+         * @return A string "Sink" identifying this node type
+         */
         std::string typeName() const override {
             return "Sink";
         }
 
     private:
+        /// The sink function that consumes the final data
         Function sinkFunction;
 
+        /**
+         * @brief Processes (consumes) data at the end of the pipeline.
+         *
+         * For Sink nodes, this method applies the sink function to the input data
+         * and produces no output for subsequent nodes.
+         *
+         * @param input The data to be consumed by this sink
+         * @return An empty unique pointer (nullptr) as sinks produce no output
+         */
         std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 

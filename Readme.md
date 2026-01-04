@@ -619,7 +619,7 @@ Il codice sorgente è organizzato separando chiaramente le interfacce (header fi
     - **`Pipeline.h`**: Definizione della classe Pipeline.
     - **`nodes/`**: Definizioni dei nodi.
       - Nodi interfaccia (`INode`, template `NodeCRTP`).
-      - Nodi primitivi come `Source`, `Sink`, `Filter`, `Transformer` e `Processor`).
+      - Nodi primitivi come `Source`, `Sink`, `Filter`, `Transformer`, `Aggregator` e `Processor`).
       - Nodi specifici per estensioni (Immagini, Audio, thread-safe console).
     - **`data/`**: Definizioni per il sistema di tipi (`IData`, `Data<T>`).
     - **`metadata/`**: Gestione dei metadati associati ai dati.

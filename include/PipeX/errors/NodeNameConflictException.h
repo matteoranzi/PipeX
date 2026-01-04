@@ -8,7 +8,7 @@
 #include <sstream>
 #include <string>
 
-#include "PipeXException.h"
+#include "InvalidPipelineException.h"
 
 namespace PipeX {
     /**
@@ -16,14 +16,14 @@ namespace PipeX {
      *
      * Indicates that a node with the same name already exists in the pipeline.
      */
-    class NodeNameConflictException final : public PipeXException {
+    class NodeNameConflictException final : public InvalidPipelineException {
     public:
+        NodeNameConflictException(const std::string& pipelineName, const std::string&nodeName) : InvalidPipelineException(pipelineName, formatMessage(pipelineName, nodeName)), nodeName_(nodeName), pipelineName_(pipelineName) {}
+
+    private:
         const std::string pipelineName_;
         const std::string nodeName_;
 
-        NodeNameConflictException(const std::string& pipelineName, const std::string&nodeName) : PipeXException(formatMessage(pipelineName, nodeName)), nodeName_(nodeName), pipelineName_(pipelineName) {}
-
-    private:
         static std::string formatMessage(const std::string& pipelineName, const std::string& nodeName) {
             std::ostringstream oss;
             oss << "Node name conflict: A node with the name '" << nodeName << "' already exists in the pipeline " <<pipelineName << ".";

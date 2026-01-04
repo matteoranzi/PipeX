@@ -16,7 +16,7 @@ namespace PipeX {
      *
      * Indicates issues such as missing source/sink nodes or invalid node connections.
      */
-    class InvalidPipelineException final : public PipeXException {
+    class InvalidPipelineException : public PipeXException {
     public:
         const std::string pipelineName_;
         const std::string message_;
