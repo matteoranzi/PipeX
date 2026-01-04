@@ -37,6 +37,7 @@ else()
     set(BoldWhite   "")
 endif()
 
+
 function(colored_message color message)
     message("${color}${message}${ColourReset}")
 endfunction()

@@ -58,6 +58,7 @@ function(show_print_debug_level_for_target target release_level debug_level)
 endfunction()
 
 
+
 #================================================================================================
 # Global debug level (used as default for all modules)
 set(RELEASE_PRINT_DEBUG_LEVEL ${PRINT_DEBUG_LEVEL_ERROR} CACHE STRING "Global debug level for all modules in release builds")
