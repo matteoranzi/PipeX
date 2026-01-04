@@ -9,6 +9,8 @@
 #include <utility>
 
 namespace extended_std {
+    // Not all compilers proved std::make_unique in C++11, so a custom implementation is provided here
+    // The following implementation is the same as the one in C++14 standard
     template<typename T, typename ...Args>
     std::unique_ptr<T> make_unique( Args&& ...args )
     {
