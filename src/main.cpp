@@ -1,7 +1,6 @@
 #include <iostream>
 #include <numeric>
 #include <algorithm>
-#include <unistd.h>
 
 #include "debug/print_debug.h"
 #include "PipeX/PipeXEngine.h"
