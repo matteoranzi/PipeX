@@ -17,6 +17,11 @@
 #endif
 
 namespace PipeX {
+    /**
+     * @brief Transformer node that applies amplitude modulation to audio data.
+     *
+     * Modulates the amplitude of the input audio signal using a sine wave (Low Frequency Modulator).
+     */
     class AmplitudeModulation final : public Transformer<WAV_AudioBuffer, WAV_AudioBuffer, WAV_Metadata> {
     public:
         AmplitudeModulation(std::string node_name, double rateHz, double depth)

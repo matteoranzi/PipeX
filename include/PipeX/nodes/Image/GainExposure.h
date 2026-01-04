@@ -13,6 +13,11 @@
 #include "PipeX/utils/image_utils.h"
 
 namespace PipeX {
+    /**
+     * @brief Transformer node that adjusts exposure and contrast of PPM images.
+     *
+     * Applies a sigmoid-based exposure and contrast adjustment to each pixel channel.
+     */
     class GainExposure final : public Transformer<PPM_Image, PPM_Image, PPM_Metadata> {
         public:
         GainExposure(std::string node_name, double gain, double contrast = 1.0)

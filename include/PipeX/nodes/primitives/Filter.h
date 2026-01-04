@@ -18,19 +18,9 @@ namespace PipeX {
      * @brief A specialized INode that filters input data based on a predicate.
      *
      * This class processes input data and filters it using a user-defined predicate function.
-     * It supports cloning and copying, and provides debug information during its lifecycle.
-     * The Filter node inherits from NodeCRTP using the CRTP pattern, allowing compile-time
-     * polymorphism while maintaining type safety.
      *
      * @tparam T The type of data to be filtered. Must be compatible with the predicate function.
-     *
-     * @note The Filter maintains type consistency by accepting input of type T and producing
-     *       output of type T, only passing through elements that satisfy the predicate.
-     *
-     * @code
-     * // Create a filter that only passes even numbers
-     * Filter<int> evenFilter([](const int& x) { return x % 2 == 0; });
-     * @endcode
+     * @tparam MetadataT The type of metadata associated with the data.
      */
     template <typename T, typename MetadataT = IMetadata>
     class Filter: public NodeCRTP<Filter<T, MetadataT>, T, T, MetadataT> {

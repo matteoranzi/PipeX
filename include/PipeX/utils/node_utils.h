@@ -17,22 +17,40 @@
 #include "PipeX/errors/TypeMismatchExpection.h"
 
 namespace PipeX {
+    /**
+     * @brief Wraps a vector of typed data into a type-erased IData object.
+     *
+     * @tparam T The type of data elements in the vector.
+     * @param data The vector of data to wrap.
+     * @return A unique_ptr to the wrapped IData object.
+     *
+     * @note The encapsulation uses std::unique_ptr<std::vector<T>> to avoid unnecessary copies of potentially large data vectors.
+     */
     template <typename T>
     std::unique_ptr<IData> wrapData(std::unique_ptr<std::vector<T>>&& data) {
         return extended_std::make_unique<Data<std::unique_ptr<std::vector<T>>>>(std::move(data));
     }
 
+    /**
+     * @brief Extracts a vector of typed data from a type-erased IData object.
+     *
+     * @tparam T The expected type of data elements in the vector.
+     * @param data The IData object to extract from.
+     * @param sourceName The name of the source node (for error reporting).
+     * @return A unique_ptr to the extracted vector of data.
+     * @throws TypeMismatchException If the data type does not match T.
+     */
     template <typename T>
     std::unique_ptr<std::vector<T>> extractData(const std::unique_ptr<IData>& data, const std::string& sourceName) {
         if (!data) {
-            PIPEX_PRINT_DEBUG_WARN("extractData -> nullptr data pointer when extracting data from source \"%s\"\n", sourceName.c_str());
+            PIPEX_PRINT_DEBUG_WARN("[node_utils] :: extractData() -> nullptr data pointer when extracting data from source \"%s\"\n", sourceName.c_str());
             return nullptr;
         }
 
         auto* castedData = dynamic_cast<Data<std::unique_ptr<std::vector<T>>>*>(data.get());
         if (!castedData) {
             const auto& rawPtrTypeid = typeid(data.get());
-            PIPEX_PRINT_DEBUG_ERROR("extractData -> Type mismatch when extracting data from source \"%s\"\n", sourceName.c_str());
+            PIPEX_PRINT_DEBUG_ERROR("[node_utils] :: extractData() -> Type mismatch when extracting data from source \"%s\"\n", sourceName.c_str());
             throw TypeMismatchException(sourceName, typeid(T), rawPtrTypeid);
         }
 

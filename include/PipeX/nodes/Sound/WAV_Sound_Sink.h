@@ -15,6 +15,11 @@
 #include "PipeX/utils/sound_utils.h"
 
 namespace PipeX {
+    /**
+     * @brief Sink node that saves audio data to WAV files.
+     *
+     * Writes each received audio buffer to a separate WAV file with an index suffix and adds the .wav extension.
+     */
     class WAV_Sound_Sink final : public Sink<WAV_AudioBuffer, WAV_Metadata> {
     public:
         WAV_Sound_Sink(std::string node_name, std::string filename)

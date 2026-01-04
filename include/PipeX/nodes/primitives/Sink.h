@@ -14,6 +14,15 @@
 #include "NodeCRTP.h"
 
 namespace PipeX {
+    /**
+     * @brief A specialized INode that consumes data.
+     *
+     * The Sink node is the end point of a pipeline. It consumes data using a
+     * user-defined function and produces no output for subsequent nodes.
+     *
+     * @tparam T The type of data consumed.
+     * @tparam MetadataT The type of metadata associated with the data.
+     */
     template <typename T, typename MetadataT = IMetadata>
     class Sink: public NodeCRTP<Sink<T, MetadataT>, T, T, MetadataT> {
 

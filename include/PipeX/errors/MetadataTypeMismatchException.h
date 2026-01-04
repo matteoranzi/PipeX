@@ -13,6 +13,11 @@
 #include "PipeXException.h"
 
 namespace PipeX {
+    /**
+     * @brief Exception thrown when metadata type mismatch occurs.
+     *
+     * Indicates that a node received metadata of a type different from what it expected.
+     */
     class MetadataTypeMismatchException final : public PipeXException {
     public:
         explicit MetadataTypeMismatchException(

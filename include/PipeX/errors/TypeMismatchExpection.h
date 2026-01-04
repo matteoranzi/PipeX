@@ -13,6 +13,11 @@
 #include "PipeXException.h"
 
 namespace PipeX {
+    /**
+     * @brief Exception thrown when data type mismatch occurs.
+     *
+     * Indicates that a node received data of a type different from what it expected.
+     */
     class TypeMismatchException final : public PipeXException {
     public:
         TypeMismatchException(

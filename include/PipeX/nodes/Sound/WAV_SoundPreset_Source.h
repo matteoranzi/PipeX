@@ -13,6 +13,11 @@
 #include "PipeX/utils/sound_utils.h"
 
 namespace PipeX {
+    /**
+     * @brief Source node that generates audio data based on presets.
+     *
+     * Can generate sinusoidal waves, white noise, pink noise, or load from a WAV file.
+     */
     class WAV_SoundPreset_Source final : public Source<WAV_AudioBuffer, WAV_Metadata> {
     public:
         WAV_SoundPreset_Source(std::string node_name, const int nStreams, const int sampleRate, const int bitsPerSample, const int durationSec, const int preset = 0)

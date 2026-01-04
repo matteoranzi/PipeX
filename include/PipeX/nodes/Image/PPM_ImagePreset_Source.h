@@ -9,14 +9,19 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
 #include "PipeX/metadata/PPM_Metadata.h"
 #include "PipeX/nodes/primitives/Source.h"
 #include "PipeX/utils/image_utils.h"
+#include "PipeX/errors/PipeXException.h"
 
 namespace PipeX {
 
+    /**
+     * @brief Source node that generates PPM images based on presets.
+     *
+     * Can generate gradient, checkerboard, or color check patterns, or load from file.
+     */
     class PPM_ImagePreset_Source final : public Source<PPM_Image, PPM_Metadata> {
         public:
             PPM_ImagePreset_Source(std::string node_name, const int width, const int height, const int preset, const int count)
@@ -30,9 +35,8 @@ namespace PipeX {
                             auto& image = images.back();
 
                             if (image.empty() || image[0].empty()) {
-                                this->logLifeCycle("Error: Generated image is empty.");
-                                //TODO create a proper exception class
-                                throw std::runtime_error("Image is empty.");
+                                PIPEX_PRINT_DEBUG_ERROR("[%s] \"%s\" {%p} :: Constructor() -> Error: Generated image is empty.\n", this->typeName().c_str(), this->getName().c_str(), this);
+                                throw PipeXException("[PPM_ImagePreset_Source::Constructor] Image is empty.");
                             }
                         }
                         return images;
@@ -78,3 +82,4 @@ namespace PipeX {
 }
 
 #endif
+

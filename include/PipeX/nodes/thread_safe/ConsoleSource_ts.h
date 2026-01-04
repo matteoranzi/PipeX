@@ -16,6 +16,14 @@
 
 
 namespace PipeX {
+    /**
+     * @brief Thread-safe source node that reads data from the console.
+     *
+     * This node prompts the user to input a vector of data from the standard input in a thread-safe manner.
+     * It requires the data type T to have an overloaded operator>> for std::istream.
+     *
+     * @tparam T The type of data to be read.
+     */
     template <typename T>
     class ConsoleSource_ts final: public Source<T>, protected Console_threadsafe {
     public:

@@ -23,15 +23,17 @@
 
 //TODO add method to get the list of nodes in the pipeline (e.g. for visualization or debugging purposes)
 //TODO verify if nodes datatypes are compatible before running/adding them in the pipeline, currently this is only checked at runtime when the pipeline is run (pipeline may throw an exception in the last node after processing all the previous nodes successfully)
+//FIXME currently pipeline integrity check don't consider compatibility of InputT/OutputT between nodes, only the presence of source/sink nodes and unique names is checked
 namespace PipeX {
 
     /**
      * @class Pipeline
-     * @brief A dynamic, type-erased pipeline that transforms a sequence of InputT into OutputT.
+     * @brief A dynamic, type-erased pipeline that transforms data.
      *
      * The pipeline stores a list of nodes derived from INode which process data represented
-     * by IData wrappers. Each node consumes and produces vectors of unique_ptr<IData>.
+     * by IData wrappers. Each node consumes and produces unique_ptr<IData>.
      *
+     * @note In order to be valid, a pipeline must contain a single source node as first node and a single sink node as last node.
      */
 
     class Pipeline {
@@ -222,19 +224,6 @@ namespace PipeX {
             return *this;
         }
 
-        //TODO evaluate if keeping the possibility for the user to manually add metadata
-
-        // template<typename MetadataT, typename... Args>
-        // Pipeline& setMetadata(Args&&... args) & {
-        //     metadata = std::make_shared<MetadataT>(std::forward<Args>(args)...);
-        //     return *this;
-        // }
-        //
-        // template<typename MetadataT, typename... Args>
-        // Pipeline&& setMetadata(Args&&... args) && {
-        //     metadata = std::make_shared<MetadataT>(std::forward<Args>(args)...);
-        //     return std::move(*this);
-        // }
 
         /**
          * @brief Run the pipeline on a vector of input values.
@@ -262,23 +251,20 @@ namespace PipeX {
             // Process through nodes
             for (const auto& node : nodes) {
                 try {
-                    PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p}.run() -> processing node \"%s\"\n", name.c_str(), this, node->getName().c_str());
+                    PIPEX_PRINT_DEBUG_INFO("[Pipeline] \"%s\" {%p} :: run() -> processing node \"%s\"\n", name.c_str(), this, node->getName().c_str());
 
                     data = node->process(std::move(data));
                 } catch (TypeMismatchException &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> TypeMismatchException exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
-                    // Rethrow the exception to propagate it up the call stack
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> TypeMismatchException in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     throw;
                 } catch (MetadataTypeMismatchException &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> MetadataTypeMismatchException exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> MetadataTypeMismatchException in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     throw;
                 } catch (InvalidOperation &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> InvalidOperation exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());
-                    // Rethrow the exception to propagate it up the call stack
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> InvalidOperation exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     throw;
                 } catch (std::exception &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p}.run() -> unknown exception in node \"%s\" ---> %s\n", name.c_str(), this, node->getName().c_str(), e.what());
-                    // Rethrow the exception to propagate it up the call stack
+                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> unknown exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
                     throw;
                 }
             }
@@ -322,8 +308,6 @@ namespace PipeX {
         bool hasSourceNode = false;
         bool hasSinkNode = false;
 
-        // std::shared_ptr<IMetadata> metadata;
-
         /**
          * @brief Checks pipeline integrity rules before adding a node.
          *
@@ -343,35 +327,33 @@ namespace PipeX {
          * @note This method updates the hasSourceNode and hasSinkNode flags based on the node type.
          */
         template <typename NodeT, typename... Args>
-        //currently derived classes of Sink and Source are not recognised as Sink and Source respectively
+
         std::unique_ptr<NodeT> checkPipelineIntegrity(Args&&... args) {
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
             auto newNode = extended_std::make_unique<NodeT>(std::forward<Args>(args)...);
             const auto castedNode = dynamic_cast<INode*>(newNode.get());
 
-            // if (is_specialization_of<Source, NodeT>::value) {
             if (castedNode->isSource()) {
                 if (hasSourceNode) {
-                    throw InvalidPipelineException(this->name, "Pipeline can have only one Source node");
+                    throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Pipeline can have only one Source node");
                 }
                 if (!nodes.empty()) {
-                    throw InvalidPipelineException(this->name, "Source node must be the first node in the pipeline");
+                    throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Source node must be the first node in the pipeline");
                 }
 
                 hasSourceNode = true;
 
-            // } else if (is_specialization_of<Sink, NodeT>::value) {
             } else if (castedNode->isSink()) {
                 if (hasSinkNode) {
-                    throw InvalidPipelineException(this->name, "Pipeline can have only one Sink node");
+                    throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Pipeline can have only one Sink node");
                 }
                 hasSinkNode = true;
             } else if (hasSinkNode) {
-                throw InvalidPipelineException(this->name, "Sink node must be the last node in the pipeline");
+                throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Sink node must be the last node in the pipeline");
             }
 
             if (!nodesNameSet.insert(newNode->getName()).second) {
-                throw InvalidPipelineException(this->name, "Node with name \"" + newNode->getName() + "\" already exists in the pipeline");
+                throw InvalidPipelineException(this->name, "[checkPipelineIntegrity] Node with name \"" + newNode->getName() + "\" already exists in the pipeline");
             }
             return newNode;
         }

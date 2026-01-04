@@ -10,6 +10,11 @@
 #include "PipeXException.h"
 
 namespace PipeX {
+    /**
+     * @brief Exception thrown when an invalid operation is attempted.
+     *
+     * Indicates that a requested operation cannot be performed in the current state.
+     */
     class InvalidOperation final : public PipeXException {
     public:
         InvalidOperation(const std::string& operation, const std::string& message) : PipeXException(formatMessage(operation, message)) {}

@@ -12,6 +12,11 @@
 #include "PipeXException.h"
 
 namespace PipeX {
+    /**
+     * @brief Exception thrown when a pipeline configuration is invalid.
+     *
+     * Indicates issues such as missing source/sink nodes or invalid node connections.
+     */
     class InvalidPipelineException final : public PipeXException {
     public:
         const std::string pipelineName_;

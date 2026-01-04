@@ -10,6 +10,12 @@
 #include "PipeX/metadata/IMetadata.h"
 
 namespace PipeX {
+    /**
+     * @brief Interface for data objects flowing through the pipeline.
+     *
+     * IData serves as a polymorphic base class for all data types processed by the pipeline.
+     * It can optionally hold metadata associated with the data.
+     */
     class IData {
     public:
         virtual ~IData() = default;

@@ -13,6 +13,14 @@
 #include "PipeX/nodes/primitives/Sink.h"
 
 namespace PipeX {
+    /**
+     * @brief Thread-safe sink node that outputs data to the console.
+     *
+     * This node prints the received data vector to the standard output in a thread-safe manner.
+     * It requires the data type T to have an overloaded operator<< for std::ostream.
+     *
+     * @tparam T The type of data to be printed.
+     */
     template <typename T>
     class ConsoleSink_ts final: public Sink<T>, protected Console_threadsafe {
     public:

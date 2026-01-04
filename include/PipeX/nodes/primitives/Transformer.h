@@ -18,17 +18,10 @@ namespace PipeX {
      * The Transformer class is a pipeline node that applies a user-defined transformation
      * function to convert data from InputT type to OutputT type. It processes multiple
      * input data items in a batch and produces corresponding output data.
-    *  It supports cloning and copying, and provides debug information during its lifecycle.
-     * The Transformer node inherits from NodeCRTP using the CRTP pattern, allowing compile-time
-     * polymorphism while maintaining type safety.
      *
      * @tparam InputT The type of input data to be transformed
      * @tparam OutputT The type of output data after transformation
-     *
-     *  @code
-     *  // Create a transformer that calculates the square of an integer
-     *  Transformer<int, int> squareTransformer([](const int& x) { return x * x; });
-     *  @endcode
+     * @tparam MetadataT The type of metadata associated with the data.
      */
     template <typename InputT, typename OutputT, typename MetadataT = IMetadata>
     class Transformer: public NodeCRTP<Transformer<InputT, OutputT, MetadataT>, InputT, OutputT, MetadataT> {

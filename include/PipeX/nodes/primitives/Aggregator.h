@@ -20,7 +20,7 @@ namespace PipeX {
      * @brief A specialized INode that aggregates input data vector of one type to a single output data of another type.
      *
      * This class processes a vector of input data, applies a user-defined aggregation function,
-     * and produces a single output value.
+     * and produces a vector containing a single output value.
      * It supports cloning and copying, and provides debug information during its lifecycle.
      * The Aggregator node inherits from NodeCRTP using the CRTP pattern, allowing compile-time
      * polymorphism while maintaining type safety.
@@ -29,7 +29,7 @@ namespace PipeX {
      * @tparam OutputT The type of the output data.
      *
      *  @code
-     *  // Create a transformer that calculates the square of an integer
+     *  // Create a transformer that calculates the sum of integers
      *  Aggregator<int, int> sumAggregator([](const std::vector<int>& dataVector) {
      *      return std::accumulate(dataVector.begin(), dataVector.end(), 0);
      *  });

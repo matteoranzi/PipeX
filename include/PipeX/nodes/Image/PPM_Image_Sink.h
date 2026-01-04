@@ -8,12 +8,17 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <stdexcept>
 
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/utils/image_utils.h"
+#include "PipeX/errors/PipeXException.h"
 
 namespace PipeX {
+    /**
+     * @brief Sink node that saves PPM images to files.
+     *
+     * Writes each received image to a separate PPM file with an index suffix and adds the .ppm extension.
+     */
     class PPM_Image_Sink final: public Sink<PPM_Image, PPM_Metadata> {
     public:
         PPM_Image_Sink(std::string node_name, std::string filename)
@@ -34,7 +39,7 @@ namespace PipeX {
             std::ofstream file(filename);
             if (!file) {
                 //TODO create a proper exception class
-                throw std::runtime_error("Could not open file for writing: " + filename);
+                throw PipeXException("[PPM_Image_Sink::saveImage] Could not open file for writing: " + filename);
             }
             const int height = metadata->height;
             const int width = metadata->width;

@@ -9,7 +9,14 @@
 #include <vector>
 
 namespace PipeX {
+    /**
+     * @brief Represents a single pixel with RGB channels.
+     */
     using channels = std::array<int, 3>; // (RGB triplet)
+
+    /**
+     * @brief Represents a PPM image as a 2D grid of pixels.
+     */
     using PPM_Image = std::vector<std::vector<channels>>;
 }
 

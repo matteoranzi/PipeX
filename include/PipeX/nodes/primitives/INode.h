@@ -21,14 +21,12 @@ namespace PipeX {
     /**
      * @brief Abstract base class representing a dynamic processing node.
      *
-     * DynamicNode defines a uniform interface for nodes that accept a vector
-     * of \c IData wrapped in \c std::unique_ptr, perform processing and
-     * return a new vector of owned \c IData objects.
+     * INode defines a uniform interface for nodes that accept a
+     * \c std::unique_ptr<IData>, perform processing and
+     * return a new \c std::unique_ptr<IData>.
      *
      * Derived classes must implement the clone methods and override
-     * \c processImpl to provide their processing logic. The public \c process
-     * and call operator overloads are \c final to ensure consistent move
-     * semantics handling at the base class level.
+     * \c process to provide their processing logic.
      */
     class INode {
     public:
@@ -66,7 +64,7 @@ namespace PipeX {
                                         return oss.str();
                                     }()
                                 ) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.Constructor()\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[INode] \"%s\" {%p} :: Constructor()\n", name.c_str(), this);
         }
 
         /**
@@ -75,7 +73,7 @@ namespace PipeX {
          * @param name Custom name for the node (moved into the member).
          */
         explicit INode(std::string name) : name(std::move(name)) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.Constructor(std::string)\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[INode] \"%s\" {%p} :: Constructor(std::string)\n", name.c_str(), this);
         }
 
         /**
@@ -87,7 +85,7 @@ namespace PipeX {
          * @param other The node to copy.
          */
         INode(const INode& other) : name(other.name + "_copy") {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.CopyConstructor()\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[INode] \"%s\" {%p} :: CopyConstructor()\n", name.c_str(), this);
         }
 
         /**
@@ -98,11 +96,11 @@ namespace PipeX {
          * @param _name Name to assign to the new instance (moved).
          */
         INode(const INode& other, std::string _name) : name(std::move(_name)) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.CopyConstructor(newName)\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[INode] \"%s\" {%p} :: CopyConstructor(newName)\n", name.c_str(), this);
         }
 
         INode(INode&& other) noexcept : name(std::move(other.name)) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.MoveConstructor(INode&&)\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[INode] \"%s\" {%p} :: MoveConstructor(INode&&)\n", name.c_str(), this);
         }
 
         /**
@@ -111,13 +109,13 @@ namespace PipeX {
          * Ensures derived destructors are called and emits debug information.
          */
         virtual ~INode() {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] \"%s\" {%p}.Destructor()\n", name.c_str(), this);
+            PIPEX_PRINT_DEBUG_INFO("[INode] \"%s\" {%p} :: Destructor()\n", name.c_str(), this);
         }
 
         virtual std::unique_ptr<IData> process(std::unique_ptr<IData>&& input) = 0;
 
         virtual std::unique_ptr<IData> operator() (std::unique_ptr<IData>&& input) {
-            PIPEX_PRINT_DEBUG_INFO("[DynamicNode] {%p}.Operator()(std::unique_ptr<IData>&&)\n", this);
+            PIPEX_PRINT_DEBUG_INFO("[INode] {%p} :: Operator()(std::unique_ptr<IData>&&)\n", this);
             return this->process(std::move(input));
         }
 

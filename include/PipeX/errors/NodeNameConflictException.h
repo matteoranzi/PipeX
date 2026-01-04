@@ -11,6 +11,11 @@
 #include "PipeXException.h"
 
 namespace PipeX {
+    /**
+     * @brief Exception thrown when a node name conflict occurs.
+     *
+     * Indicates that a node with the same name already exists in the pipeline.
+     */
     class NodeNameConflictException final : public PipeXException {
     public:
         const std::string pipelineName_;

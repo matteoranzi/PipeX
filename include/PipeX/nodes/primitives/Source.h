@@ -14,6 +14,15 @@
 
 namespace PipeX {
     //TODO make MetadataT a template parameter of NodeCRTP too, with templated getMetadata/setMetadata
+    /**
+     * @brief A specialized INode that produces data.
+     *
+     * The Source node is the starting point of a pipeline. It generates data using a
+     * user-defined function and passes it to the next node.
+     *
+     * @tparam T The type of data produced.
+     * @tparam MetadataT The type of metadata associated with the data.
+     */
     template <typename T, typename MetadataT = IMetadata>
     class Source : public NodeCRTP<Source<T, MetadataT>, T, T, MetadataT> {
 

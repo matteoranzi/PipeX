@@ -145,9 +145,9 @@ namespace PipeX {
                 std::cout << "Running pipeline \"" << pipeline->getName() << "\"..." << std::endl;
                 pipeline->run();
             } catch (InvalidOperation &e) {
-                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] InvalidOperation exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] :: runPipeline() -> InvalidOperation exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
             } catch (PipeXException &e) {
-                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] PipeXException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
+                PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] :: runPipeline() -> PipeXException in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());
             }
             /*catch (TypeMismatchException &e) {
                 PIPEX_PRINT_DEBUG_ERROR("[PipeXEngine] TypeMismatchException exception in pipeline \"%s\": %s\n", pipeline->getName().c_str(), e.what());

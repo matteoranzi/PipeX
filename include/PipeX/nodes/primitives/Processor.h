@@ -20,23 +20,8 @@ namespace PipeX {
      * a complete vector of output data. Useful for operations requiring
      * access to all elements simultaneously (e.g., sorting, shuffling).
      *
-     * Unlike other node types:
-     * - Transformer: one-to-one mapping (single input → single output)
-     * - Filter: many-to-many with potential reduction (removes elements)
-     * - Aggregator: many-to-one (reduces to single output)
-     *
-     * Processor is many-to-many with full access to the entire vector,
-     * making it ideal for operations that require the complete dataset.
-     *
      * @tparam T The type of data to be processed.
-     *
-     * @code
-     * // Create a processor that sorts integers
-     * Processor<int> sortProcessor([](std::vector<int> data) {
-     *     std::sort(data.begin(), data.end());
-     *     return data;
-     * });
-     * @endcode
+     * @tparam MetadataT The type of metadata associated with the data.
      */
     template <typename T, typename MetadataT = IMetadata>
     class Processor: public NodeCRTP<Processor<T, MetadataT>, T, T, MetadataT> {

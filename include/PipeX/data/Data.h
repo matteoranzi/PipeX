@@ -6,6 +6,14 @@
 #include "IData.h"
 
 namespace PipeX {
+    /**
+     * @brief Concrete data wrapper for a specific type T.
+     *
+     * Data<T> wraps a value of type T and inherits from IData, allowing it to be
+     * passed through the pipeline in a type-erased manner.
+     *
+     * @tparam T The type of the data being wrapped.
+     */
     template <typename T>
     class Data final: public IData {
     public:

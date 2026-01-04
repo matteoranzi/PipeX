@@ -112,7 +112,7 @@ cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
 Per abilitare o disabilitare la compilazione dei test e della sandbox, utilizzare le seguenti opzioni:
 - **`PIPEX_BUILD_TESTS`**: ON/OFF (default ON)
 - **`PIPEX_BUILD_SANDBOX`**: ON/OFF (default OFF)
-- 
+
 Esempio per abilitare la sendobox senza testing:
 ```bash
 cmake -DPIPEX_BUILD_TESTS=OFF -DPIPEX_BUILD_SANDBOX=ON ..

@@ -17,6 +17,11 @@
 #endif
 
 namespace PipeX {
+    /**
+     * @brief Transformer node that applies a bell curve equalization filter.
+     *
+     * Implements a peaking EQ filter using a biquad implementation.
+     */
     class EQ_BellCurve final : public Transformer<WAV_AudioBuffer, WAV_AudioBuffer, WAV_Metadata> {
     public:
         EQ_BellCurve(std::string node_name, double centerFrequency, double qFactor, double gainDB)

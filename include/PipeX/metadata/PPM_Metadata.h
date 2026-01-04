@@ -8,6 +8,12 @@
 #include "PipeX/metadata/IMetadata.h"
 
 namespace PipeX {
+    /**
+     * @brief Metadata for PPM image format.
+     *
+     * Stores information about the image such as dimensions and bit depth.
+     * The number of channels is fixed to 3 (RGB).
+     */
     class PPM_Metadata final : public IMetadata {
     public:
         const int channels = 3;// RGB triplet

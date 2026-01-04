@@ -26,14 +26,17 @@
 
 namespace PipeX {
     /**
-     * @brief CRTP base class for pipeline nodes with typed input/output
+     * @brief CRTP base class for pipeline nodes with typed input/output.
      *
      * This class uses the Curiously Recurring Template Pattern (CRTP) to provide
      * common functionality for pipeline nodes while maintaining type safety.
+     * It handles the extraction of typed data from the generic `IData` input
+     * and the wrapping of typed output data back into `IData`.
      *
-     * @tparam Derived The derived class type (CRTP pattern)
-     * @tparam InputT The input data type for this node
-     * @tparam OutputT The output data type for this node
+     * @tparam Derived The derived class type (CRTP pattern).
+     * @tparam InputT The input data type for this node.
+     * @tparam OutputT The output data type for this node.
+     * @tparam MetadataT The metadata type expected by this node (default: IMetadata).
      */
     template <typename Derived, typename InputT, typename OutputT, typename MetadataT = IMetadata>
     class NodeCRTP: public INode {
@@ -104,18 +107,20 @@ namespace PipeX {
         virtual std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const = 0;
 
         std::shared_ptr<MetadataT> getMetadata() const {
-            this->logLifeCycle("getTypedMetadata()");
+            this->logLifeCycle("getMetadata()");
 
             if (this->inputData) {
                 if (!this->inputData->metadata) {
-                    PIPEX_PRINT_DEBUG_ERROR("[NodeCRTP] getTypedMetadata()-> in node \"%s\": no metadata available in data\n", this->getName().c_str());
+                    PIPEX_PRINT_DEBUG_ERROR("[%s] \"%s\" {%p} :: getMetadata() -> No metadata available in data\n", typeName().c_str(), this->getName().c_str(), this);
                     throw InvalidOperation("NodeCRTP::getTypedMetadata", "No metadata available in data");
                 }
 
                 const auto typedMetadata = std::dynamic_pointer_cast<MetadataT>(this->inputData->metadata);
                 if (!typedMetadata) {
-                    PIPEX_PRINT_DEBUG_ERROR("[NodeCRTP] getTypedMetadata()-> MetadataTypeMismatchException in node \"%s\": expected metadata type %s, but got %s\n",
+                    PIPEX_PRINT_DEBUG_ERROR("[%s] \"%s\" {%p} :: getMetadata() -> MetadataTypeMismatchException: expected metadata type %s, but got %s\n",
+                        typeName().c_str(),
                         this->getName().c_str(),
+                        this,
                         typeid(MetadataT).name(),
                         typeid(this->inputData->metadata.get()).name());
                     throw MetadataTypeMismatchException(this->getName(), typeid(MetadataT), typeid(this->inputData->metadata.get()));
@@ -123,7 +128,7 @@ namespace PipeX {
 
                 return typedMetadata;
             } else {
-                PIPEX_PRINT_DEBUG_ERROR("[NodeCRTP] getTypedMetadata()-> in node \"%s\": no data available to extract metadata from\n", this->getName().c_str());
+                PIPEX_PRINT_DEBUG_ERROR("[%s] \"%s\" {%p} :: getMetadata() -> No data available to extract metadata from\n", typeName().c_str(), this->getName().c_str(), this);
                 throw InvalidOperation("NodeCRTP::getTypedMetadata", "No data available to extract metadata from");
             }
         }
@@ -162,7 +167,7 @@ namespace PipeX {
          */
         std::unique_ptr<INode> clone(std::string _name) const override {
             logLifeCycle("clone(std::string)");
-            return extended_std::make_unique<Derived>(static_cast<const Derived&>(*this), std::move(_name));
+            return extended_std::make_unique<Derived>(static_cast<const Derived&>(*this), std::move( _name));
         }
     };
 }

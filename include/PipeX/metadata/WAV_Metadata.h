@@ -10,6 +10,11 @@
 #include "PipeX/metadata/IMetadata.h"
 
 namespace PipeX {
+    /**
+     * @brief Metadata for WAV audio format.
+     *
+     * Stores standard WAV header information and derived parameters.
+     */
     class WAV_Metadata final : public IMetadata {
     public:
 
