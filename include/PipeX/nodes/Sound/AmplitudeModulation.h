@@ -12,6 +12,10 @@
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/utils/sound_utils.h"
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 namespace PipeX {
     class AmplitudeModulation final : public Transformer<WAV_AudioBuffer, WAV_AudioBuffer, WAV_Metadata> {
     public:
