@@ -2,7 +2,7 @@
 [![C++ Standard](https://img.shields.io/badge/C%2B%2B-11-blue.svg)](https://isocpp.org/)
 [![Build](https://img.shields.io/badge/build-CMake-green.svg)](https://cmake.org/)
 [![Tests](https://img.shields.io/badge/tests-GoogleTest-lightgrey.svg)](https://github.com/google/googletest)
-[![Tests](https://img.shields.io/badge/tests-passing-brightgreen.svg)]()
+[![CMake on multiple platforms (Release Build)](https://github.com/matteoranzi/PipeX/actions/workflows/cmake-multi-platform.yml/badge.svg?branch=main)](https://github.com/matteoranzi/PipeX/actions/workflows/cmake-multi-platform.yml)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
