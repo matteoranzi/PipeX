@@ -51,15 +51,15 @@ OutputT foo(const IData* input) {
 int main() {
 
     std::vector<std::unique_ptr<IData>> dataset;
-    // dataset.push_back(make_unique<Integer>(10));
-    // dataset.push_back(make_unique<Float>(3.14f));
-    // dataset.push_back(make_unique<Integer>(5));
-    // dataset.push_back(make_unique<Float>(7.2f));
+    // dataset.push_back(extended_std::make_unique<Integer>(10));
+    // dataset.push_back(extended_std::make_unique<Float>(3.14f));
+    // dataset.push_back(extended_std::make_unique<Integer>(5));
+    // dataset.push_back(extended_std::make_unique<Float>(7.2f));
 
-    dataset.push_back(make_unique<Data<int>>(10));
-    dataset.push_back(make_unique<Data<float>>(3.14f));
-    dataset.push_back(make_unique<Data<int>>(20));
-    dataset.push_back(make_unique<Data<float>>(2.71f));
+    dataset.push_back(extended_std::make_unique<Data<int>>(10));
+    dataset.push_back(extended_std::make_unique<Data<float>>(3.14f));
+    dataset.push_back(extended_std::make_unique<Data<int>>(20));
+    dataset.push_back(extended_std::make_unique<Data<float>>(2.71f));
 
     const IData* element = dataset[0].get();
     auto result = foo<int, int>(element);

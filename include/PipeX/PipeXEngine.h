@@ -30,7 +30,7 @@ namespace PipeX {
 
         // Safeguards if different threads access the engine simultaneously
         bool isRunning_flag = false;
-        pthread_mutex_t pipex_engine_mutex_ = PTHREAD_MUTEX_INITIALIZER;
+        std::mutex pipex_engine_mutex_;
 
     public:
         // Singleton instance of the PipeXEngine
@@ -160,10 +160,10 @@ namespace PipeX {
         }
 
         void lockEngine() {
-            pthread_mutex_lock(&pipex_engine_mutex_);
+            pipex_engine_mutex_.lock();
         }
         void unlockEngine() {
-            pthread_mutex_unlock(&pipex_engine_mutex_);
+            pipex_engine_mutex_.unlock();
         }
 
         void isRunning(const bool flag) {

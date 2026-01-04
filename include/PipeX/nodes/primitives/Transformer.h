@@ -124,7 +124,7 @@ namespace PipeX {
         std::unique_ptr<std::vector<OutputT>> processImpl(std::unique_ptr<std::vector<InputT>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
-            auto output = make_unique<std::vector<OutputT>>();
+            auto output = extended_std::make_unique<std::vector<OutputT>>();
             output->reserve(input->size());
 
             // Transform data

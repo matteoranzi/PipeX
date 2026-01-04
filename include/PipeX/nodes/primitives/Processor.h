@@ -130,7 +130,7 @@ namespace PipeX {
         std::unique_ptr<std::vector<T>> processImpl(std::unique_ptr<std::vector<T>>&& input) const override {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
-            return make_unique<std::vector<T>>(std::move(processorFunction(*input)));
+            return extended_std::make_unique<std::vector<T>>(std::move(processorFunction(*input)));
         }
     };
 }

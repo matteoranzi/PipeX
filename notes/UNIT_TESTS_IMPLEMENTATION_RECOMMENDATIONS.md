@@ -282,7 +282,7 @@ Create reusable test fixtures:
 class PipelineTestFixture : public ::testing::Test {
 protected:
     void SetUp() override {
-        pipeline = std::make_unique<Pipeline>("TestPipeline");
+        pipeline = std::extended_std::make_unique<Pipeline>("TestPipeline");
     }
     
     std::unique_ptr<Pipeline> pipeline;

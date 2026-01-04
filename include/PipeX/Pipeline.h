@@ -346,7 +346,7 @@ namespace PipeX {
         //currently derived classes of Sink and Source are not recognised as Sink and Source respectively
         std::unique_ptr<NodeT> checkPipelineIntegrity(Args&&... args) {
             static_assert(std::is_base_of<INode, NodeT>::value, "template parameter of Pipeline::addNode must derive from INode");
-            auto newNode = make_unique<NodeT>(std::forward<Args>(args)...);
+            auto newNode = extended_std::make_unique<NodeT>(std::forward<Args>(args)...);
             const auto castedNode = dynamic_cast<INode*>(newNode.get());
 
             // if (is_specialization_of<Source, NodeT>::value) {

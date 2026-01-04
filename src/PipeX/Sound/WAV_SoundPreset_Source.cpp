@@ -4,6 +4,7 @@
 
 #include "PipeX/nodes/Sound/WAV_SoundPreset_Source.h"
 #include "PipeX/errors/PipeXException.h"
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdlib>
 #include <ctime>

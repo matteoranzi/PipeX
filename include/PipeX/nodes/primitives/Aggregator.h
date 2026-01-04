@@ -92,7 +92,7 @@ namespace PipeX {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             // Apply aggregation function
-            auto output = make_unique<std::vector<OutputT>>();
+            auto output = extended_std::make_unique<std::vector<OutputT>>();
             output->push_back(std::move(aggregatorFunction(*input)));
 
             return output;

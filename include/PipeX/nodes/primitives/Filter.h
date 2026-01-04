@@ -144,7 +144,7 @@ namespace PipeX {
             this->logLifeCycle("processImpl(std::unique_ptr<std::vector<InputT>>&&)");
 
             // Filter data based on predicate
-            auto output = make_unique<std::vector<T>>();
+            auto output = extended_std::make_unique<std::vector<T>>();
             output->reserve(input->size());
 
             std::copy_if(

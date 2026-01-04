@@ -351,7 +351,7 @@ This document outlines comprehensive unit tests to validate the PipeX Pipelined 
 
 ### 6.3 Custom Memory Utilities (my_memory.h)
 - [ ] **Test_MyMemory_MakeUnique**
-  - Verify custom make_unique works for various types
+  - Verify custom extended_std::make_unique works for various types
   - Verify compatibility with standard library
 
 ---

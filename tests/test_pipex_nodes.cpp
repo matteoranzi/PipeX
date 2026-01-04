@@ -15,7 +15,7 @@
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/data/Data.h"
 #include "PipeX/nodes/primitives/Processor.h"
-#include "../include/PipeX/utils/node_utils.h"
+#include "PipeX/utils/node_utils.h"
 #include "my_extended_cpp_standard/my_memory.h"
 
 
@@ -47,7 +47,7 @@ TEST(NodeTest, Transformer) {
         }
 
 
-        auto wrappedInput = wrapData<int>(make_unique<std::vector<int>>(inputData));
+        auto wrappedInput = wrapData<int>(extended_std::make_unique<std::vector<int>>(inputData));
         auto outputData = transformer.process(std::move(wrappedInput));
         const auto extractedOutput = PipeX::extractData<float>(outputData);
 
@@ -90,7 +90,7 @@ TEST(NodeTest, Processor) {
         inputData.emplace_back(9);
         inputData.emplace_back(4);
 
-        auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
+        auto wrappedInput = PipeX::wrapData<int>(extended_std::make_unique<std::vector<int>>(inputData));
         auto outputData = processor.process(std::move(wrappedInput));
         const auto extractedOutput = PipeX::extractData<int>(outputData);
 
@@ -131,7 +131,7 @@ TEST(NodeTest, Filter) {
         }
 
 
-        auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
+        auto wrappedInput = PipeX::wrapData<int>(extended_std::make_unique<std::vector<int>>(inputData));
         auto outputData = filter.process(std::move(wrappedInput));
         const auto extractedOutput = PipeX::extractData<int>(outputData);
 
@@ -173,7 +173,7 @@ TEST(NodeTest, Aggregator) {
         }
 
 
-        auto wrappedInput = PipeX::wrapData<int>(make_unique<std::vector<int>>(inputData));
+        auto wrappedInput = PipeX::wrapData<int>(extended_std::make_unique<std::vector<int>>(inputData));
         auto outputData = aggregator.process(std::move(wrappedInput));
         const auto extractedOutput = PipeX::extractData<int>(outputData);
 

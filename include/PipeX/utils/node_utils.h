@@ -19,7 +19,7 @@
 namespace PipeX {
     template <typename T>
     std::unique_ptr<IData> wrapData(std::unique_ptr<std::vector<T>>&& data) {
-        return make_unique<Data<std::unique_ptr<std::vector<T>>>>(std::move(data));
+        return extended_std::make_unique<Data<std::unique_ptr<std::vector<T>>>>(std::move(data));
     }
 
     template <typename T>

@@ -146,9 +146,9 @@ namespace PipeX {
             return std::move(this->outputData);
         }
 
-        std::unique_ptr<INode>  clone() const override {
+        std::unique_ptr<INode> clone() const override {
             logLifeCycle("clone()");
-            return make_unique<Derived>(static_cast<const Derived&>(*this));
+            return extended_std::make_unique<Derived>(static_cast<const Derived&>(*this));
         }
 
         /**
@@ -162,7 +162,7 @@ namespace PipeX {
          */
         std::unique_ptr<INode> clone(std::string _name) const override {
             logLifeCycle("clone(std::string)");
-            return make_unique<Derived>(static_cast<const Derived&>(*this), std::move(_name));
+            return extended_std::make_unique<Derived>(static_cast<const Derived&>(*this), std::move(_name));
         }
     };
 }
