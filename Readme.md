@@ -16,7 +16,7 @@
 
 ## 2. Data e versione del documento
 **Data:** 3 Gennaio 2026  
-**Versione:** 1.0
+**Versione:** 1.1
 
 ## 3. Riferimenti dei componenti del Gruppo
 - **Matteo Ranzi** (matteo.ranzi@studenti.unitn.it)
@@ -91,24 +91,29 @@ cmake ..
 
 2.b **Configurazione Log di Debug:**
 
-È possibile controllare il livello di verbosità dei log di debug configurando la variabile CMake `GLOBAL_PRINT_DEBUG_LEVEL`.
+È possibile controllare il livello di verbosità dei log di debug configurando le variabile CMake `RELEASE_PRINT_DEBUG_LEVEL`
+e `DEBUG_PRINT_DEBUG_LEVEL`, che impostano il livello di log rispettivamente per le build di tipo Release e Debug.
 
 I livelli disponibili sono:
 - `0` (NONE): Nessun log.
-- `1` (ERROR): Solo errori (default).
+- `1` (ERROR): Solo errori (Release build default).
 - `2` (WARN): Errori e avvisi.
-- `3` (INFO): Log completi.
+- `3` (INFO): Log completi (Debug build default).
 
-Esempio per disabilitare i log:
+Esempio per disabilitare i log nella build di Release:
 ```bash
-cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
+cmake -DRELEASE_PRINT_DEBUG_LEVEL=0 ..
 ```
 
 È inoltre possibile sovrascrivere il livello di log sei singoli moduli tramite le variabili:
-- **`APP_PRINT_DEBUG_LEVEL`**: livello di log per l'applicazione principale.
-- **`TESTING_PRINT_DEBUG_LEVEL`**: livello di log per i test.
-- **`PIPEX_PRINT_DEBUG_LEVEL`**: livello di log per il core framework PipeX.
-- **`SANDBOX_PRINT_DEBUG_LEVEL`**: livello di log per la sandbox di sperimentazione.
+- **`APP_RELEASE_PRINT_DEBUG_LEVEL`**: livello di log per l'applicazione principale in Release.
+- **`APP_DEBUG_PRINT_DEBUG_LEVEL`**: livello di log per l'applicazione principale in Debug.
+- **`TESTS_RELEASE_PRINT_DEBUG_LEVEL`**: livello di log per i test in Release.
+- **`TESTS_DEBUG_PRINT_DEBUG_LEVEL`**: livello di log per i test in Debug.
+- **`PIPEX_RELEASE_PRINT_DEBUG_LEVEL`**: livello di log per il core framework PipeX in Release.
+- **`PIPEX_DEBUG_PRINT_DEBUG_LEVEL`**: livello di log per il core framework PipeX in Debug.
+- **`SANDBOX_RELEASE_PRINT_DEBUG_LEVEL`**: livello di log per la sandbox di sperimentazione in Release.
+- **`SANDBOX_DEBUG_PRINT_DEBUG_LEVEL`**: livello di log per la sandbox di sperimentazione in Debug.
 
 
 2.b **Attivazione/disattivazione test e sandbox:**
