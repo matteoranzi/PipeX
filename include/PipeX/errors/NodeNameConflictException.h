@@ -4,8 +4,8 @@
 
 #ifndef PIPEX_NODENAMECONFLICTEXCEPTION_H
 #define PIPEX_NODENAMECONFLICTEXCEPTION_H
+
 #include <sstream>
-#include <stdexcept>
 #include <string>
 
 #include "PipeXException.h"

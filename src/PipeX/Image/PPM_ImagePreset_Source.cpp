@@ -5,7 +5,7 @@
 #include "PipeX/nodes/Image/PPM_ImagePreset_Source.h"
 #include "PipeX/errors/PipeXException.h"
 
-#include <iostream>
+
 namespace PipeX {
     PPM_Image PPM_ImagePreset_Source::gradientImage(const int width, const int height) const {
         PPM_Image image;

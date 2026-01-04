@@ -18,6 +18,7 @@
 #include "errors/InvalidOperation.h"
 #include "errors/InvalidPipelineException.h"
 #include "errors/MetadataTypeMismatchException.h"
+#include "errors/PipeX_IO_Exception.h"
 #include "errors/TypeMismatchExpection.h"
 
 
@@ -255,17 +256,29 @@ namespace PipeX {
 
                     data = node->process(std::move(data));
                 } catch (TypeMismatchException &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> TypeMismatchException in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
-                    throw;
+                    std::string err = "TypeMismatchException in pipeline '" + name + "' at node '" + node->getName() + "': " + e.what();
+                    // PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> %s\n", name.c_str(), this, err.c_str());
+                    throw PipeXException(err);
                 } catch (MetadataTypeMismatchException &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> MetadataTypeMismatchException in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
-                    throw;
+                    std::string err = "MetadataTypeMismatchException in pipeline '" + name + "' at node '" + node->getName() + "': " + e.what();
+                    // PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> %s\n", name.c_str(), this, err.c_str());
+                    throw PipeXException(err);
                 } catch (InvalidOperation &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> InvalidOperation exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
-                    throw;
+                    std::string err = "InvalidOperation in pipeline '" + name + "' at node '" + node->getName() + "': " + e.what();
+                    // PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> %s\n", name.c_str(), this, err.c_str());
+                    throw PipeXException(err);
+                } catch (PipeX_IO_Exception &e) {
+                    std::string err = "PipeX_IO_Exception in pipeline '" + name + "' at node '" + node->getName() + "': " + e.what();
+                    // PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> %s\n", name.c_str(), this, err.c_str());
+                    throw PipeX_IO_Exception(err);
+                } catch (PipeXException &e) {
+                    std::string err = "PipeXException in pipeline '" + name + "' at node '" + node->getName() + "': " + e.what();
+                    // PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> %s\n", name.c_str(), this, err.c_str());
+                    throw PipeXException(err);
                 } catch (std::exception &e) {
-                    PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> unknown exception in node \"%s\": %s\n", name.c_str(), this, node->getName().c_str(), e.what());
-                    throw;
+                    std::string err = "Unknown exception in pipeline '" + name + "' at node '" + node->getName() + "': " + e.what();
+                    // PIPEX_PRINT_DEBUG_ERROR("[Pipeline] \"%s\" {%p} :: run() -> %s\n", name.c_str(), this, err.c_str());
+                    throw PipeXException(err);
                 }
             }
 

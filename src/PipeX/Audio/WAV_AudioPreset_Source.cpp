@@ -2,7 +2,7 @@
 // Created by Matteo Ranzi on 01/01/26.
 //
 
-#include "PipeX/nodes/Sound/WAV_SoundPreset_Source.h"
+#include "PipeX/nodes/Audio/WAV_AudioPreset_Source.h"
 #include "PipeX/errors/PipeXException.h"
 
 #include <cmath>

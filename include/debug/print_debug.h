@@ -61,7 +61,7 @@
 #endif
 
 #if PRINT_DEBUG_LEVEL >= PRINT_DEBUG_LEVEL_ERROR
-#define PRINT_DEBUG_ERROR(format, ...) do {/*printf(ANSI_COLOR_RED_BOLD "[DEBUG_ERROR] " format ANSI_COLOR_RESET, ##__VA_ARGS__);*/ fprintf(stderr, "[DEBUG_ERROR] " format, ##__VA_ARGS__);} while(0)
+#define PRINT_DEBUG_ERROR(format, ...) do {/*printf(ANSI_COLOR_RED_BOLD "[DEBUG_ERROR] " format ANSI_COLOR_RESET, ##__VA_ARGS__);*/ fprintf(stderr, ANSI_COLOR_RED_BOLD "[DEBUG_ERROR] " format ANSI_COLOR_RESET, ##__VA_ARGS__);} while(0)
 #else
 #define PRINT_DEBUG_ERROR(format, ...)
 #endif

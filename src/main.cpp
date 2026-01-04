@@ -11,10 +11,10 @@
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/nodes/primitives/Source.h"
-#include "PipeX/nodes/Sound/AmplitudeModulation.h"
-#include "PipeX/nodes/Sound/EQ_BellCurve.h"
-#include "PipeX/nodes/Sound/WAV_SoundPreset_Source.h"
-#include "PipeX/nodes/Sound/WAV_Sound_Sink.h"
+#include "PipeX/nodes/Audio/AmplitudeModulation.h"
+#include "PipeX/nodes/Audio/EQ_BellCurve.h"
+#include "PipeX/nodes/Audio/WAV_AudioPreset_Source.h"
+#include "PipeX/nodes/Audio/WAV_Audio_Sink.h"
 #include "PipeX/nodes/thread_safe/ConsoleSink_ts.h"
 #include "PipeX/nodes/thread_safe/ConsoleSource_ts.h"
 
@@ -47,7 +47,11 @@ int main() {
         PRINT_DEBUG_ERROR("[Main] Unknown exception caught while creating pipeline\n");
     }
 
-    pipex_engine->start();
+    try {
+        pipex_engine->start();
+    } catch (PipeX::PipeXException& e) {
+        PRINT_DEBUG_ERROR("[Main] Exception caught while starting pipex engine: %s\n", e.what());
+    }
 
     return 0;
 }

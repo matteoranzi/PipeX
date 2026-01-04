@@ -6,7 +6,6 @@
 #define PIPEX_INVALIDPIPELINEEXCEPTION_H
 
 #include <sstream>
-#include <stdexcept>
 #include <string>
 
 #include "PipeXException.h"

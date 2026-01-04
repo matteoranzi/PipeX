@@ -8,11 +8,12 @@
 #include <fstream>
 #include <string>
 #include <vector>
-#include <cstdint>
 
 #include "PipeX/metadata/WAV_Metadata.h"
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/utils/sound_utils.h"
+#include "PipeX/errors/PipeX_IO_Exception.h"
+
 
 namespace PipeX {
     /**
@@ -26,7 +27,7 @@ namespace PipeX {
                 : Sink(std::move(node_name), [this](std::vector<WAV_AudioBuffer>& audios) {
                     int index = 0;
                     for (auto& audio : audios) {
-                        saveWAV2File(audio, filename_ + "_" + std::to_string(index++) + ".wav");
+                        saveToFile(audio, filename_ + "_" + std::to_string(index++) + ".wav");
                     }
                 }), filename_(std::move(filename)) {
             this->logLifeCycle("Constructor(filename, name)");
@@ -35,9 +36,14 @@ namespace PipeX {
     private:
         const std::string filename_;
 
-        void saveWAV2File(const WAV_AudioBuffer& audio, const std::string& filename) const {
+        void saveToFile(const WAV_AudioBuffer& audio, const std::string& filename) const {
             const auto& metadata = this->getMetadata();
+
             std::ofstream file(filename, std::ios::binary);
+            if (!file) {
+                throw PipeX_IO_Exception("[PPM_Image_Sink::saveToFile] Could not open file for writing: " + filename
+                    + ", make sure the directory exists.");
+            }
 
             // RIFF
             file.write("RIFF", 4);
@@ -46,8 +52,8 @@ namespace PipeX {
 
             // fmt chunk
             file.write("fmt ", 4);
-            uint32_t fmtSize = 16;
-            uint16_t audioFormat = 1; // PCM
+            constexpr uint32_t fmtSize = 16;
+            constexpr uint16_t audioFormat = 1; // PCM
             file.write(reinterpret_cast<const char*>(&fmtSize), 4);
             file.write(reinterpret_cast<const char*>(&audioFormat), 2);
             file.write(reinterpret_cast<const char*>(&(metadata->numChannels)), 2);

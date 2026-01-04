@@ -1,6 +1,6 @@
 add_library(PipeX STATIC PipeX.cpp
         Image/PPM_ImagePreset_Source.cpp
-        Sound/WAV_SoundPreset_Source.cpp)
+        Audio/WAV_AudioPreset_Source.cpp)
 
 include(${CMAKE_SOURCE_DIR}/cmake/PrintDebug.cmake)
 

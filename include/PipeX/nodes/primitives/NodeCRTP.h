@@ -20,7 +20,6 @@
 #include "PipeX/errors/MetadataTypeMismatchException.h"
 #include "PipeX/errors/InvalidOperation.h"
 
-
 namespace PipeX {
     /**
      * @brief CRTP base class for pipeline nodes with typed input/output.

@@ -11,7 +11,7 @@
 
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/utils/image_utils.h"
-#include "PipeX/errors/PipeXException.h"
+#include "PipeX/errors/PipeX_IO_Exception.h"
 
 namespace PipeX {
     /**
@@ -25,7 +25,7 @@ namespace PipeX {
                 : Sink(std::move(node_name), [this](const std::vector<PPM_Image>& images) {
                     int index = 0;
                     for (auto& image : images) {
-                        saveImage(image, filename_ + "_" + std::to_string(index++) + ".ppm");
+                        saveToFile(image, filename_ + "_" + std::to_string(index++) + ".ppm");
                     }
                 }), filename_(std::move(filename)) {
             this->logLifeCycle("Constructor(filename, name)");
@@ -34,12 +34,15 @@ namespace PipeX {
     private:
         const std::string filename_;
 
-        void saveImage(const PPM_Image& image, const std::string& filename) const {
+        void saveToFile(const PPM_Image& image, const std::string& filename) const {
             const auto&metadata = this->getMetadata();
+
             std::ofstream file(filename);
             if (!file) {
-                throw PipeXException("[PPM_Image_Sink::saveImage] Could not open file for writing: " + filename);
+                throw PipeX_IO_Exception("[PPM_Image_Sink::saveToFile] Could not open file for writing: " + filename
+                    + ", make sure the directory exists.");
             }
+
             const int height = metadata->height;
             const int width = metadata->width;
             file << "P3\n" << width << " " << height << "\n" << metadata->bit_depth << "\n";

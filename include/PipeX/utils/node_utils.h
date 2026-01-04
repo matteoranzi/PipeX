@@ -5,7 +5,6 @@
 #ifndef PIPEX_NODE_UTILS_H
 #define PIPEX_NODE_UTILS_H
 
-
 #include <string>
 #include <vector>
 #include <memory>

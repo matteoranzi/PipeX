@@ -4,8 +4,8 @@
 
 #ifndef PIPEX_SOUND_UTILS_H
 #define PIPEX_SOUND_UTILS_H
+
 #include <vector>
-#include <ostream>
 #include <cstdint>
 
 namespace PipeX {

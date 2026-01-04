@@ -9,6 +9,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+
 #include "NodeCRTP.h"
 
 namespace PipeX {

@@ -7,7 +7,6 @@
 
 #include <mutex>
 
-
 namespace PipeX {
     /**
      * @brief Helper class for thread-safe console access.

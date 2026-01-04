@@ -69,7 +69,8 @@ Per compilare ed eseguire PipeX sono necessari i seguenti requisiti:
 
 ### Istruzioni per la Compilazione
 
-**Passaggi per la compilazione ed esecuzione:**
+**Passaggi per la compilazione ed esecuzione**
+
 Dentro la cartella del progetto, eseguire i seguenti comandi nel terminale:
 
 1.  **Creazione directory di build:**
@@ -544,8 +545,10 @@ Esempio di output console (con livello di debug ERROR):
 Running PipeXEngine with 3 pipelines...
 Running pipeline "PPM Image generation"...
 Valid pipeline "PPM Image generation" starting execution with 3 nodes.
-Running pipeline "Running pipeline "WAV Audio generation"...
-Valid pipeline "WAV Audio generation" starting execution with WAV Audio generation with Amplitude Modulation"...3 nodes.
+Running pipeline "WAV Audio generation with Amplitude Modulation"...
+Running pipeline "WAV Audio generation"...
+
+Valid pipeline "WAV Audio generation" starting execution with 3 nodes.
 ***Pipeline "WAV Audio generation" execution completed.
 
 [DEBUG_ERROR] [PipeX] [PipeXEngine] PipeXException exception in pipeline "WAV Audio generation with Amplitude Modulation": PipeX Library exception: Invalid Pipeline "WAV Audio generation with Amplitude Modulation": Cannot run pipeline, invalid configuration: missing Sink node
