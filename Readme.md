@@ -143,7 +143,7 @@ ctest --output-on-failure
 #### Compilazione con g++
 Se si preferisce compilare manualmente senza CMake, è necessario assicurarsi di includere la directory `include` per i file header e collegare le librerie necessarie.
 
-Assicurarsi anche di creare le cartelle `output/audio` e `output/images` prima di eseguire l'applicazione di esempio contenuta in `main.cpp`.
+Assicurarsi anche di creare le cartelle `output/audio` e `output/image` prima di eseguire l'applicazione di esempio contenuta in `main.cpp`.
 
 Comando g++ per compilazione di base (no tests), impostando il livello di debug a ERROR:
 ```bash
@@ -617,7 +617,10 @@ Il codice sorgente è organizzato separando chiaramente le interfacce (header fi
 - **`include/PipeX/`**: Contiene tutti gli header files del framework.
     - **`PipeXEngine.h`**: Definizione del motore principale e gestione delle pipeline.
     - **`Pipeline.h`**: Definizione della classe Pipeline.
-    - **`nodes/`**: Definizioni dei nodi (interfaccia `INode`, template `NodeCRTP`, e nodi primitivi come `Source`, `Sink`, `Filter`, `Transformer` e `Processor`).
+    - **`nodes/`**: Definizioni dei nodi.
+      - Nodi interfaccia (`INode`, template `NodeCRTP`).
+      - Nodi primitivi come `Source`, `Sink`, `Filter`, `Transformer` e `Processor`).
+      - Nodi specifici per estensioni (Immagini, Audio, thread-safe console).
     - **`data/`**: Definizioni per il sistema di tipi (`IData`, `Data<T>`).
     - **`metadata/`**: Gestione dei metadati associati ai dati.
     - **`errors/`**: Definizioni delle eccezioni personalizzate.
