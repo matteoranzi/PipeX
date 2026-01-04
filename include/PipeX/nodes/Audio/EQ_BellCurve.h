@@ -39,7 +39,7 @@ namespace PipeX {
             double y1 = 0, y2 = 0;
 
             double process(double x) {
-                double y = b0*x + b1*x1 + b2*x2
+                const double y = b0*x + b1*x1 + b2*x2
                            - a1*y1 - a2*y2;
                 x2 = x1;
                 x1 = x;

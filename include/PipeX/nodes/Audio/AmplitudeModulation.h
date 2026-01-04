@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <string>
+#include <cstdlib>
 
 #include "PipeX/metadata/WAV_Metadata.h"
 #include "PipeX/nodes/primitives/Transformer.h"
@@ -25,7 +26,9 @@ namespace PipeX {
     class AmplitudeModulation final : public Transformer<WAV_AudioBuffer, WAV_AudioBuffer, WAV_Metadata> {
     public:
         AmplitudeModulation(std::string node_name, double rateHz, double depth)
-            : Transformer(std::move(node_name), [this, rateHz, depth] (WAV_AudioBuffer& input) {
+            : Transformer(std::move(node_name), [this, rateHz, depth] (WAV_AudioBuffer& input) mutable  {
+                rateHz = std::abs(rateHz);
+                depth = this->clamp(depth, 0.0, 1.0);
                 return this->applyAmplitudeModulation(input, rateHz, depth);
             }) {
             this->logLifeCycle("AmplitudeModulation(std::string node_name, double modulationIndex, double modulationFrequency)");
@@ -43,6 +46,10 @@ namespace PipeX {
             }
 
             return modulatedData;
+        }
+
+        constexpr double clamp(const double& v, const double& lo, const double& hi) const {
+            return v < lo ? lo : hi < v ? hi : v;
         }
     };
 }

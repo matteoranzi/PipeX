@@ -22,13 +22,13 @@ namespace PipeX {
         public:
         GainExposure(std::string node_name, double gain, double contrast = 1.0)
             : Transformer(std::move(node_name), [this, gain, contrast] (PPM_Image& input) {
-                return this->applyGain(input, gain, contrast);
+                return this->grayscale(input, gain, contrast);
             }) {
             this->logLifeCycle("Gain Exposure");
         }
 
     private:
-        PPM_Image applyGain(PPM_Image& data, const double gain, const double contrast) {
+        PPM_Image grayscale(PPM_Image& data, const double gain, const double contrast) const {
             static const auto& metadata = this->getMetadata();
 
             for (auto& row: data) {

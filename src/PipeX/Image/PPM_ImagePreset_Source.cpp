@@ -23,7 +23,7 @@ namespace PipeX {
                 const int ig = static_cast<int>(255.999 * g);
                 constexpr int ib = static_cast<int>(255.999 * b);
 
-                image[j].emplace_back(channels{ir, ig, ib});
+                image[j].emplace_back(channelsT{ir, ig, ib});
             }
         }
 

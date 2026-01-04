@@ -19,6 +19,7 @@
 #include "PipeX/nodes/Audio/EQ_BellCurve.h"
 #include "PipeX/nodes/Audio/WAV_AudioPreset_Source.h"
 #include "PipeX/nodes/Audio/WAV_Audio_Sink.h"
+#include "PipeX/nodes/Image/Color2BlackWhite.h"
 #include "PipeX/nodes/primitives/Aggregator.h"
 #include "PipeX/nodes/primitives/Filter.h"
 #include "PipeX/nodes/primitives/Processor.h"
@@ -44,6 +45,8 @@ int main() {
     std::cout << "(1) Basic pipeline demo" << std::endl;
     std::cout << "(2) Threa-safe console pipelines demo" << std::endl;
     std::cout << "(3) Pipeline exceptions demo" << std::endl;
+    std::cout << "(4) WAV audio demo" << std::endl;
+    std::cout << "(5) PPM image demo" << std::endl;
 
     int demo;
     std::cout << "\nSelect demo to run: ";
@@ -143,7 +146,6 @@ void threadsafeConsolePipeXEngineDemo() {
 // The first pipeline is missing a Sink node, which will cause an exception during execution
 // The second pipeline has duplicated node names, which will cause an exception during creation. Such corrupted pipeline is removed from PipeXEngine after exception is caught
 // After handling the exceptions, a working pipeline is created and executed to show that PipeXEngine continues working after exceptions
-
 void pipelineExceptionsDemo() {
     const auto pipexEngine = PipeX::PipeXEngine::getPipexEngine();
 
@@ -177,7 +179,7 @@ void pipelineExceptionsDemo() {
             });
 
     } catch (PipeX::NodeNameConflictException& e) {
-        // Pipeline is incomplete, so is removed from PipeXEngine
+        // Pipeline is incomplete, so it is removed from PipeXEngine
         PRINT_DEBUG_ERROR("[Main] Removing corrupted pipeline \"DuplicatedNode_Pipeline\" from PipeXEngine\n");
         pipexEngine->removePipeline("DuplicatedNode_Pipeline");
     } catch (... ) {
@@ -207,55 +209,66 @@ void pipelineExceptionsDemo() {
 
 //==========================================================================================================
 
+// This demo shows how to create a pipeline that generates WAV audio files with amplitude modulation effects
 void WAV_audioDemo() {
+    const auto pipexEngine = PipeX::PipeXEngine::getPipexEngine();
+
+    // WAV audio generation parameters
+    constexpr int nStreams = 1; // number of audio files to generate
+    constexpr int sampleRate = 44100; // samples per second
+    constexpr int bitsPerSample = 16;
+    constexpr int durationSec = 5; // duration of each audio file in seconds
+    constexpr int preset = 2; // 0: sinusoidal wave, 1: white noise, 2: pink noise
+
+    // EQ Bell Curve parameters
+    constexpr double centerFrequency = 831.0; // Hz
+    constexpr double qFactor = 4.0; // Quality factor
+    constexpr double gainDB = 30.0; // Gain in decibels
+
+    // Amplitude Modulation parameters
+    constexpr double rateHz_1 = 27.0; // Modulation frequency in Hz > 0
+    constexpr double depth_1 = 0.7; // Modulation depth (0.0 to 1.0)
+    constexpr double rateHz_2 = 5.0; // Modulation frequency in Hz > 0
+    constexpr double depth_2 = 0.4; // Modulation depth (0.0 to 1.0)
+
+    pipexEngine->newPipeline("WAV Audio generation with Amplitude Modulation")
+            .addNode<PipeX::WAV_SoundPreset_Source>("WAV Audio Sample Source", nStreams, sampleRate, bitsPerSample, durationSec, preset)
+            .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve", centerFrequency, qFactor, gainDB)
+            .addNode<PipeX::AmplitudeModulation>("Amplitude Modulation 1", rateHz_1, depth_1)
+            .addNode<PipeX::AmplitudeModulation>("Amplitude Modulation 2", rateHz_2, depth_2)
+            .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/tremolo_pink_noise");
+
+    pipexEngine->start();
 
 }
 
 //==========================================================================================================
 
 void PPM_imageDemo() {
+    const auto pipexEngine = PipeX::PipeXEngine::getPipexEngine();
 
+    // PPM image generation parameters
+    constexpr int width = 1024;
+    constexpr int height = 1024;
+    constexpr int preset = 0; // 0: gradient, 1: checkerboard, 2: color checkerboard || only 0 (gradient) is implemented for now
+    constexpr int count = 1; // number of images to generate
+
+    // Gain Exposure parameters
+    constexpr double gain = 3.2; // Gain factor
+    constexpr double contrast = 0.4; // Contrast factor
+
+
+    pipexEngine->newPipeline("PPM Image generation")
+        .addNode<PipeX::PPM_ImagePreset_Source>("PPM Image Sample Source", width, height, preset, count)
+        .addNode<PipeX::GainExposure>("Gain Exposure", gain, contrast)
+        // .addNode<PipeX::Color2BlackWhite>("Black and White Converter")
+        .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/image/gradient");
+
+    pipexEngine->start();
 }
 
 //==========================================================================================================
 
-/*{
-    const auto pipex_engine = PipeX::PipeXEngine::getPipexEngine();
-    pipex_engine->newPipeline("PPM Image generation")
-        .addNode<PipeX::PPM_ImagePreset_Source>("PPM Image Sample Source", 1024, 1024, 0, 1)
-        .addNode<PipeX::GainExposure>("Gain Exposure", 1.3, 10)
-        .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/image/gain_contrast_gradient_square");
-
-    pipex_engine->newPipeline("WAV Audio generation")
-            .addNode<PipeX::WAV_SoundPreset_Source>("WAV Audio Sample Source", 1, 44100, 16, 5, 2)
-            .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve", 450.0, 6.0, 25.0)
-            .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/eq3_pink_noise");
-
-
-    try {
-        pipex_engine->newPipeline("WAV Audio generation with Amplitude Modulation")
-            .addNode<PipeX::WAV_SoundPreset_Source>("WAV Audio Sample Source", 1, 44100, 16, 5, 2)
-            .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve", 440.0, 4.0, 30.0)
-            .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve 2", 831, 4.0, 20.0)
-            .addNode<PipeX::AmplitudeModulation>("Amplitude Modulation", 27.0, 0.8)
-            .addNode<PipeX::AmplitudeModulation>("Amplitude Modulation 2", 5.0, 0.5);
-            // .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/eq2_tremolo_pink_noise_3");
-            // .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/test");
-    } catch (PipeX::PipeXException& e) {
-        PRINT_DEBUG_ERROR("[Main] Exception caught while creating pipeline: %s\n", e.what());
-        //New pipeline is not created and PipeXEngine continue with the previous ones
-    } catch (...) {
-        PRINT_DEBUG_ERROR("[Main] Unknown exception caught while creating pipeline\n");
-    }
-
-    try {
-        pipex_engine->start();
-    } catch (PipeX::PipeXException& e) {
-        PRINT_DEBUG_ERROR("[Main] Exception caught while starting pipex engine: %s\n", e.what());
-    }
-
-    return 0;
-}*/
 
 template <typename T>
 void printVector(const std::vector<T>& vec) {
