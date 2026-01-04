@@ -8,6 +8,7 @@
 #include <functional>
 #include <string>
 #include <utility>
+#include <algorithm>
 
 #include "NodeCRTP.h"
 
