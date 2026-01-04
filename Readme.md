@@ -667,7 +667,7 @@ Il framework garantisce che un'eccezione in una pipeline non comprometta l'esecu
 
 ## 12. Dichiarazione sull'uso dell'IA
 
-> Gli strumenti di AI (ChatGPT e Github Copilot) sono stati utilizzati esclusivamente per suggerimenti di name refactoring,
+> Gli strumenti di AI (ChatGPT e Github Copilot) sono stati utilizzati esclusivamente per suggerimenti di refactoring,
 > supporto nella creazione di commenti/documentazione e supporto per il debug e per la correzione degli errori.
 > Tutta la logica, il design e l'implementazione sono stati realizzati autonomamente dall'autore del progetto, che si assume la piena responsabilità della correttezza del codice finale.
 
