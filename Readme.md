@@ -88,6 +88,7 @@ cmake ..
 2.b **Configurazione Log di Debug:**
 
 È possibile controllare il livello di verbosità dei log di debug configurando la variabile CMake `GLOBAL_PRINT_DEBUG_LEVEL`.
+
 I livelli disponibili sono:
 - `0` (NONE): Nessun log.
 - `1` (ERROR): Solo errori (default).
@@ -103,6 +104,7 @@ cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
 - **`APP_PRINT_DEBUG_LEVEL`**: livello di log per l'applicazione principale.
 - **`TESTING_PRINT_DEBUG_LEVEL`**: livello di log per i test.
 - **`PIPEX_PRINT_DEBUG_LEVEL`**: livello di log per il core framework PipeX.
+- **`SANDBOX_PRINT_DEBUG_LEVEL`**: livello di log per la sandbox di sperimentazione.
 
 
 2.b **Attivazione/disattivazione test e sandbox:**
@@ -110,9 +112,10 @@ cmake -DGLOBAL_PRINT_DEBUG_LEVEL=0 ..
 Per abilitare o disabilitare la compilazione dei test e della sandbox, utilizzare le seguenti opzioni:
 - **`PIPEX_BUILD_TESTS`**: ON/OFF (default ON)
 - **`PIPEX_BUILD_SANDBOX`**: ON/OFF (default OFF)
-Esempio per abilitare entrambi:
+- 
+Esempio per abilitare la sendobox senza testing:
 ```bash
-cmake -DPIPEX_BUILD_TESTS=ON -DPIPEX_BUILD_SANDBOX=ON ..
+cmake -DPIPEX_BUILD_TESTS=OFF -DPIPEX_BUILD_SANDBOX=ON ..
 ```
 
 3.  **Compilazione:**
@@ -131,7 +134,6 @@ Gli eseguibili dei test si trovano in `build/tests/` e vengono creati solamente 
 
 Per eseguire tutti i test:
 ```bash
-cd tests
 ctest --output-on-failure
 ```
 
@@ -536,14 +538,18 @@ Definizione della pipeline nel codice sorgente
     -   File generati nelle cartelle `output/image/` e `output/audio/`.
     -   Log dettagliati su console che mostrano: creazione nodi, flusso dati, chiamate a costruttori/distruttori (utile per debug gestione memoria).
 
-Esempio di output console:
+Esempio di output console (con livello di debug ERROR):
 ```text
-[Pipeline] "WAV Audio generation" {0x...}.Constructor(std::string)
-[Source] "WAV Audio Sample Source" {0x...}.Constructor(...)
-[Transformer] "EQ Bell Curve" {0x...}.Constructor(...)
-...
-[Pipeline] "WAV Audio generation" {0x...}.run()
-...
+Running PipeXEngine with 3 pipelines...
+Running pipeline "PPM Image generation"...
+Valid pipeline "PPM Image generation" starting execution with 3 nodes.
+Running pipeline "Running pipeline "WAV Audio generation"...
+Valid pipeline "WAV Audio generation" starting execution with WAV Audio generation with Amplitude Modulation"...3 nodes.
+***Pipeline "WAV Audio generation" execution completed.
+
+[DEBUG_ERROR] [PipeX] [PipeXEngine] PipeXException exception in pipeline "WAV Audio generation with Amplitude Modulation": PipeX Library exception: Invalid Pipeline "WAV Audio generation with Amplitude Modulation": Cannot run pipeline, invalid configuration: missing Sink node
+
+***Pipeline "PPM Image generation" execution completed.
 ```
 
 ---

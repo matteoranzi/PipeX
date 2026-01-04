@@ -17,11 +17,12 @@ option(PIPEX_BUILD_TESTS "Build tests" ON)
 option(PIPEX_BUILD_SANDBOX "Build sandbox utilities" OFF)
 
 if(PIPEX_BUILD_TESTS)
-  add_subdirectory(tests)
+    enable_testing()
+    add_subdirectory(tests)
 endif()
 
 if(PIPEX_BUILD_SANDBOX)
-  add_subdirectory(sandbox)
+    add_subdirectory(sandbox)
 endif()
 
 
@@ -37,7 +38,8 @@ file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/output/image)
 
 
 #================================================================================================
-set(APP_PRINT_DEBUG_LEVEL ${GLOBAL_PRINT_DEBUG_LEVEL} STRING "Debug level for main")
-#set(APP_PRINT_DEBUG_LEVEL ${PRINT_DEBUG_LEVEL_INFO} STRING "Debug level for main")
-define_print_debug_level_for_target(app ${APP_PRINT_DEBUG_LEVEL})
+set(APP_RELEASE_PRINT_DEBUG_LEVEL ${RELEASE_PRINT_DEBUG_LEVEL} CACHE STRING "Debug level for main in release builds")
+set(APP_DEBUG_PRINT_DEBUG_LEVEL ${DEBUG_PRINT_DEBUG_LEVEL} CACHE STRING "Debug level for main in debug builds")
+
+define_print_debug_level_for_target(app ${APP_RELEASE_PRINT_DEBUG_LEVEL} ${APP_DEBUG_PRINT_DEBUG_LEVEL})
 #================================================================================================

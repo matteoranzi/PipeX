@@ -11,6 +11,7 @@
 #include <string>
 #include <list>
 #include <set>
+#include <sstream>
 
 #include "nodes/primitives/INode.h"
 #include "data/IData.h"
@@ -378,3 +379,4 @@ namespace PipeX {
 }
 
 #endif //PIPEX_PIPELINE_H
+

@@ -5,7 +5,8 @@
 #ifndef PIPEX_CONSOLE_THREADSAFE_H
 #define PIPEX_CONSOLE_THREADSAFE_H
 
-#include <pthread.h>
+#include <mutex>
+
 
 namespace PipeX {
     class Console_threadsafe {

@@ -8,6 +8,7 @@
 #include <string>
 #include <ostream>
 #include <sstream>
+#include <typeinfo>
 
 #include "PipeXException.h"
 

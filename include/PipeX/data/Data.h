@@ -1,6 +1,8 @@
 #ifndef PIPEX_DATA_HP
 #define PIPEX_DATA_HP
 
+#include <utility>
+#include <ostream>
 #include "IData.h"
 
 namespace PipeX {

@@ -6,6 +6,9 @@
 #define PIPEX_PROCESSOR_H
 
 #include <functional>
+#include <vector>
+#include <string>
+#include <utility>
 #include "NodeCRTP.h"
 
 namespace PipeX {

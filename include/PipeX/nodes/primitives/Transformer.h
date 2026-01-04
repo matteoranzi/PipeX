@@ -5,6 +5,8 @@
 #ifndef PIPEX_TRANSFORMER_H
 #define PIPEX_TRANSFORMER_H
 #include <functional>
+#include <string>
+#include <utility>
 
 #include "NodeCRTP.h"
 

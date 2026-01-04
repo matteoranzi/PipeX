@@ -5,6 +5,9 @@
 #ifndef PIPEX_WAV_SOUNDSAMPLE_SOURCE_H
 #define PIPEX_WAV_SOUNDSAMPLE_SOURCE_H
 
+#include <string>
+#include <vector>
+
 #include "PipeX/metadata/WAV_Metadata.h"
 #include "PipeX/nodes/primitives/Source.h"
 #include "PipeX/utils/sound_utils.h"

@@ -3,6 +3,10 @@
 //
 
 #include "PipeX/nodes/Sound/WAV_SoundPreset_Source.h"
+#include "PipeX/errors/PipeXException.h"
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
 
 namespace PipeX {
 

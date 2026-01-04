@@ -6,6 +6,10 @@
 #define PIPEX_SOURCE_H
 
 #include <functional>
+#include <vector>
+#include <memory>
+#include <string>
+#include <utility>
 #include "NodeCRTP.h"
 
 namespace PipeX {

@@ -6,6 +6,9 @@
 #define PIPEX_WAV_SOUND_SINK_H
 
 #include <fstream>
+#include <string>
+#include <vector>
+#include <cstdint>
 
 #include "PipeX/metadata/WAV_Metadata.h"
 #include "PipeX/nodes/primitives/Sink.h"

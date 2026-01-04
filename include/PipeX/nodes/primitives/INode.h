@@ -9,6 +9,7 @@
 #include <memory>
 #include <typeindex>
 #include <sstream>
+#include <string>
 
 #include "PipeX/data/IData.h"
 #include "PipeX/debug/pipex_print_debug.h"

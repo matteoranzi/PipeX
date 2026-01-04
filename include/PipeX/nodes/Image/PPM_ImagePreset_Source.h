@@ -7,6 +7,9 @@
 #define PIPEX_NODES_IMAGE_PPM_IMAGESAMPLE_SOURCE_H
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <stdexcept>
 
 #include "PipeX/metadata/PPM_Metadata.h"
 #include "PipeX/nodes/primitives/Source.h"

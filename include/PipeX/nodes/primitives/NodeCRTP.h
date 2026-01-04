@@ -7,6 +7,9 @@
 
 #include <string>
 #include <vector>
+#include <typeinfo>
+#include <memory>
+#include <type_traits>
 
 #include "INode.h"
 #include "PipeX/debug/pipex_print_debug.h"
@@ -165,3 +168,4 @@ namespace PipeX {
 }
 
 #endif //PIPEX_NODEBASE_H
+

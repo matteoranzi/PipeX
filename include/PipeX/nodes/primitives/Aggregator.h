@@ -6,6 +6,10 @@
 #define PIPEX_AGGREGATOR_HPP
 
 #include <functional>
+#include <vector>
+#include <string>
+#include <utility>
+#include <memory>
 
 #include "NodeCRTP.h"
 

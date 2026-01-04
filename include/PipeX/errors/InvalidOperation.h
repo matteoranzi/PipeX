@@ -5,6 +5,7 @@
 #ifndef PIPEX_CANCELOPERATION_H
 #define PIPEX_CANCELOPERATION_H
 #include <sstream>
+#include <string>
 
 #include "PipeXException.h"
 

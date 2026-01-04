@@ -8,6 +8,9 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <vector>
+#include <mutex>
+
 #include "../../utils/Console_threadsafe_utils.h"
 #include "PipeX/nodes/primitives/Source.h"
 

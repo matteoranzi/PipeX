@@ -4,6 +4,10 @@
 
 #ifndef PIPEX_EQ_BELLCURVE_HPP
 #define PIPEX_EQ_BELLCURVE_HPP
+
+#include <cmath>
+#include <string>
+
 #include "PipeX/metadata/WAV_Metadata.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/utils/sound_utils.h"

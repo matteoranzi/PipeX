@@ -6,6 +6,8 @@
 #define PIPEX_CONSOLESINK_H
 #include <string>
 #include <iostream>
+#include <vector>
+#include <mutex>
 
 #include "../../utils/Console_threadsafe_utils.h"
 #include "PipeX/nodes/primitives/Sink.h"

@@ -5,6 +5,9 @@
 #ifndef PIPEX_GAINEXPOSURE_H
 #define PIPEX_GAINEXPOSURE_H
 
+#include <cmath>
+#include <string>
+
 #include "PipeX/metadata/PPM_Metadata.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/utils/image_utils.h"

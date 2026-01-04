@@ -5,6 +5,8 @@
 //
 
 #include <gtest/gtest.h>
+#include <vector>
+#include <iostream>
 
 #include "PipeX/Pipeline.h"
 #include "PipeX/nodes/primitives/Filter.h"

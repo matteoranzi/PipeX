@@ -6,6 +6,8 @@
 #define PIPEX_FILTER_H
 
 #include <functional>
+#include <string>
+#include <utility>
 
 #include "NodeCRTP.h"
 

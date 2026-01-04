@@ -3,6 +3,7 @@
 //
 
 #include "PipeX/nodes/Image/PPM_ImagePreset_Source.h"
+#include "PipeX/errors/PipeXException.h"
 
 #include <iostream>
 namespace PipeX {

@@ -4,6 +4,10 @@
 
 #ifndef PIPEX_GAINAUDIO_HPP
 #define PIPEX_GAINAUDIO_HPP
+
+#include <cmath>
+#include <string>
+
 #include "PipeX/metadata/WAV_Metadata.h"
 #include "PipeX/nodes/primitives/Transformer.h"
 #include "PipeX/utils/sound_utils.h"

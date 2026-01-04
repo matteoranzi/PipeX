@@ -8,6 +8,8 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+#include <typeinfo>
 
 #include "PipeX/nodes/primitives/INode.h"
 #include "my_extended_cpp_standard/my_memory.h"

@@ -3,6 +3,9 @@
 //
 
 #include <iostream>
+#include <vector>
+#include <memory>
+#include <typeinfo>
 
 #include "my_extended_cpp_standard/my_memory.h"
 

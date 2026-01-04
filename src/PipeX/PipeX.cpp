@@ -4,6 +4,7 @@
 
 #include "PipeX/PipeXEngine.h"
 #include "../../include/PipeX/utils/Console_threadsafe_utils.h"
+#include <mutex>
 
 namespace PipeX {
     // Definition of the singleton instance used in header files to prevent multiple definition over different translation units

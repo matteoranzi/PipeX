@@ -6,6 +6,9 @@
 #define PIPEX_PPM_IMAGE_SINK_H
 
 #include <fstream>
+#include <string>
+#include <vector>
+#include <stdexcept>
 
 #include "PipeX/nodes/primitives/Sink.h"
 #include "PipeX/utils/image_utils.h"

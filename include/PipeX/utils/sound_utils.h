@@ -6,6 +6,7 @@
 #define PIPEX_SOUND_UTILS_H
 #include <vector>
 #include <ostream>
+#include <cstdint>
 
 namespace PipeX {
     using bit_depth_t = std::int32_t;

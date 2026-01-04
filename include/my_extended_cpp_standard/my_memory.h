@@ -6,6 +6,7 @@
 #define PIPEX_MEMORY_H
 
 #include <memory>
+#include <utility>
 
 template<typename T, typename ...Args>
 std::unique_ptr<T> make_unique( Args&& ...args )
