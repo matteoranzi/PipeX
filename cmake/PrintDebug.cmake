@@ -53,7 +53,7 @@ function(show_print_debug_level_for_target target release_level debug_level)
         endif()
         set(_level_name "${_level_name}|")
 
-        colored_message(${color} "[print_debug] Module [${target}] >>> ${conf} PRINT_DEBUG_LEVEL: (${_level_name})")
+        colored_message("${color}" "[print_debug] Module [${target}] >>> ${conf} PRINT_DEBUG_LEVEL: (${_level_name})")
     endforeach()
 endfunction()
 
