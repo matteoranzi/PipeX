@@ -37,8 +37,8 @@ int main() {
             .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve", 440.0, 4.0, 30.0)
             .addNode<PipeX::EQ_BellCurve>("EQ Bell Curve 2", 831, 4.0, 20.0)
             .addNode<PipeX::AmplitudeModulation>("Amplitude Modulation", 27.0, 0.8)
-            .addNode<PipeX::AmplitudeModulation>("Amplitude Modulation 2", 5.0, 0.5);
-            // .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/eq2_tremolo_pink_noise_3");
+            .addNode<PipeX::AmplitudeModulation>("Amplitude Modulation 2", 5.0, 0.5)
+            .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/eq2_tremolo_pink_noise_3");
             // .addNode<PipeX::WAV_Sound_Sink>("WAV Audio Sink", "output/audio/test");
     } catch (PipeX::PipeXException& e) {
         PRINT_DEBUG_ERROR("Exception caught while creating pipeline: %s\n", e.what());
