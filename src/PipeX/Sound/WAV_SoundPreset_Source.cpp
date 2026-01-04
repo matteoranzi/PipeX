@@ -4,11 +4,14 @@
 
 #include "PipeX/nodes/Sound/WAV_SoundPreset_Source.h"
 #include "PipeX/errors/PipeXException.h"
-#define _USE_MATH_DEFINES
-#include <math.h>
+
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace PipeX {
 
