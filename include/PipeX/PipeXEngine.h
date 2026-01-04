@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <thread>
-#include <pthread.h>
+#include <mutex>
 
 #include "Pipeline.h"
 #include "errors/InvalidOperation.h"
