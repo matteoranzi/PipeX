@@ -6,6 +6,12 @@ enable_language(CXX)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+if(NOT isMultiConfig AND NOT CMAKE_BUILD_TYPE)
+    message(WARNING "CMAKE_BUILD_TYPE not set, defaulting to Release")
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+endif()
+
 include(cmake/PrintDebug.cmake)
 include(cmake/my_extended_cpp_standard.cmake)
 include(cmake/utils.cmake)

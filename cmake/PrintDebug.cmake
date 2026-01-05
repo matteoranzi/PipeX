@@ -19,23 +19,33 @@ set(PRINT_DEBUG_LEVEL_INFO  3)
 
 
 #------------- CUSTOM PRINT DEBUG LEVELS (for console print) -----------------
-
 function(define_print_debug_level_for_target target release_build_level debug_build_level)
     target_compile_definitions(${target} PRIVATE
         $<$<CONFIG:Release>:PRINT_DEBUG_LEVEL=${release_build_level}>
         $<$<CONFIG:Debug>:PRINT_DEBUG_LEVEL=${debug_build_level}>
     )
+
     show_print_debug_level_for_target(${target} ${release_build_level} ${debug_build_level})
 endfunction()
 
 function(show_print_debug_level_for_target target release_level debug_level)
-    foreach(conf IN ITEMS Release Debug)
+    get_property(isMultiConfig GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
+    if (isMultiConfig)
+        set(configs Release Debug)
+    else()
+        set(configs ${CMAKE_BUILD_TYPE})
+    endif()
+
+    foreach(conf IN ITEMS ${configs})
         if(conf STREQUAL Release)
             set(level "${release_level}")
             set(color ${Green})
-        else()
+        elseif(conf STREQUAL Debug)
             set(level "${debug_level}")
             set(color ${BoldMagenta})
+        else()
+            message(FATAL_ERROR "[print_debug] Unknown build configuration: ${conf}")
         endif()
 
         set(_level_name "")

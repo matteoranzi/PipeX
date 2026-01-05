@@ -16,7 +16,7 @@
 
 ## 2. Data e versione del documento
 **Data:** 3 Gennaio 2026  
-**Versione:** 1.1
+**Versione:** 1.2
 
 ## 3. Riferimenti dei componenti del Gruppo
 - **Matteo Ranzi** (matteo.ranzi@studenti.unitn.it)
@@ -82,11 +82,22 @@ cd build
 ```
 2.  **Configurazione:**
 
+I parametri di configurazione di seguito mostrati singolarmente sono da intendersi come parametri da impostare in un unico comando `cmake`, separati da spazi.
+
 2.a **Configurazione di base**
 
+In fase di configurazione è necessario specificare il tipo di build desiderato (Release impostato di default).
+
+Per una build di Debug (con log dettagliati):
 ```bash
-cmake ..
+cmake .. -DCMAKE_BUILD_TYPE=Debug
 ```
+
+Per una build di Release (solo log di errori):
+```bash
+cmake .. -DCMAKE_BUILD_TYPE=Release
+```
+
 *Nota: CMake scaricherà automaticamente GoogleTest se non presente.*
 
 2.b **Configurazione Log di Debug:**
