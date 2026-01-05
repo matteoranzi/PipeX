@@ -86,16 +86,16 @@ I parametri di configurazione di seguito mostrati singolarmente sono da intender
 
 2.a **Configurazione di base**
 
-In fase di configurazione è necessario specificare il tipo di build desiderato (Release impostato di default).
+In fase di configurazione è possibile specificare il tipo di build desiderato (_Release impostato di default_).
 
-Per una build di Debug (con log dettagliati):
+Ad esempio, se si preferisce una build di Debug (con log dettagliati):
 ```bash
 cmake .. -DCMAKE_BUILD_TYPE=Debug
 ```
 
-Per una build di Release (solo log di errori):
+Altrimenti, per una build di Release (solo log di errori):
 ```bash
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake ..
 ```
 
 *Nota: CMake scaricherà automaticamente GoogleTest se non presente.*
