@@ -5,14 +5,14 @@
 #ifndef PIPEX_PIPELINE_H
 #define PIPEX_PIPELINE_H
 
-#include "PipeX/debug/pipex_print_debug.h"
-#include "my_extended_cpp_standard/my_memory.h"
 
 #include <string>
 #include <list>
 #include <set>
 #include <sstream>
 
+#include "PipeX/debug/pipex_print_debug.h"
+#include "my_extended_cpp_standard/my_memory.h"
 #include "nodes/primitives/INode.h"
 #include "data/IData.h"
 #include "errors/InvalidOperation.h"

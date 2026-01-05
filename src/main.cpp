@@ -83,6 +83,8 @@ int main() {
 // This demo shows how to create a simple pipeline with Source, Transformer, Filter and Sink nodes
 // The pipeline takes a vector of integers, multiplies each by 3, filters out odd numbers and collects the results
 void basicPipelineDemo() {
+    std::cout << "Starting Basic pipeline demo..." << std::endl;
+
     std::vector<int> data_source = {1, 2, 3, 4, 5};
     std::vector<int> data_sink;
 
@@ -108,6 +110,8 @@ void basicPipelineDemo() {
     printVector<int>(data_source);
     std::cout << "Output data: ";
     printVector<int>(data_sink);
+
+    std::cout << "End of Basic pipeline demo." << std::endl;
 }
 
 //==========================================================================================================
@@ -116,6 +120,8 @@ void basicPipelineDemo() {
 // The first pipeline generates a vector of integers, multiplies each by 2 and outputs to console
 // The second pipeline reads integers from console input, sum up all of them and outputs to console
 void threadsafeConsolePipeXEngineDemo() {
+    std::cout << "Starting Threa-safe console pipelines demo..." << std::endl;
+
     const auto pipexEngine = PipeX::PipeXEngine::getPipexEngine();
 
     pipexEngine->newPipeline("ConsolePipeline_1")
@@ -137,6 +143,8 @@ void threadsafeConsolePipeXEngineDemo() {
 
 
     pipexEngine->start();
+
+    std::cout << "End of Thread-safe console pipelines demo." << std::endl;
 }
 
 //==========================================================================================================
@@ -146,6 +154,8 @@ void threadsafeConsolePipeXEngineDemo() {
 // The second pipeline has duplicated node names, which will cause an exception during creation. Such corrupted pipeline is removed from PipeXEngine after exception is caught
 // After handling the exceptions, a working pipeline is created and executed to show that PipeXEngine continues working after exceptions
 void pipelineExceptionsDemo() {
+    std::cout << "Starting Pipeline exceptions demo..." << std::endl;
+
     const auto pipexEngine = PipeX::PipeXEngine::getPipexEngine();
 
     pipexEngine->newPipeline("NoSink_Pipeline")
@@ -204,12 +214,15 @@ void pipelineExceptionsDemo() {
 
     pipexEngine->start();
 
+    std::cout << "End of Pipeline exceptions demo." << std::endl;
 }
 
 //==========================================================================================================
 
 // This demo shows how to create a pipeline that generates WAV audio files with amplitude modulation effects
 void WAV_audioDemo() {
+    std::cout << "Starting WAV audio demo..." << std::endl;
+
     const auto pipexEngine = PipeX::PipeXEngine::getPipexEngine();
 
     // WAV audio generation parameters
@@ -239,11 +252,15 @@ void WAV_audioDemo() {
 
     pipexEngine->start();
 
+    std::cout << "File audio generated in output/audio folder" << std::endl;
+    std::cout << "End of WAV audio demo." << std::endl;
 }
 
 //==========================================================================================================
 
 void PPM_imageDemo() {
+    std::cout << "Starting PPM image demo..." << std::endl;
+
     const auto pipexEngine = PipeX::PipeXEngine::getPipexEngine();
 
     // PPM image generation parameters
@@ -264,6 +281,9 @@ void PPM_imageDemo() {
         .addNode<PipeX::PPM_Image_Sink>("PPM Image Sink", "output/image/gradient");
 
     pipexEngine->start();
+
+    std::cout << "File image generated in output/image folder" << std::endl;
+    std::cout << "End of PPM image demo." << std::endl;
 }
 
 //==========================================================================================================
