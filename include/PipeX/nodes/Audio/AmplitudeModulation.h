@@ -48,7 +48,7 @@ namespace PipeX {
             return modulatedData;
         }
 
-        constexpr double clamp(const double& v, const double& lo, const double& hi) const {
+        static double clamp(const double& v, const double& lo, const double& hi) {
             return v < lo ? lo : hi < v ? hi : v;
         }
     };
